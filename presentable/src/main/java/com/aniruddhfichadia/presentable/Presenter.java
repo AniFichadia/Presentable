@@ -45,8 +45,9 @@ public interface Presenter {
 
 
     /**
-     * Convenience class for when your UI doesn't require a {@link Presenter}. Returns {@link NoLifecycleHooks} for
-     * {@link #getLifecycleHooks()}.
+     * Convenience class for when your UI doesn't require a {@link Presenter}.
+     * <p>
+     * Returns {@link NoLifecycleHooks} for {@link #getLifecycleHooks()}.
      */
     final class DoNotPresent
             implements Presenter {

@@ -17,6 +17,7 @@
  */
 package com.aniruddhfichadia.presentable;
 
+
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -42,13 +43,13 @@ import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public abstract class PresentableFragment<P extends Presenter>
-        extends Fragment {
+        extends Fragment
+        implements ViewBindable {
     /**
      * A format for {@link PresenterState} persistence. Refer to {@link #generatePresenterStateKey()} for the actual key
      * used in the bundle for {@link #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
      */
-    private static final String KEY_PRESENTER_STATE = ".key_presenter_state";
-
+    private static final String KEY_PRESENTER_STATE = "key_presenter_state";
 
     @NonNull
     protected final P              presenter;
@@ -74,20 +75,22 @@ public abstract class PresentableFragment<P extends Presenter>
     }
 
 
+    //region Lifecycle
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                                   @Nullable Bundle savedInstanceState) {
         int layoutResource = getLayoutResource();
 
-        if (layoutResource < 0) {
-            return null;
-        } else {
+        if (layoutResource > 0) {
             View view = inflater.inflate(layoutResource, container, false);
 
             bind(view);
+            afterBind(view);
 
             return view;
+        } else {
+            return null;
         }
     }
 
@@ -120,6 +123,13 @@ public abstract class PresentableFragment<P extends Presenter>
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        unbind();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -147,11 +157,13 @@ public abstract class PresentableFragment<P extends Presenter>
      * Generates a key unique to the {@link Fragment} class to persist {@link PresenterState} during {@link
      * #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
      */
-    private String generatePresenterStateKey() {
-        return getClass().getSimpleName() + KEY_PRESENTER_STATE;
+    protected String generatePresenterStateKey() {
+        return getClass().getSimpleName() + "." + KEY_PRESENTER_STATE;
     }
+    //endregion
 
 
+    //region Dependency Injection
     protected boolean shouldInjectBeforeInitialisingPresenter() {
         return true;
     }
@@ -163,25 +175,17 @@ public abstract class PresentableFragment<P extends Presenter>
      */
     protected void inject() {
     }
+    //endregion
 
-    /** Provide your {@link Presenter} instance through this method */
-    @NonNull
-    protected abstract P createPresenter();
 
-    /** Provide your layout resource through this method. Use any negative number for no layout */
-    @LayoutRes
-    protected abstract int getLayoutResource();
+    //region Presenter
 
     /**
-     * Perform any view binding (eg. via ButterKnife, or using a bunch of {@link View#findViewById(int)} calls). Won't
-     * be called if a layout isn't inflated
-     *
-     * @param view
-     *         The inflated layout. Won't be null
+     * Provide your {@link Presenter} instance through this method. If no presenter is required, return {@link
+     * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
      */
-    protected void bind(@NonNull View view) {
-    }
-
+    @NonNull
+    protected abstract P createPresenter();
 
     /**
      * Internal access to the {@link Presenter}
@@ -189,4 +193,24 @@ public abstract class PresentableFragment<P extends Presenter>
     protected final P getPresenter() {
         return presenter;
     }
+    //endregion
+
+
+    //region ViewBindable
+    @LayoutRes
+    @Override
+    public abstract int getLayoutResource();
+
+    @Override
+    public void bind(@NonNull View view) {
+    }
+
+    @Override
+    public void afterBind(@NonNull View view) {
+    }
+
+    @Override
+    public void unbind() {
+    }
+    //endregion
 }

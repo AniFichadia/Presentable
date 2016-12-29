@@ -17,10 +17,13 @@
  */
 package com.aniruddhfichadia.presentable;
 
+
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
 
@@ -29,7 +32,8 @@ import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public abstract class PresentableActivity<P extends Presenter>
-        extends AppCompatActivity {
+        extends AppCompatActivity
+        implements ViewBindable {
     private static final String KEY_PRESENTER_STATE = ".key_presenter_state";
 
 
@@ -49,9 +53,16 @@ public abstract class PresentableActivity<P extends Presenter>
     }
 
 
+    //region Lifecycle
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(getLayoutResource());
+
+        View contentView = getWindow().getDecorView();
+        bind(contentView);
+        afterBind(contentView);
 
         lifecycleHooks.onCreate();
     }
@@ -75,6 +86,10 @@ public abstract class PresentableActivity<P extends Presenter>
         super.onDestroy();
 
         lifecycleHooks.onDestroy();
+
+        // Unbinding is unnecessary in Activities, just use a no-op in your unbind method unless
+        // this is explicitly necessary
+        unbind();
     }
 
 
@@ -105,17 +120,49 @@ public abstract class PresentableActivity<P extends Presenter>
     private String generatePresenterStateKey() {
         return getClass().getSimpleName() + KEY_PRESENTER_STATE;
     }
+    //endregion
 
 
+    //region Dependency Injection
     // Override as necessary
     protected void inject() {
     }
+    //endregion
 
 
+    //region Presenter
+
+    /**
+     * Provide your {@link Presenter} instance through this method. If no presenter is required, return {@link
+     * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
+     */
     @NonNull
     protected abstract P createPresenter();
 
+    /**
+     * Internal access to the {@link Presenter}
+     */
     protected final P getPresenter() {
         return presenter;
     }
+    //endregion
+
+
+    //region ViewBindable
+    @LayoutRes
+    @Override
+    public abstract int getLayoutResource();
+
+    @Override
+    public void bind(@NonNull View view) {
+    }
+
+    @Override
+    public void afterBind(@NonNull View view) {
+    }
+
+    @Override
+    public void unbind() {
+    }
+    //endregion
 }
