@@ -17,7 +17,11 @@
  */
 package com.aniruddhfichadia.presentable;
 
+
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -27,13 +31,42 @@ public class ResourceProvider {
     public final StringProvider string;
     @NotNull
     public final ColorProvider  color;
+    @NotNull
+    public final LocaleProvider locale;
     // More to come?
 
 
-    public ResourceProvider(@NotNull StringProvider string, @NotNull ColorProvider color) {
+    public ResourceProvider(@NotNull StringProvider string, @NotNull ColorProvider color,
+                            @NotNull LocaleProvider locale) {
         this.string = string;
         this.color = color;
+        this.locale = locale;
     }
+
+
+    //region StringProvider
+    public String getString(@NotNull String identifier) {
+        return string.getString(identifier);
+    }
+
+    public String getString(@NotNull String identifier, Object... formatArgs) {
+        return string.getString(identifier, formatArgs);
+    }
+    //endregion
+
+
+    //region ColorProvider
+    public int getColor(@NotNull String identifier) {
+        return color.getColor(identifier);
+    }
+    //endregion
+
+
+    //region LocaleProvider
+    public Locale getLocale() {
+        return locale.getLocale();
+    }
+    //endregion
 
 
     public interface StringProvider {
@@ -45,5 +78,10 @@ public class ResourceProvider {
 
     public interface ColorProvider {
         int getColor(@NotNull String identifier);
+    }
+
+
+    public interface LocaleProvider {
+        Locale getLocale();
     }
 }

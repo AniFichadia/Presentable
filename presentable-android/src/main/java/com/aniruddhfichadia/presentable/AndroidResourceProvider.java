@@ -19,17 +19,23 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.content.Context;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public class AndroidResourceProvider
         implements ResourceProvider.StringProvider,
-                   ResourceProvider.ColorProvider {
+                   ResourceProvider.ColorProvider,
+                   ResourceProvider.LocaleProvider {
     private static final String DEF_TYPE_STRING = "string";
     private static final String DEF_TYPE_COLOR  = "color";
 
@@ -61,7 +67,8 @@ public class AndroidResourceProvider
     }
 
     protected String lookupString(@NotNull String identifier) {
-        return context.getString(context.getResources().getIdentifier(identifier, DEF_TYPE_STRING, packageName));
+        return context.getString(context.getResources()
+                                        .getIdentifier(identifier, DEF_TYPE_STRING, packageName));
     }
     //endregion
 
@@ -73,7 +80,20 @@ public class AndroidResourceProvider
 
     protected int lookupColor(@NotNull String identifier) {
         return ContextCompat
-                .getColor(context, context.getResources().getIdentifier(identifier, DEF_TYPE_COLOR, packageName));
+                .getColor(context, context.getResources()
+                                          .getIdentifier(identifier, DEF_TYPE_COLOR, packageName));
+    }
+    //endregion
+
+
+    //region Locale
+    @Override
+    public Locale getLocale() {
+        if (VERSION.SDK_INT >= VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            return context.getResources().getConfiguration().locale;
+        }
     }
     //endregion
 }
