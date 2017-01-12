@@ -61,8 +61,8 @@ public abstract class PresentableActivity<P extends Presenter>
         setContentView(getLayoutResource());
 
         View contentView = getWindow().getDecorView();
-        bind(contentView);
-        afterBind(contentView);
+        bindView(contentView);
+        afterBindView(contentView);
 
         lifecycleHooks.onCreate();
     }
@@ -87,9 +87,9 @@ public abstract class PresentableActivity<P extends Presenter>
 
         lifecycleHooks.onDestroy();
 
-        // Unbinding is unnecessary in Activities, just use a no-op in your unbind method unless
+        // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
         // this is explicitly necessary
-        unbind();
+        unbindView();
     }
 
 
@@ -154,15 +154,15 @@ public abstract class PresentableActivity<P extends Presenter>
     public abstract int getLayoutResource();
 
     @Override
-    public void bind(@NonNull View view) {
+    public void bindView(@NonNull View view) {
     }
 
     @Override
-    public void afterBind(@NonNull View view) {
+    public void afterBindView(@NonNull View view) {
     }
 
     @Override
-    public void unbind() {
+    public void unbindView() {
     }
     //endregion
 }

@@ -21,14 +21,14 @@ public interface ViewBindable {
      *
      * @param view The inflated layout. Won't be null
      */
-    void bind(@NonNull View view);
+    void bindView(@NonNull View view);
 
     /**
-     * Called after {@link #bind(View)}. Configure your UI elements here
+     * Called after {@link #bindView(View)}. Configure your UI elements here
      *
      * @param view The inflated layout. Won't be null
      */
-    void afterBind(@NonNull View view);
+    void afterBindView(@NonNull View view);
 
-    void unbind();
+    void unbindView();
 }

@@ -85,8 +85,8 @@ public abstract class PresentableFragment<P extends Presenter>
         if (layoutResource > 0) {
             View view = inflater.inflate(layoutResource, container, false);
 
-            bind(view);
-            afterBind(view);
+            bindView(view);
+            afterBindView(view);
 
             return view;
         } else {
@@ -126,7 +126,7 @@ public abstract class PresentableFragment<P extends Presenter>
     public void onDestroyView() {
         super.onDestroyView();
 
-        unbind();
+        unbindView();
     }
 
     @Override
@@ -202,15 +202,15 @@ public abstract class PresentableFragment<P extends Presenter>
     public abstract int getLayoutResource();
 
     @Override
-    public void bind(@NonNull View view) {
+    public void bindView(@NonNull View view) {
     }
 
     @Override
-    public void afterBind(@NonNull View view) {
+    public void afterBindView(@NonNull View view) {
     }
 
     @Override
-    public void unbind() {
+    public void unbindView() {
     }
     //endregion
 }
