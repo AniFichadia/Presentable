@@ -27,6 +27,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 
 /**
  * A {@link Fragment} with appropriate hook-ins and abstractions to interact with a {@link Presenter}. Also adds a bit
@@ -35,41 +39,44 @@ import android.view.ViewGroup;
  * {@link Presenter} instantiation occurs in the constructor.
  * <p>
  * For applications that require dependency injection (eg. Dagger), you can implement the {@link #inject()} method.
- * Depending on how your dependency injection is configured (constructor vs post instantiation), you can to control the
- * point of injection using {@link #shouldInjectBeforeInitialisingPresenter()}.
+ * <p>
+ * <p>
+ * todo queue up events for the ui when detached
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public abstract class PresentableFragment<P extends Presenter>
         extends Fragment
         implements ViewBindable {
-    /**
-     * A format for {@link PresenterModel} persistence. Refer to {@link #generatePresenterModelKey()} for the actual key
-     * used in the bundle for {@link #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
-     */
-    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
+    private static final String            KEY_PRESENTER  = "presenter";
+    private static       Map<UUID, Object> objectRegistry = new HashMap<>();
 
     @NonNull
-    private final P              presenter;
-    @NonNull
-    private final LifecycleHooks lifecycleHooks;
+    private P presenter;
 
+    @NonNull
+    private LifecycleHooks lifecycleHooks;
 
     public PresentableFragment() {
         super();
 
-        boolean injectBeforeInitialisingPresenter = shouldInjectBeforeInitialisingPresenter();
+        inject();
+    }
 
-        if (injectBeforeInitialisingPresenter) {
-            inject();
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            presenter = createPresenter();
+        } else {
+            presenter = (P) objectRegistry.remove(UUID.fromString(savedInstanceState.getString
+                    (KEY_PRESENTER)));
         }
 
-        presenter = createPresenter();
         lifecycleHooks = presenter.getLifecycleHooks();
-
-        if (!injectBeforeInitialisingPresenter) {
-            inject();
-        }
     }
 
 
@@ -131,46 +138,17 @@ public abstract class PresentableFragment<P extends Presenter>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterModel presenterModel = lifecycleHooks.onSave();
-        if (presenterModel != null) {
-            outState.putSerializable(generatePresenterModelKey(), presenterModel);
-        }
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        PresenterModel presenterModel = null;
-
-        if (savedInstanceState != null) {
-            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
-                    generatePresenterModelKey());
-        }
-
-        lifecycleHooks.onRestore(presenterModel);
-    }
-
-
-    /**
-     * Generates a key unique to the {@link Fragment} class to persist {@link PresenterModel} during {@link
-     * #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
-     */
-    protected String generatePresenterModelKey() {
-        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
+        UUID presenterKey = UUID.randomUUID();
+        objectRegistry.put(presenterKey, presenter);
+        outState.putString(KEY_PRESENTER, presenterKey.toString());
     }
     //endregion
 
 
     //region Dependency Injection
-    protected boolean shouldInjectBeforeInitialisingPresenter() {
-        return true;
-    }
 
     /**
      * Performs dependency injection for your fragment. You can override this as necessary or not implement it at all!
-     * <p>
-     * {@link #shouldInjectBeforeInitialisingPresenter()} controls when injection occurs.
      */
     protected void inject() {
     }
