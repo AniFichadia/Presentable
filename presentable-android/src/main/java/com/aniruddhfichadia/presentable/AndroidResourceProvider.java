@@ -92,6 +92,7 @@ public class AndroidResourceProvider
         if (VERSION.SDK_INT >= VERSION_CODES.N) {
             return context.getResources().getConfiguration().getLocales().get(0);
         } else {
+            //noinspection deprecation
             return context.getResources().getConfiguration().locale;
         }
     }
