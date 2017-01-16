@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
-import com.aniruddhfichadia.presentable.component.ErrorComponent.ErrorBuilder;
+import com.aniruddhfichadia.presentable.component.MessageBuilder;
 
 
 /**
@@ -26,9 +26,9 @@ public class SimpleErrorDialog
 
 
     @NonNull
-    public static SimpleErrorDialog newInstance(@NonNull ErrorBuilder errorBuilder) {
+    public static SimpleErrorDialog newInstance(@NonNull MessageBuilder messageBuilder) {
         Bundle args = new Bundle();
-        args.putSerializable(KEY_ERROR_BUILDER, errorBuilder);
+        args.putSerializable(KEY_ERROR_BUILDER, messageBuilder);
 
         SimpleErrorDialog instance = new SimpleErrorDialog();
         instance.setArguments(args);
@@ -40,17 +40,17 @@ public class SimpleErrorDialog
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ErrorBuilder errorBuilder =
-                (ErrorBuilder) getArguments().getSerializable(KEY_ERROR_BUILDER);
+        MessageBuilder messageBuilder =
+                (MessageBuilder) getArguments().getSerializable(KEY_ERROR_BUILDER);
 
-        if (errorBuilder == null) {
-            throw new IllegalStateException("ErrorBuilder is not set");
+        if (messageBuilder == null) {
+            throw new IllegalStateException("MessageBuilder is not set");
         }
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setTitle(errorBuilder.getTitle());
-        builder.setMessage(errorBuilder.getMessage());
+        builder.setTitle(messageBuilder.getTitle());
+        builder.setMessage(messageBuilder.getMessage());
 
         OnClickListener delegatingOnClickListener = new OnClickListener() {
             @Override
@@ -61,13 +61,13 @@ public class SimpleErrorDialog
             }
         };
 
-        builder.setPositiveButton(errorBuilder.getPositiveAction(), delegatingOnClickListener);
-        builder.setNegativeButton(errorBuilder.getNegativeAction(), delegatingOnClickListener);
-        builder.setNeutralButton(errorBuilder.getNeutralAction(), delegatingOnClickListener);
+        builder.setPositiveButton(messageBuilder.getPositiveAction(), delegatingOnClickListener);
+        builder.setNegativeButton(messageBuilder.getNegativeAction(), delegatingOnClickListener);
+        builder.setNeutralButton(messageBuilder.getNeutralAction(), delegatingOnClickListener);
 
         // Dismissible handling: prevent back-presses and external touches from dismissing the
         // dialog
-        setCancelable(errorBuilder.isDismissible());
+        setCancelable(messageBuilder.isDismissible());
 
         return builder.create();
     }

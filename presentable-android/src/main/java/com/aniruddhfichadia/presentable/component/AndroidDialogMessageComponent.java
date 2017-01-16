@@ -16,8 +16,8 @@ import com.aniruddhfichadia.presentable.SimpleErrorDialog;
  * @author Aniruddh Fichadia
  * @date 29/12/16
  */
-public class AndroidDialogErrorComponent
-        extends ErrorComponent {
+public class AndroidDialogMessageComponent
+        extends MessageComponent {
     @NonNull
     private final Context         context;
     @NonNull
@@ -27,17 +27,17 @@ public class AndroidDialogErrorComponent
     private DialogFragment currentlyShowing;
 
 
-    public AndroidDialogErrorComponent(@NonNull Context context, @NonNull FragmentManager fragmentManager) {
+    public AndroidDialogMessageComponent(@NonNull Context context, @NonNull FragmentManager fragmentManager) {
         this.context = context;
         this.fragmentManager = fragmentManager;
     }
 
 
     @Override
-    protected void showInternal(@NonNull ErrorBuilder errorBuilder, @Nullable final OnActionClickListener listener) {
+    protected void showInternal(@NonNull MessageBuilder messageBuilder, @Nullable final OnActionClickListener listener) {
         dismissIfShowing();
 
-        SimpleErrorDialog dialog = SimpleErrorDialog.newInstance(errorBuilder);
+        SimpleErrorDialog dialog = SimpleErrorDialog.newInstance(messageBuilder);
 
         if (listener != null) {
             dialog.setOnClickListener(new OnClickListener() {
@@ -45,13 +45,13 @@ public class AndroidDialogErrorComponent
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            listener.onActionClicked(ErrorComponent.ACTION_POSITIVE);
+                            listener.onActionClicked(MessageComponent.ACTION_POSITIVE);
                             break;
                         case DialogInterface.BUTTON_NEGATIVE:
-                            listener.onActionClicked(ErrorComponent.ACTION_NEGATIVE);
+                            listener.onActionClicked(MessageComponent.ACTION_NEGATIVE);
                             break;
                         case DialogInterface.BUTTON_NEUTRAL:
-                            listener.onActionClicked(ErrorComponent.ACTION_NEUTRAL);
+                            listener.onActionClicked(MessageComponent.ACTION_NEUTRAL);
                             break;
                         default:
                             break;
