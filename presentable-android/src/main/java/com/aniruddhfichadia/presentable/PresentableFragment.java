@@ -27,8 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
-
 
 /**
  * A {@link Fragment} with appropriate hook-ins and abstractions to interact with a {@link Presenter}. Also adds a bit
@@ -46,15 +44,15 @@ public abstract class PresentableFragment<P extends Presenter>
         extends Fragment
         implements ViewBindable {
     /**
-     * A format for {@link PresenterState} persistence. Refer to {@link #generatePresenterStateKey()} for the actual key
+     * A format for {@link PresenterModel} persistence. Refer to {@link #generatePresenterModelKey()} for the actual key
      * used in the bundle for {@link #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
      */
-    private static final String KEY_PRESENTER_STATE = "key_presenter_state";
+    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
 
     @NonNull
-    protected final P              presenter;
+    private final P              presenter;
     @NonNull
-    private final   LifecycleHooks lifecycleHooks;
+    private final LifecycleHooks lifecycleHooks;
 
 
     public PresentableFragment() {
@@ -133,9 +131,9 @@ public abstract class PresentableFragment<P extends Presenter>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterState presenterState = lifecycleHooks.onSave();
-        if (presenterState != null) {
-            outState.putSerializable(generatePresenterStateKey(), presenterState);
+        PresenterModel presenterModel = lifecycleHooks.onSave();
+        if (presenterModel != null) {
+            outState.putSerializable(generatePresenterModelKey(), presenterModel);
         }
     }
 
@@ -143,22 +141,23 @@ public abstract class PresentableFragment<P extends Presenter>
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        PresenterState presenterState = null;
+        PresenterModel presenterModel = null;
 
         if (savedInstanceState != null) {
-            presenterState = (PresenterState) savedInstanceState.getSerializable(generatePresenterStateKey());
+            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
+                    generatePresenterModelKey());
         }
 
-        lifecycleHooks.onRestore(presenterState);
+        lifecycleHooks.onRestore(presenterModel);
     }
 
 
     /**
-     * Generates a key unique to the {@link Fragment} class to persist {@link PresenterState} during {@link
+     * Generates a key unique to the {@link Fragment} class to persist {@link PresenterModel} during {@link
      * #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
      */
-    protected String generatePresenterStateKey() {
-        return getClass().getSimpleName() + "." + KEY_PRESENTER_STATE;
+    protected String generatePresenterModelKey() {
+        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
     }
     //endregion
 

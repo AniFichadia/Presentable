@@ -20,15 +20,13 @@ package com.aniruddhfichadia.presentable;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
-
 
 /**
  * UI lifecycle hooks. Allows linking between a {@link Presenter} and its corresponding {@link PresenterUi}'s
  * lifecycle.
  * <p>
  * This is modelled similarly to Android's lifecycle events, but makes some abstractions for saving and restoring a
- * presenters state ({@link #onSave()} and {@link #onRestore(PresenterState)}). Each lifecycle event should be
+ * presenters state ({@link #onSave()} and {@link #onRestore(PresenterModel)}). Each lifecycle event should be
  * relatively self explanatory.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -43,19 +41,9 @@ public interface LifecycleHooks {
     void onPause();
 
     @Nullable
-    PresenterState onSave();
+    PresenterModel onSave();
 
-    void onRestore(@Nullable PresenterState savedState);
-
-
-    /**
-     * A savable representation of a {@link Presenter}'s state. Allows {@link Presenter}'s to be saved and restored
-     * based on lifecycle events, such as Android's Fragment.onSaveInstanceState(Bundle) and
-     * Fragment.onViewStateRestore(Bundle)
-     */
-    interface PresenterState
-            extends Serializable {
-    }
+    void onRestore(@Nullable PresenterModel savedState);
 
 
     /**
@@ -78,12 +66,12 @@ public interface LifecycleHooks {
 
         @Nullable
         @Override
-        public PresenterState onSave() {
+        public PresenterModel onSave() {
             return null;
         }
 
         @Override
-        public void onRestore(@Nullable PresenterState savedState) {
+        public void onRestore(@Nullable PresenterModel savedState) {
         }
 
         @Override

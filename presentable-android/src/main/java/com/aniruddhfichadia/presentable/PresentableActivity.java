@@ -25,8 +25,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
-
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -34,7 +32,7 @@ import com.aniruddhfichadia.presentable.LifecycleHooks.PresenterState;
 public abstract class PresentableActivity<P extends Presenter>
         extends AppCompatActivity
         implements ViewBindable {
-    private static final String KEY_PRESENTER_STATE = ".key_presenter_state";
+    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
 
 
     @NonNull
@@ -97,9 +95,9 @@ public abstract class PresentableActivity<P extends Presenter>
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterState presenterState = lifecycleHooks.onSave();
-        if (presenterState != null) {
-            outState.putSerializable(generatePresenterStateKey(), presenterState);
+        PresenterModel presenterModel = lifecycleHooks.onSave();
+        if (presenterModel != null) {
+            outState.putSerializable(generatePresenterModelKey(), presenterModel);
         }
     }
 
@@ -107,18 +105,19 @@ public abstract class PresentableActivity<P extends Presenter>
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        PresenterState presenterState = null;
+        PresenterModel presenterModel = null;
 
         if (savedInstanceState != null) {
-            presenterState = (PresenterState) savedInstanceState.getSerializable(generatePresenterStateKey());
+            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
+                    generatePresenterModelKey());
         }
 
-        lifecycleHooks.onRestore(presenterState);
+        lifecycleHooks.onRestore(presenterModel);
     }
 
 
-    private String generatePresenterStateKey() {
-        return getClass().getSimpleName() + KEY_PRESENTER_STATE;
+    protected String generatePresenterModelKey() {
+        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
     }
     //endregion
 
