@@ -17,6 +17,7 @@
  */
 package com.aniruddhfichadia.presentable;
 
+
 import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 import com.aniruddhfichadia.presentable.LifecycleHooks.SparseLifecycleHooks;
 
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public interface Presenter {
+public interface Presenter<Ui extends PresenterUi> {
     /**
      * Provides {@link LifecycleHooks} so a {@link Presenter} can interact with its {@link PresenterUi}'s lifecycle
      * events. The provided value is required to be non-null to simplify development and integration. Since the value is
@@ -43,18 +44,25 @@ public interface Presenter {
     @NotNull
     LifecycleHooks getLifecycleHooks();
 
+    Ui getUi();
+
 
     /**
      * Convenience class for when your UI doesn't require a {@link Presenter}.
      * <p>
      * Returns {@link NoLifecycleHooks} for {@link #getLifecycleHooks()}.
      */
-    final class DoNotPresent
-            implements Presenter {
+    final class DoNotPresent<U extends PresenterUi>
+            implements Presenter<U> {
         @NotNull
         @Override
         public LifecycleHooks getLifecycleHooks() {
             return new NoLifecycleHooks();
+        }
+
+        @Override
+        public U getUi() {
+            return null;
         }
     }
 }

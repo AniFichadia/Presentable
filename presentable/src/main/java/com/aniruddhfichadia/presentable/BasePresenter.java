@@ -29,13 +29,13 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public class BasePresenter<U extends PresenterUi>
-        implements Presenter {
+public class BasePresenter<Ui extends PresenterUi>
+        implements Presenter<Ui> {
     @NotNull
-    protected final U ui;
+    private final Ui ui;
 
 
-    public BasePresenter(@NotNull U ui) {
+    public BasePresenter(@NotNull Ui ui) {
         this.ui = ui;
     }
 
@@ -44,5 +44,10 @@ public class BasePresenter<U extends PresenterUi>
     @Override
     public LifecycleHooks getLifecycleHooks() {
         return new NoLifecycleHooks();
+    }
+
+    @Override
+    public Ui getUi() {
+        return ui;
     }
 }
