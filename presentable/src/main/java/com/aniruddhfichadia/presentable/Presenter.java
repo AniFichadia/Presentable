@@ -44,6 +44,11 @@ public interface Presenter<Ui extends PresenterUi> {
     @NotNull
     LifecycleHooks getLifecycleHooks();
 
+
+    void bindUi(@NotNull Ui ui);
+
+    void unBindUi();
+
     Ui getUi();
 
 
@@ -63,6 +68,16 @@ public interface Presenter<Ui extends PresenterUi> {
         @Override
         public U getUi() {
             return null;
+        }
+
+        @Override
+        public void bindUi(@NotNull U ui) {
+            // No-op
+        }
+
+        @Override
+        public void unBindUi() {
+            // No-op
         }
     }
 }

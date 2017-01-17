@@ -58,10 +58,12 @@ public class BasePresenter<Ui extends PresenterUi>
     }
 
 
+    @Override
     public void bindUi(@NotNull Ui ui) {
         this.ui = ui;
     }
 
+    @Override
     public void unBindUi() {
         ui = null;
     }
