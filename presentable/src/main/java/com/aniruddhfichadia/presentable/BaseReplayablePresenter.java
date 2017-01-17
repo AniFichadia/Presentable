@@ -18,51 +18,45 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
+import com.aniruddhfichadia.presentable.replay.ReplayableUi;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
 /**
- * A convenient, extensible implementation of the {@link Presenter} interface. The constructor associates a {@link
- * PresenterUi} with it and provides {@link NoLifecycleHooks} by default.
+ * TODO: document
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
+ * @date 2017-01-17
  */
-public class BasePresenter<Ui extends PresenterUi>
-        implements Presenter<Ui> {
-    @Nullable
-    protected Ui ui;
-
-
-    public BasePresenter() {
+public abstract class BaseReplayablePresenter<Ui extends PresenterUi>
+        extends BasePresenter<Ui> {
+    public BaseReplayablePresenter() {
         super();
     }
 
-
-    @NotNull
-    @Override
-    public LifecycleHooks getLifecycleHooks() {
-        return new NoLifecycleHooks();
-    }
-
-    @Override
-    public Ui getUi() {
-        return ui;
-    }
-
-
     protected boolean isUiAttached() {
-        return ui != null;
+        return super.isUiAttached() && !isReplayable();
     }
 
+    protected boolean isReplayable() {
+        return ui instanceof ReplayableUi;
+    }
 
+    @SuppressWarnings("unchecked")
     public void bindUi(@NotNull Ui ui) {
-        this.ui = ui;
+        if (this.ui instanceof ReplayableUi) {
+            // Apply all replayable UI updates
+            ((ReplayableUi<Ui>) this.ui).replay(ui);
+        }
+
+        super.bindUi(ui);
     }
 
     public void unBindUi() {
-        ui = null;
+        ui = getUnboundUi();
     }
+
+    @NotNull
+    protected abstract Ui getUnboundUi();
 }

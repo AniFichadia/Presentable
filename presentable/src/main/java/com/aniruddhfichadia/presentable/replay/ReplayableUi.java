@@ -15,16 +15,15 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable.replay;
 
-
-import java.io.Serializable;
-
+import com.aniruddhfichadia.presentable.PresenterUi;
 
 /**
- * A savable model of a {@link Presenter}'s state. Allows {@link Presenter}'s to be saved and restored based on
- * lifecycle events, such as Android's Fragment.onSaveInstanceState (Bundle) and Fragment.onViewStateRestore(Bundle)
+ * @author Aniruddh Fichadia
+ * @date 17/1/17
  */
-public interface PresenterModel
-        extends Serializable {
+public interface ReplayableUi<Ui extends PresenterUi>
+        extends Replayable<Ui>,
+                PresenterUi {
 }
