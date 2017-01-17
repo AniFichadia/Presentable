@@ -1,4 +1,4 @@
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentableexample;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentableexample;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
