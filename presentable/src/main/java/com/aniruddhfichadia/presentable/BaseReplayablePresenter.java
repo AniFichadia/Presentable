@@ -18,8 +18,6 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.presentable.replay.ReplayableUi;
-
 import org.jetbrains.annotations.NotNull;
 
 
@@ -29,34 +27,39 @@ import org.jetbrains.annotations.NotNull;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17
  */
-public abstract class BaseReplayablePresenter<Ui extends PresenterUi>
-        extends BasePresenter<Ui> {
+public abstract class BaseReplayablePresenter<UiT extends PresenterUi>
+        extends BasePresenter<UiT> {
     public BaseReplayablePresenter() {
         super();
     }
 
-    protected boolean isUiAttached() {
-        return super.isUiAttached() && !isReplayable();
-    }
-
-    protected boolean isReplayable() {
-        return ui instanceof ReplayableUi;
-    }
 
     @SuppressWarnings("unchecked")
-    public void bindUi(@NotNull Ui ui) {
+    @Override
+    public void bindUi(@NotNull UiT ui) {
         if (this.ui instanceof ReplayableUi) {
             // Apply all replayable UI updates
-            ((ReplayableUi<Ui>) this.ui).replay(ui);
+            ((ReplayableUi<UiT>) this.ui).replay(ui);
         }
 
         super.bindUi(ui);
     }
 
+    @Override
     public void unBindUi() {
         ui = getUnboundUi();
     }
 
+    @Override
+    public boolean isUiAttached() {
+        return super.isUiAttached() && !isReplayable();
+    }
+
     @NotNull
-    protected abstract Ui getUnboundUi();
+    protected abstract UiT getUnboundUi();
+
+
+    protected boolean isReplayable() {
+        return ui instanceof ReplayableUi;
+    }
 }
