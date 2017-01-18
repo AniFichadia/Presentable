@@ -15,12 +15,20 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.replay;
+package com.aniruddhfichadia.replayableinterface;
+
 
 /**
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-public interface ReplayableAction<Target> {
-    void replayOnTarget(Target target);
+public enum ReplayStrategy {
+    /** Invocations are enqueued without discriminating */
+    ENQUEUE,
+    /** Only a single instance of a method call will be enqueued, if at all */
+    ENQUEUE_LAST_ONLY,
+    /** Only a single instance of a method call with equivalent parameters will be enqueued, if at all */
+    ENQUEUE_PARAM_UNIQUE,
+    /** Invocations will not be enqueued */
+    NONE
 }

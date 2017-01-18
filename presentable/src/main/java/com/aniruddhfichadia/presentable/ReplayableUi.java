@@ -15,15 +15,17 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.replay;
+package com.aniruddhfichadia.presentable;
 
-import com.aniruddhfichadia.presentable.PresenterUi;
+
+import com.aniruddhfichadia.replayableinterface.ReplayTarget;
+
 
 /**
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-public interface ReplayableUi<Ui extends PresenterUi>
-        extends Replayable<Ui>,
+public interface ReplayableUi<UiT extends PresenterUi>
+        extends ReplayTarget<UiT>,
                 PresenterUi {
 }

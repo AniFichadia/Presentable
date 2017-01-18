@@ -15,30 +15,46 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.replay;
+package com.aniruddhfichadia.replayableinterface;
+
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+
 /**
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-public class ReplayActionKeyGenerator {
-    public static String generateKey(String methodSignature, @NotNull ReplayStrategy strategy,
+public class ReplayableActionHelper {
+    public static String generateKey(@NotNull String methodSignature, @NotNull ReplayStrategy strategy,
                                      Object... params) throws IllegalStateException {
         switch (strategy) {
-        case ENQUEUE:
-            return UUID.randomUUID().toString();
-        case ENQUEUE_SINGLE:
-            return methodSignature;
-        case ENQUEUE_PARAM_UNIQUE:
-            return methodSignature + "(" + createSignatureFromParams(params) + ")";
-        default:
-            throw new IllegalStateException("Strategy (" + strategy + ") cannot be handled");
+            case ENQUEUE:
+                return generateKeyForEnqueue();
+            case ENQUEUE_LAST_ONLY:
+                return generateKeyForEnqueueLastOnly(methodSignature);
+            case ENQUEUE_PARAM_UNIQUE:
+                return generateKeyForEnqueueParamUnique(methodSignature, params);
+            case NONE:
+            default:
+                throw new IllegalStateException("Strategy (" + strategy + ") cannot be handled");
         }
     }
+
+    public static String generateKeyForEnqueue() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static String generateKeyForEnqueueLastOnly(String methodSignature) {
+        return methodSignature;
+    }
+
+    public static String generateKeyForEnqueueParamUnique(String methodSignature, Object... params) {
+        return methodSignature + " [" + createSignatureFromParams(params) + "]";
+    }
+
 
     private static String createSignatureFromParams(Object... params) {
         if (params.length == 0) {

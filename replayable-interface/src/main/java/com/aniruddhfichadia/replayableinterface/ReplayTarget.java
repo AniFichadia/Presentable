@@ -15,12 +15,13 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.replay;
+package com.aniruddhfichadia.replayableinterface;
+
 
 /**
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-public interface Replayable<Real> {
-    void replay(Real realObject);
+public interface ReplayTarget<TargetT> {
+    void replay(TargetT target);
 }

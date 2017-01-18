@@ -1,3 +1,5 @@
 include ':app'
 include ':presentable'
 include ':presentable-android'
+include ':replayable-interface'
+include ':replayable-interface-compiler'

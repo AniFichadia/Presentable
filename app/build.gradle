@@ -20,9 +20,13 @@ android {
 }
 
 dependencies {
+    compile 'com.android.support:appcompat-v7:25.1.0'
     compile project(':presentable')
     compile project(':presentable-android')
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile project(':replayable-interface')
+
+    // TODO: annotationProcessor
+    compile project(':replayable-interface-compiler')
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
