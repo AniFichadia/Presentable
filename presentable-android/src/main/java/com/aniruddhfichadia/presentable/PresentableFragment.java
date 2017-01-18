@@ -49,13 +49,13 @@ public abstract class PresentableFragment<P extends Presenter>
         extends Fragment
         implements ViewBindable {
     private static final String            KEY_PRESENTER  = "presenter";
-    private static       Map<UUID, Object> objectRegistry = new HashMap<>();
+    private static final Map<UUID, Object> objectRegistry = new HashMap<>();
 
     @NonNull
-    private P presenter;
-
+    private P              presenter;
     @NonNull
     private LifecycleHooks lifecycleHooks;
+
 
     public PresentableFragment() {
         super();

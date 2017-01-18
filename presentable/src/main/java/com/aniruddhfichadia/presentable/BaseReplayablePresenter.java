@@ -18,6 +18,8 @@
 package com.aniruddhfichadia.presentable;
 
 
+import com.aniruddhfichadia.replayableinterface.ReplayTarget;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -37,9 +39,10 @@ public abstract class BaseReplayablePresenter<UiT extends PresenterUi>
     @SuppressWarnings("unchecked")
     @Override
     public void bindUi(@NotNull UiT ui) {
-        if (this.ui instanceof ReplayableUi) {
+        UiT oldUi = getUi();
+        if (oldUi instanceof ReplayTarget) {
             // Apply all replayable UI updates
-            ((ReplayableUi<UiT>) this.ui).replay(ui);
+            ((ReplayTarget<UiT>) oldUi).replay(ui);
         }
 
         super.bindUi(ui);
@@ -60,6 +63,6 @@ public abstract class BaseReplayablePresenter<UiT extends PresenterUi>
 
 
     protected boolean isReplayable() {
-        return ui instanceof ReplayableUi;
+        return ui instanceof ReplayTarget;
     }
 }

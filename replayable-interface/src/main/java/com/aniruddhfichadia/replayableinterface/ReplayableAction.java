@@ -22,6 +22,14 @@ package com.aniruddhfichadia.replayableinterface;
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-public interface ReplayableAction<Target> {
-    void replayOnTarget(Target target);
+public abstract class ReplayableAction<Target> {
+    public final Object[] params;
+
+
+    public ReplayableAction(Object... params) {
+        this.params = params;
+    }
+
+
+    public abstract void replayOnTarget(Target target);
 }
