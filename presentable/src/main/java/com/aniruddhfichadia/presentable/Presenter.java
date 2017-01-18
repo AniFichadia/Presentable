@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public interface Presenter<Ui extends PresenterUi> {
+public interface Presenter<UiT extends PresenterUi> {
     /**
      * Provides {@link LifecycleHooks} so a {@link Presenter} can interact with its {@link PresenterUi}'s lifecycle
      * events. The provided value is required to be non-null to simplify development and integration. Since the value is
@@ -45,11 +45,13 @@ public interface Presenter<Ui extends PresenterUi> {
     LifecycleHooks getLifecycleHooks();
 
 
-    void bindUi(@NotNull Ui ui);
+    void bindUi(@NotNull UiT ui);
 
     void unBindUi();
 
-    Ui getUi();
+    boolean isUiAttached();
+
+    UiT getUi();
 
 
     /**
@@ -57,8 +59,8 @@ public interface Presenter<Ui extends PresenterUi> {
      * <p>
      * Returns {@link NoLifecycleHooks} for {@link #getLifecycleHooks()}.
      */
-    final class DoNotPresent<U extends PresenterUi>
-            implements Presenter<U> {
+    final class DoNotPresent<UiT extends PresenterUi>
+            implements Presenter<UiT> {
         @NotNull
         @Override
         public LifecycleHooks getLifecycleHooks() {
@@ -66,18 +68,23 @@ public interface Presenter<Ui extends PresenterUi> {
         }
 
         @Override
-        public U getUi() {
-            return null;
-        }
-
-        @Override
-        public void bindUi(@NotNull U ui) {
+        public void bindUi(@NotNull UiT ui) {
             // No-op
         }
 
         @Override
         public void unBindUi() {
             // No-op
+        }
+
+        @Override
+        public boolean isUiAttached() {
+            return false;
+        }
+
+        @Override
+        public UiT getUi() {
+            return null;
         }
     }
 }

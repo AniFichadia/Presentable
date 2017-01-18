@@ -30,10 +30,10 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public class BasePresenter<Ui extends PresenterUi>
-        implements Presenter<Ui> {
+public class BasePresenter<UiT extends PresenterUi>
+        implements Presenter<UiT> {
     @Nullable
-    protected Ui ui;
+    protected UiT ui;
 
 
     public BasePresenter() {
@@ -47,24 +47,24 @@ public class BasePresenter<Ui extends PresenterUi>
         return new NoLifecycleHooks();
     }
 
+
     @Override
-    public Ui getUi() {
-        return ui;
-    }
-
-
-    protected boolean isUiAttached() {
+    public boolean isUiAttached() {
         return ui != null;
     }
 
-
     @Override
-    public void bindUi(@NotNull Ui ui) {
+    public void bindUi(@NotNull UiT ui) {
         this.ui = ui;
     }
 
     @Override
     public void unBindUi() {
         ui = null;
+    }
+
+    @Override
+    public UiT getUi() {
+        return ui;
     }
 }
