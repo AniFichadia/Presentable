@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class MessageComponent {
     public static final int ACTION_POSITIVE = -1;
     public static final int ACTION_NEGATIVE = -2;
-    public static final int ACTION_NEUTRAL = -3;
+    public static final int ACTION_NEUTRAL  = -3;
 
 
     public void show(@NotNull MessageBuilder messageBuilder, @Nullable OnActionClickListener listener)

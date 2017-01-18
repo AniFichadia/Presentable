@@ -20,10 +20,10 @@ package com.aniruddhfichadia.presentable;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.os.TraceCompat;
 import android.support.v4.util.LruCache;
 
 import org.jetbrains.annotations.NotNull;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)

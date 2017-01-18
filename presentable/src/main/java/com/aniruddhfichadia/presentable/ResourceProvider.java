@@ -30,7 +30,7 @@ public class ResourceProvider {
     @NotNull
     public final StringProvider string;
     @NotNull
-    public final ColorProvider color;
+    public final ColorProvider  color;
     @NotNull
     public final LocaleProvider locale;
     // More to come?

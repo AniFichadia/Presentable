@@ -34,7 +34,8 @@ public class AndroidDialogMessageComponent
 
 
     @Override
-    protected void showInternal(@NonNull MessageBuilder messageBuilder, @Nullable final OnActionClickListener listener) {
+    protected void showInternal(@NonNull MessageBuilder messageBuilder,
+                                @Nullable final OnActionClickListener listener) {
         dismissIfShowing();
 
         SimpleErrorDialog dialog = SimpleErrorDialog.newInstance(messageBuilder);
