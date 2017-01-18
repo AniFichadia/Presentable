@@ -18,6 +18,7 @@
 package com.aniruddhfichadia.presentableexample.demo;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -96,6 +97,28 @@ public class DemoFragment
         super.onPause();
 
         getPresenter().unBindUi();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
+        outState.putCharSequence("txtMessageText", txtMessage.getText());
+        outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            progressLoading.setVisibility(
+                    savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
+                                                                            : INVISIBLE);
+            txtMessage.setText(savedInstanceState.getCharSequence("txtMessageText"));
+            btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
+        }
     }
 
     @OnClick(R.id.demo_btn_load)
