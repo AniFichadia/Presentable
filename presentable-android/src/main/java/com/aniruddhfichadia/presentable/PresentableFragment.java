@@ -49,7 +49,7 @@ public abstract class PresentableFragment<P extends Presenter>
         extends Fragment
         implements ViewBindable {
     private static final String            KEY_PRESENTER  = "presenter";
-    private static final Map<UUID, Object> objectRegistry = new HashMap<>();
+    private static final Map<String, Object> objectRegistry = new HashMap<>();
 
     @NonNull
     private P              presenter;
@@ -72,8 +72,7 @@ public abstract class PresentableFragment<P extends Presenter>
         if (savedInstanceState == null) {
             presenter = createPresenter();
         } else {
-            presenter = (P) objectRegistry.remove(UUID.fromString(savedInstanceState.getString
-                    (KEY_PRESENTER)));
+            presenter = (P) objectRegistry.remove(savedInstanceState.getString(KEY_PRESENTER));
         }
 
         lifecycleHooks = presenter.getLifecycleHooks();
@@ -138,9 +137,9 @@ public abstract class PresentableFragment<P extends Presenter>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        UUID presenterKey = UUID.randomUUID();
+        String presenterKey = UUID.randomUUID().toString();
         objectRegistry.put(presenterKey, presenter);
-        outState.putString(KEY_PRESENTER, presenterKey.toString());
+        outState.putString(KEY_PRESENTER, presenterKey);
     }
     //endregion
 
