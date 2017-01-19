@@ -62,15 +62,20 @@ public class ReplayableActionHelper {
         } else {
             StringBuilder sb = new StringBuilder();
 
-            for (Object param : params) {
+            for (int i = 0; i < params.length; i++) {
+                Object param = params[i];
+
                 if (param != null) {
-                    sb.append(param.getClass().getName())
+                    sb.append(param.getClass().getSimpleName())
                       .append(":")
                       .append(param.hashCode());
                 } else {
                     sb.append("null");
                 }
-                sb.append("/");
+
+                if (i < params.length - 1) {
+                    sb.append(",");
+                }
             }
 
             return sb.toString();

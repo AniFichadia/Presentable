@@ -20,12 +20,14 @@ package com.aniruddhfichadia.presentableexample.demo;
 
 import android.util.Log;
 
-import com.aniruddhfichadia.replayableinterface.ReplayTarget;
+import com.aniruddhfichadia.replayableinterface.Delegatable;
+import com.aniruddhfichadia.replayableinterface.ReplaySource;
 import com.aniruddhfichadia.replayableinterface.ReplayableAction;
-import com.aniruddhfichadia.replayableinterface.ReplayableActionHelper;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+
+import static com.aniruddhfichadia.replayableinterface.ReplayableActionHelper.generateKeyForEnqueueLastOnly;
 
 
 /**
@@ -33,9 +35,10 @@ import java.util.Map.Entry;
  * @date 17/1/17
  */
 public class ReplayableDemoUi
-        implements DemoUi, ReplayTarget<DemoUi> {
+        implements Delegatable<DemoUi>, DemoUi, ReplaySource<DemoUi> {
     private static final String TAG = ReplayableDemoUi.class.getSimpleName();
 
+    private DemoUi delegate;
     private final LinkedHashMap<String, ReplayableAction<DemoUi>> actions = new LinkedHashMap<>();
 
 
@@ -45,14 +48,39 @@ public class ReplayableDemoUi
 
 
     @Override
+    public void bindDelegate(DemoUi delegate) {
+        Log.d(TAG, "bindDelegate(DemoUi: " + delegate.getClass().getSimpleName() + ")");
+
+        this.delegate = delegate;
+    }
+
+    @Override
+    public void unBindDelegate() {
+        Log.d(TAG, "unBindDelegate()");
+
+        this.delegate = null;
+    }
+
+    @Override
+    public boolean isDelegateBound() {
+        return delegate != null;
+    }
+
+    @Override
     public void showLoading() {
         Log.d(TAG, "showLoading()");
 
-        String actionKey = ReplayableActionHelper.generateKeyForEnqueue();
+        if (delegate != null) {
+            delegate.showLoading();
+        }
+
+        String actionKey = generateKeyForEnqueueLastOnly("showLoading()");
         actions.remove(actionKey);
         actions.put(actionKey, new ReplayableAction<DemoUi>() {
             @Override
             public void replayOnTarget(DemoUi demoUi) {
+                Log.d(TAG, "Replaying: showLoading()");
+
                 demoUi.showLoading();
             }
         });
@@ -62,11 +90,17 @@ public class ReplayableDemoUi
     public void hideLoading() {
         Log.d(TAG, "hideLoading()");
 
-        String actionKey = ReplayableActionHelper.generateKeyForEnqueue();
+        if (delegate != null) {
+            delegate.hideLoading();
+        }
+
+        String actionKey = generateKeyForEnqueueLastOnly("hideLoading()");
         actions.remove(actionKey);
         actions.put(actionKey, new ReplayableAction<DemoUi>() {
             @Override
             public void replayOnTarget(DemoUi demoUi) {
+                Log.d(TAG, "Replaying: hideLoading()");
+
                 demoUi.hideLoading();
             }
         });
@@ -76,13 +110,18 @@ public class ReplayableDemoUi
     public void setMessage(String text) {
         Log.d(TAG, "setMessage(text: " + text + ")");
 
-        String actionKey =
-                ReplayableActionHelper.generateKeyForEnqueueParamUnique("setMessage(String)", text);
+        if (delegate != null) {
+            delegate.setMessage(text);
+        }
+
+        String actionKey = generateKeyForEnqueueLastOnly("setMessage(String)");
 
         actions.remove(actionKey);
         actions.put(actionKey, new ReplayableAction<DemoUi>(text) {
             @Override
             public void replayOnTarget(DemoUi demoUi) {
+                Log.d(TAG, "Replaying: setMessage(text: " + params[0] + ")");
+
                 demoUi.setMessage((String) params[0]);
             }
         });
@@ -93,14 +132,18 @@ public class ReplayableDemoUi
     public void setLoadingAllowed(boolean allowed) {
         Log.d(TAG, "setLoadingAllowed(allowed: " + allowed + ")");
 
-        String actionKey =
-                ReplayableActionHelper.generateKeyForEnqueueParamUnique(
-                        "setLoadingAllowed(boolean)", allowed);
+        if (delegate != null) {
+            delegate.setLoadingAllowed(allowed);
+        }
+
+        String actionKey = generateKeyForEnqueueLastOnly("setLoadingAllowed(boolean)");
 
         actions.remove(actionKey);
         actions.put(actionKey, new ReplayableAction<DemoUi>(allowed) {
             @Override
             public void replayOnTarget(DemoUi demoUi) {
+                Log.d(TAG, "Replaying: setLoadingAllowed(allowed: " + params[0] + ")");
+
                 demoUi.setLoadingAllowed((boolean) params[0]);
             }
         });
@@ -112,6 +155,6 @@ public class ReplayableDemoUi
             entry.getValue().replayOnTarget(target);
         }
 
-        actions.clear();
+//        actions.clear();
     }
 }

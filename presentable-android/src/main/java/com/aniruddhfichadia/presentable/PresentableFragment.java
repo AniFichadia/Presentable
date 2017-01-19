@@ -45,15 +45,13 @@ import java.util.UUID;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableFragment<P extends Presenter>
+public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends PresenterUi>
         extends Fragment
         implements ViewBindable {
-    private static final String            KEY_PRESENTER  = "presenter";
+    private static final String              KEY_PRESENTER  = "presenter";
     private static final Map<String, Object> objectRegistry = new HashMap<>();
 
-    @NonNull
-    private P              presenter;
-    @NonNull
+    private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
 
 
@@ -72,7 +70,8 @@ public abstract class PresentableFragment<P extends Presenter>
         if (savedInstanceState == null) {
             presenter = createPresenter();
         } else {
-            presenter = (P) objectRegistry.remove(savedInstanceState.getString(KEY_PRESENTER));
+            presenter = (PresenterT) objectRegistry.remove(
+                    savedInstanceState.getString(KEY_PRESENTER));
         }
 
         lifecycleHooks = presenter.getLifecycleHooks();
@@ -105,9 +104,12 @@ public abstract class PresentableFragment<P extends Presenter>
         lifecycleHooks.onCreate();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
+
+        getPresenter().bindUi((UiT) this);
 
         lifecycleHooks.onResume();
     }
@@ -117,6 +119,8 @@ public abstract class PresentableFragment<P extends Presenter>
         super.onPause();
 
         lifecycleHooks.onPause();
+
+        getPresenter().unBindUi();
     }
 
     @Override
@@ -161,12 +165,12 @@ public abstract class PresentableFragment<P extends Presenter>
      * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
      */
     @NonNull
-    protected abstract P createPresenter();
+    protected abstract PresenterT createPresenter();
 
     /**
      * Internal access to the {@link Presenter}
      */
-    protected final P getPresenter() {
+    protected final PresenterT getPresenter() {
         return presenter;
     }
     //endregion

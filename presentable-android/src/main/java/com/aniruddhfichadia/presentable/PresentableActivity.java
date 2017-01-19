@@ -23,35 +23,36 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableActivity<P extends Presenter>
+public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends PresenterUi>
         extends AppCompatActivity
         implements ViewBindable {
-    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
+    private static final String              KEY_PRESENTER  = "presenter";
+    private static final Map<String, Object> objectRegistry = new HashMap<>();
 
-
-    @NonNull
-    protected final P              presenter;
-    @NonNull
-    private final   LifecycleHooks lifecycleHooks;
+    private PresenterT     presenter;
+    private LifecycleHooks lifecycleHooks;
 
 
     public PresentableActivity() {
         super();
 
         inject();
-
-        presenter = createPresenter();
-        lifecycleHooks = presenter.getLifecycleHooks();
     }
 
 
     //region Lifecycle
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,12 +63,27 @@ public abstract class PresentableActivity<P extends Presenter>
         bindView(contentView);
         afterBindView(contentView);
 
+        if (savedInstanceState == null) {
+            presenter = createPresenter();
+        } else {
+            presenter = (PresenterT) objectRegistry.remove(
+                    savedInstanceState.getString(KEY_PRESENTER));
+        }
+
+        lifecycleHooks = presenter.getLifecycleHooks();
+
+
         lifecycleHooks.onCreate();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onResume() {
         super.onResume();
+
+        Log.d("PresentableActivity", "onResume");
+
+        getPresenter().bindUi((UiT) this);
 
         lifecycleHooks.onResume();
     }
@@ -76,7 +92,11 @@ public abstract class PresentableActivity<P extends Presenter>
     protected void onPause() {
         super.onPause();
 
+        Log.d("PresentableActivity", "onPause");
+
         lifecycleHooks.onPause();
+
+        getPresenter().unBindUi();
     }
 
     @Override
@@ -92,38 +112,19 @@ public abstract class PresentableActivity<P extends Presenter>
 
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterModel presenterModel = lifecycleHooks.onSave();
-        if (presenterModel != null) {
-            outState.putSerializable(generatePresenterModelKey(), presenterModel);
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        PresenterModel presenterModel = null;
-
-        if (savedInstanceState != null) {
-            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
-                    generatePresenterModelKey());
-        }
-
-        lifecycleHooks.onRestore(presenterModel);
-    }
-
-
-    protected String generatePresenterModelKey() {
-        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
+        String presenterKey = UUID.randomUUID().toString();
+        objectRegistry.put(presenterKey, presenter);
+        outState.putString(KEY_PRESENTER, presenterKey);
     }
     //endregion
 
 
     //region Dependency Injection
-    // Override as necessary
+
+    /** Override as necessary */
     protected void inject() {
     }
     //endregion
@@ -136,12 +137,12 @@ public abstract class PresentableActivity<P extends Presenter>
      * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
      */
     @NonNull
-    protected abstract P createPresenter();
+    protected abstract PresenterT createPresenter();
 
     /**
      * Internal access to the {@link Presenter}
      */
-    protected final P getPresenter() {
+    protected final PresenterT getPresenter() {
         return presenter;
     }
     //endregion

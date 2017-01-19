@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @date 17/1/17
  */
 public class DemoPresenterImpl
-        extends BaseReplayablePresenter<DemoUi>
+        extends BaseReplayablePresenter<DemoUi, ReplayableDemoUi>
         implements DemoPresenter {
     private static final String TAG = DemoPresenterImpl.class.getSimpleName();
 
@@ -42,7 +42,7 @@ public class DemoPresenterImpl
 
     @NotNull
     @Override
-    protected DemoUi getUnboundUi() {
+    protected ReplayableDemoUi createUiDelegator() {
         // Alternatively, inject or retain an instance of this
         return new ReplayableDemoUi();
     }

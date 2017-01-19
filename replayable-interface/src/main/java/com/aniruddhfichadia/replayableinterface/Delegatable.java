@@ -20,8 +20,12 @@ package com.aniruddhfichadia.replayableinterface;
 
 /**
  * @author Aniruddh Fichadia
- * @date 17/1/17
+ * @date 19/1/17
  */
-public interface ReplayTarget<TargetT> {
-    void replay(TargetT target);
+public interface Delegatable<DelegateT> {
+    void bindDelegate(DelegateT delegate);
+
+    void unBindDelegate();
+
+    boolean isDelegateBound();
 }

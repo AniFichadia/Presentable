@@ -18,7 +18,8 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.replayableinterface.ReplayTarget;
+import com.aniruddhfichadia.replayableinterface.Delegatable;
+import com.aniruddhfichadia.replayableinterface.ReplaySource;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,40 +30,49 @@ import org.jetbrains.annotations.NotNull;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17
  */
-public abstract class BaseReplayablePresenter<UiT extends PresenterUi>
+public abstract class BaseReplayablePresenter<UiT extends PresenterUi,
+        UiDelegateT extends PresenterUi & Delegatable<UiT> & ReplaySource<UiT>>
         extends BasePresenter<UiT> {
+    @NotNull
+    private final UiDelegateT uiDelegator;
+
+
     public BaseReplayablePresenter() {
         super();
+
+        uiDelegator = createUiDelegator();
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
     public void bindUi(@NotNull UiT ui) {
-        UiT oldUi = getUi();
-        if (oldUi instanceof ReplayTarget) {
-            // Apply all replayable UI updates
-            ((ReplayTarget<UiT>) oldUi).replay(ui);
-        }
-
-        super.bindUi(ui);
+        uiDelegator.bindDelegate(ui);
+        uiDelegator.replay(ui);
     }
 
     @Override
     public void unBindUi() {
-        ui = getUnboundUi();
+        uiDelegator.unBindDelegate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public UiT getUi() {
+        // TODO: unsafe cast ... need to figure out a proper way to do this
+        return (UiT) uiDelegator;
     }
 
     @Override
     public boolean isUiAttached() {
-        return super.isUiAttached() && !isReplayable();
+        return uiDelegator.isDelegateBound();
     }
 
     @NotNull
-    protected abstract UiT getUnboundUi();
+    protected abstract UiDelegateT createUiDelegator();
 
 
     protected boolean isReplayable() {
-        return ui instanceof ReplayTarget;
+        return ui instanceof ReplaySource;
     }
 }
