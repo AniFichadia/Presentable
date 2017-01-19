@@ -23,6 +23,8 @@ package com.aniruddhfichadia.replayableinterface;
  * @date 17/1/17
  */
 public enum ReplayStrategy {
+    /** DO NOT USE: reserved. Equivalent to {@link ReplayStrategy#ENQUEUE_LAST_ONLY} */
+    DEFAULT,
     /** Invocations are enqueued without discriminating */
     ENQUEUE,
     /** Only a single instance of a method call will be enqueued, if at all */

@@ -64,6 +64,7 @@ public class DemoPresenterImpl
                 getUi().setLoadingAllowed(true);
                 getUi().hideLoading();
                 getUi().setMessage("Loading done");
+                getUi().doMeaninglessThing();
             }
         }, TimeUnit.SECONDS.toMillis(5));
     }

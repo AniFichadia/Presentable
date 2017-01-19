@@ -66,6 +66,16 @@ public class ReplayableDemoUi
         return delegate != null;
     }
 
+
+    @Override
+    public void doMeaninglessThing() {
+        Log.d(TAG, "doMeaninglessThing()");
+
+        if (delegate != null) {
+            delegate.doMeaninglessThing();
+        }
+    }
+
     @Override
     public void showLoading() {
         Log.d(TAG, "showLoading()");

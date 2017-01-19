@@ -15,30 +15,22 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.replayableinterface;
 
 
-import com.aniruddhfichadia.presentable.PresenterUi;
-import com.aniruddhfichadia.replayableinterface.ReplayStrategy;
-import com.aniruddhfichadia.replayableinterface.ReplayableInterface;
-import com.aniruddhfichadia.replayableinterface.ReplayableMethod;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 17/1/17
  */
-@ReplayableInterface
-public interface DemoUi
-        extends PresenterUi {
-    @ReplayableMethod(ReplayStrategy.NONE)
-    void doMeaninglessThing();
-
-    void showLoading();
-
-    void hideLoading();
-
-    void setMessage(String text);
-
-    void setLoadingAllowed(boolean allowed);
+@Target(TYPE)
+@Retention(CLASS)
+public @interface ReplayableInterface {
+    ReplayStrategy value() default ReplayStrategy.ENQUEUE_LAST_ONLY;
 }

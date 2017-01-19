@@ -18,7 +18,6 @@
 package com.aniruddhfichadia.presentableexample.demo;
 
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -26,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aniruddhfichadia.presentable.PresentableActivity;
 import com.aniruddhfichadia.presentableexample.R;
@@ -92,7 +92,6 @@ public class DemoActivity
 //            progressLoading.setVisibility(
 //                    savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
 //                                                                            : INVISIBLE);
-//            txtMessage.setText(savedInstanceState.getCharSequence("txtMessageText"));
 //            btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
 //        }
 //    }
@@ -102,7 +101,6 @@ public class DemoActivity
 //        super.onSaveInstanceState(outState);
 //
 //        outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
-//        outState.putCharSequence("txtMessageText", txtMessage.getText());
 //        outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
 //    }
 
@@ -112,6 +110,11 @@ public class DemoActivity
         getPresenter().loadSomething();
     }
 
+
+    @Override
+    public void doMeaninglessThing() {
+        Toast.makeText(this, "Meaningless thing", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void showLoading() {

@@ -15,23 +15,15 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.replayableinterface;
-
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.CLASS;
+package com.aniruddhfichadia.presentable;
 
 
 /**
  * @author Aniruddh Fichadia
- * @date 17/1/17
+ * @date 19/1/17
  */
-@Target({TYPE, METHOD})
-@Retention(CLASS)
-public @interface Replayable {
-    ReplayStrategy value() default ReplayStrategy.ENQUEUE_PARAM_UNIQUE;
+public enum PresenterBindingTime {
+    START_STOP,
+    RESUME_PAUSE,
+    CREATE_DESTROY
 }

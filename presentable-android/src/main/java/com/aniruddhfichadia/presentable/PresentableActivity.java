@@ -23,7 +23,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import java.util.HashMap;
@@ -54,6 +53,16 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     //region Lifecycle
     @SuppressWarnings("unchecked")
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (PresenterBindingTime.START_STOP.equals(getBindingPoint())) {
+            getPresenter().bindUi((UiT) this);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -72,6 +81,9 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         lifecycleHooks = presenter.getLifecycleHooks();
 
+        if (PresenterBindingTime.CREATE_DESTROY.equals(getBindingPoint())) {
+            getPresenter().bindUi((UiT) this);
+        }
 
         lifecycleHooks.onCreate();
     }
@@ -81,9 +93,9 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     protected void onResume() {
         super.onResume();
 
-        Log.d("PresentableActivity", "onResume");
-
-        getPresenter().bindUi((UiT) this);
+        if (PresenterBindingTime.RESUME_PAUSE.equals(getBindingPoint())) {
+            getPresenter().bindUi((UiT) this);
+        }
 
         lifecycleHooks.onResume();
     }
@@ -92,11 +104,11 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     protected void onPause() {
         super.onPause();
 
-        Log.d("PresentableActivity", "onPause");
-
         lifecycleHooks.onPause();
 
-        getPresenter().unBindUi();
+        if (PresenterBindingTime.RESUME_PAUSE.equals(getBindingPoint())) {
+            getPresenter().unBindUi();
+        }
     }
 
     @Override
@@ -105,11 +117,24 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         lifecycleHooks.onDestroy();
 
+        if (PresenterBindingTime.CREATE_DESTROY.equals(getBindingPoint())) {
+            getPresenter().unBindUi();
+        }
+
         // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
         // this is explicitly necessary
         unbindView();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (PresenterBindingTime.START_STOP.equals(getBindingPoint())) {
+            getPresenter().unBindUi();
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -144,6 +169,11 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
      */
     protected final PresenterT getPresenter() {
         return presenter;
+    }
+
+    @NonNull
+    protected PresenterBindingTime getBindingPoint() {
+        return PresenterBindingTime.START_STOP;
     }
     //endregion
 

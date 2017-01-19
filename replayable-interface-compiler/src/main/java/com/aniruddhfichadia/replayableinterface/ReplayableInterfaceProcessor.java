@@ -36,7 +36,7 @@ public class ReplayableInterfaceProcessor
     private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
 
-        annotations.add(Replayable.class);
+        annotations.add(ReplayableInterface.class);
 
         return annotations;
     }
@@ -44,14 +44,14 @@ public class ReplayableInterfaceProcessor
 
     @Override
     public boolean process(Set<? extends TypeElement> elements, RoundEnvironment env) {
-        // Process each @Replayable element.
-        for (Element element : env.getElementsAnnotatedWith(Replayable.class)) {
+        // Process each @ReplayableInterface element.
+        for (Element element : env.getElementsAnnotatedWith(ReplayableInterface.class)) {
             if (!SuperficialValidation.validateElement(element)) {
                 continue;
             }
 
             if (ElementKind.INTERFACE.equals(element.getKind())) {
-                Replayable classAnnotation = element.getAnnotation(Replayable.class);
+                ReplayableInterface classAnnotation = element.getAnnotation(ReplayableInterface.class);
 
 
                 // TODO generate

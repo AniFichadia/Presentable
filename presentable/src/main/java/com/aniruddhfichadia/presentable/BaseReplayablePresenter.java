@@ -48,7 +48,7 @@ public abstract class BaseReplayablePresenter<UiT extends PresenterUi,
     @Override
     public void bindUi(@NotNull UiT ui) {
         uiDelegator.bindDelegate(ui);
-        uiDelegator.replay(ui);
+//        uiDelegator.replay(ui);
     }
 
     @Override
