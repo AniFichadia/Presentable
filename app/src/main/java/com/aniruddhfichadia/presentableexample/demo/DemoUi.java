@@ -34,8 +34,16 @@ public interface DemoUi
     @ReplayableMethod(ReplayStrategy.NONE)
     void doMeaninglessThing();
 
+    @ReplayableMethod(ReplayStrategy.ENQUEUE_PARAM_UNIQUE)
+    void doSomethingElseMeaningLess(String aParam, boolean anotherParam);
+
+    @ReplayableMethod(ReplayStrategy.ENQUEUE)
+    void somethingEnqueueable(String aParam);
+
+    @ReplayableMethod(value = ReplayStrategy.ENQUEUE_LAST_IN_GROUP, group = "loadingState")
     void showLoading();
 
+    @ReplayableMethod(value = ReplayStrategy.ENQUEUE_LAST_IN_GROUP, group = "loadingState")
     void hideLoading();
 
     void setMessage(String text);

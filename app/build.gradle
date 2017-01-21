@@ -30,7 +30,7 @@ dependencies {
     compile project(':replayable-interface')
 
     // TODO: annotationProcessor
-    //compile project(':replayable-interface-compiler')
+    annotationProcessor project(':replayable-interface-compiler')
 
     // ButterKnife
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"

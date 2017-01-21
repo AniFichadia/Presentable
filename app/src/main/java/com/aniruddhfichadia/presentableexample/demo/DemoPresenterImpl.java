@@ -42,8 +42,7 @@ public class DemoPresenterImpl
 
     @NotNull
     @Override
-    protected ReplayableDemoUi createUiDelegator() {
-        // Alternatively, inject or retain an instance of this
+    protected ReplayableDemoUi createUiCommander() {
         return new ReplayableDemoUi();
     }
 

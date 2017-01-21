@@ -33,4 +33,9 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 @Retention(CLASS)
 public @interface ReplayableMethod {
     ReplayStrategy value() default ReplayStrategy.DEFAULT;
+
+    String group() default NO_GROUP;
+
+
+    String NO_GROUP = "";
 }

@@ -31,48 +31,45 @@ import org.jetbrains.annotations.NotNull;
  * @date 2017-01-17
  */
 public abstract class BaseReplayablePresenter<UiT extends PresenterUi,
-        UiDelegateT extends PresenterUi & Delegatable<UiT> & ReplaySource<UiT>>
+        UiCommanderT extends PresenterUi & Delegatable<UiT> & ReplaySource<UiT>>
         extends BasePresenter<UiT> {
     @NotNull
-    private final UiDelegateT uiDelegator;
+    private final UiCommanderT uiCommander;
 
 
     public BaseReplayablePresenter() {
         super();
 
-        uiDelegator = createUiDelegator();
+        uiCommander = createUiCommander();
     }
+
+
+    @NotNull
+    protected abstract UiCommanderT createUiCommander();
 
 
     @SuppressWarnings("unchecked")
     @Override
     public void bindUi(@NotNull UiT ui) {
-        uiDelegator.bindDelegate(ui);
-//        uiDelegator.replay(ui);
+        uiCommander.bindDelegate(ui);
+        uiCommander.replay(ui);
+
+        afterBindUi();
     }
 
     @Override
     public void unBindUi() {
-        uiDelegator.unBindDelegate();
+        uiCommander.unBindDelegate();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public UiT getUi() {
-        // TODO: unsafe cast ... need to figure out a proper way to do this
-        return (UiT) uiDelegator;
+        return (UiT) uiCommander;
     }
 
     @Override
     public boolean isUiAttached() {
-        return uiDelegator.isDelegateBound();
-    }
-
-    @NotNull
-    protected abstract UiDelegateT createUiDelegator();
-
-
-    protected boolean isReplayable() {
-        return ui instanceof ReplaySource;
+        return uiCommander.isDelegateBound();
     }
 }

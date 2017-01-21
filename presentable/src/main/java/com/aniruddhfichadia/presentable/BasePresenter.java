@@ -49,6 +49,12 @@ public class BasePresenter<UiT extends PresenterUi>
 
 
     @Override
+    public boolean shouldRetainPresenter() {
+        return true;
+    }
+
+
+    @Override
     public boolean isUiAttached() {
         return ui != null;
     }
@@ -56,6 +62,12 @@ public class BasePresenter<UiT extends PresenterUi>
     @Override
     public void bindUi(@NotNull UiT ui) {
         this.ui = ui;
+
+        afterBindUi();
+    }
+
+    @Override
+    public void afterBindUi() {
     }
 
     @Override

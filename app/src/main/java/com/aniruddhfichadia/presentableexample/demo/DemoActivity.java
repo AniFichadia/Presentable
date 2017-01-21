@@ -18,11 +18,13 @@
 package com.aniruddhfichadia.presentableexample.demo;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,9 @@ public class DemoActivity
     TextView    txtMessage;
     @BindView(R.id.demo_btn_load)
     Button      btnLoad;
+    @BindView(R.id.demo_chk_something)
+    CheckBox    chkSomething;
+
 
     @Nullable
     private Unbinder unbinder;
@@ -72,6 +77,25 @@ public class DemoActivity
 
 
     @Override
+    protected void restoreUiState(@NonNull Bundle savedInstanceState) {
+        super.restoreUiState(savedInstanceState);
+
+        progressLoading.setVisibility(
+                savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
+                                                                        : INVISIBLE);
+        btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
+    }
+
+    @Override
+    public void saveUiState(@NonNull Bundle outState) {
+        super.saveUiState(outState);
+
+        outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
+        outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
+    }
+
+
+    @Override
     public void bindView(@NonNull View view) {
         unbinder = ButterKnife.bind(this, view);
     }
@@ -84,26 +108,6 @@ public class DemoActivity
         unbinder = null;
     }
 
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        if (savedInstanceState != null) {
-//            progressLoading.setVisibility(
-//                    savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
-//                                                                            : INVISIBLE);
-//            btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
-//        }
-//    }
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
-//        outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
-//    }
-
 
     @OnClick(R.id.demo_btn_load)
     public void onLoadClicked() {
@@ -114,6 +118,18 @@ public class DemoActivity
     @Override
     public void doMeaninglessThing() {
         Toast.makeText(this, "Meaningless thing", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void doSomethingElseMeaningLess(String aParam, boolean anotherParam) {
+        Toast.makeText(this, "Another meaningless thing " + aParam + " " + anotherParam,
+                       Toast.LENGTH_LONG)
+             .show();
+    }
+
+    @Override
+    public void somethingEnqueueable(String aParam) {
+        Toast.makeText(this, aParam, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,7 +148,7 @@ public class DemoActivity
 
     @Override
     public void setMessage(String text) {
-        Log.d(TAG, "setMessage(text: " + text + ")");
+        Log.d(TAG, "setMessage(text: " + text + ")" + " from " + txtMessage.getText().toString());
 
         txtMessage.setText(text);
     }

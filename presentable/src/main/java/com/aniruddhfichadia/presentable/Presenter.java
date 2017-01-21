@@ -45,7 +45,12 @@ public interface Presenter<UiT extends PresenterUi> {
     LifecycleHooks getLifecycleHooks();
 
 
+    boolean shouldRetainPresenter();
+
+
     void bindUi(@NotNull UiT ui);
+
+    void afterBindUi();
 
     void unBindUi();
 
@@ -67,8 +72,20 @@ public interface Presenter<UiT extends PresenterUi> {
             return new NoLifecycleHooks();
         }
 
+
+        @Override
+        public boolean shouldRetainPresenter() {
+            return true;
+        }
+
+
         @Override
         public void bindUi(@NotNull UiT ui) {
+            // No-op
+        }
+
+        @Override
+        public void afterBindUi() {
             // No-op
         }
 

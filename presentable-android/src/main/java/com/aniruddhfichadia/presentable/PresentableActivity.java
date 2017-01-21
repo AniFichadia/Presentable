@@ -53,17 +53,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     //region Lifecycle
     @SuppressWarnings("unchecked")
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        if (PresenterBindingTime.START_STOP.equals(getBindingPoint())) {
-            getPresenter().bindUi((UiT) this);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(getLayoutResource());
@@ -72,30 +62,28 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         bindView(contentView);
         afterBindView(contentView);
 
+        // TODO: wrap in delegate
         if (savedInstanceState == null) {
             presenter = createPresenter();
         } else {
+            restoreUiState(savedInstanceState);
+
             presenter = (PresenterT) objectRegistry.remove(
                     savedInstanceState.getString(KEY_PRESENTER));
         }
-
         lifecycleHooks = presenter.getLifecycleHooks();
 
-        if (PresenterBindingTime.CREATE_DESTROY.equals(getBindingPoint())) {
-            getPresenter().bindUi((UiT) this);
-        }
+        // TODO: wrap in delegate
+        getPresenter().bindUi((UiT) this);
 
         lifecycleHooks.onCreate();
     }
+
 
     @SuppressWarnings("unchecked")
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (PresenterBindingTime.RESUME_PAUSE.equals(getBindingPoint())) {
-            getPresenter().bindUi((UiT) this);
-        }
 
         lifecycleHooks.onResume();
     }
@@ -105,10 +93,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         super.onPause();
 
         lifecycleHooks.onPause();
-
-        if (PresenterBindingTime.RESUME_PAUSE.equals(getBindingPoint())) {
-            getPresenter().unBindUi();
-        }
     }
 
     @Override
@@ -117,32 +101,33 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         lifecycleHooks.onDestroy();
 
-        if (PresenterBindingTime.CREATE_DESTROY.equals(getBindingPoint())) {
-            getPresenter().unBindUi();
-        }
+        getPresenter().unBindUi();
 
         // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
         // this is explicitly necessary
         unbindView();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected void onStop() {
-        super.onStop();
-
-        if (PresenterBindingTime.START_STOP.equals(getBindingPoint())) {
-            getPresenter().unBindUi();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String presenterKey = UUID.randomUUID().toString();
-        objectRegistry.put(presenterKey, presenter);
-        outState.putString(KEY_PRESENTER, presenterKey);
+        if (getPresenter().shouldRetainPresenter()) {
+            // TODO: wrap in delegate
+            String presenterKey = UUID.randomUUID().toString();
+            objectRegistry.put(presenterKey, presenter);
+            outState.putString(KEY_PRESENTER, presenterKey);
+        }
+
+        saveUiState(outState);
+    }
+
+
+    protected void saveUiState(@NonNull Bundle outState) {
+    }
+
+    protected void restoreUiState(@NonNull Bundle savedState) {
+
     }
     //endregion
 
@@ -169,11 +154,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
      */
     protected final PresenterT getPresenter() {
         return presenter;
-    }
-
-    @NonNull
-    protected PresenterBindingTime getBindingPoint() {
-        return PresenterBindingTime.START_STOP;
     }
     //endregion
 

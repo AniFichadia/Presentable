@@ -29,6 +29,12 @@ public enum ReplayStrategy {
     ENQUEUE,
     /** Only a single instance of a method call will be enqueued, if at all */
     ENQUEUE_LAST_ONLY,
+    /**
+     * Only the last invocation of a method call in a 'group' of related method calls will be
+     * enqueued. This applies to methods that negate or interfere with each other. An example
+     * would be showElement vs hideElement, which are antonyms.
+     */
+    ENQUEUE_LAST_IN_GROUP,
     /** Only a single instance of a method call with equivalent parameters will be enqueued, if at all */
     ENQUEUE_PARAM_UNIQUE,
     /** Invocations will not be enqueued */
