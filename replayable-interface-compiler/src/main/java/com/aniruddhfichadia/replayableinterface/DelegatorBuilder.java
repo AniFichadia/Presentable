@@ -19,9 +19,9 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
-public class DelegatableBuilder {
+public class DelegatorBuilder {
     public static final ClassName DELEGATABLE = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
-                                                              "Delegatable");
+                                                              "Delegator");
 
     public static final String FIELD_NAME_DELEGATE = "delegate";
 
@@ -29,7 +29,7 @@ public class DelegatableBuilder {
     private final ClassName        targetClassName;
 
 
-    public DelegatableBuilder(TypeSpec.Builder classBuilder, ClassName targetClassName) {
+    public DelegatorBuilder(TypeSpec.Builder classBuilder, ClassName targetClassName) {
         super();
 
         this.classBuilder = classBuilder;
@@ -37,17 +37,17 @@ public class DelegatableBuilder {
     }
 
 
-    public DelegatableBuilder applyClassDefinition() {
+    public DelegatorBuilder applyClassDefinition() {
         classBuilder.addSuperinterface(ParameterizedTypeName.get(DELEGATABLE, targetClassName));
         return this;
     }
 
-    public DelegatableBuilder applyFields() {
+    public DelegatorBuilder applyFields() {
         classBuilder.addField(createFieldDelegate());
         return this;
     }
 
-    public DelegatableBuilder applyMethods() {
+    public DelegatorBuilder applyMethods() {
         classBuilder.addMethod(createMethodBindDelegate())
                     .addMethod(createMethodUnBindDelegate())
                     .addMethod(createMethodIsDelegateBound());

@@ -36,6 +36,9 @@ public @interface ReplayableInterface {
 
     ReplayType replayType() default ReplayType.REPLAY_IF_NO_DELEGATE;
 
+    boolean clearAfterReplaying() default true;
+
+
     enum ReplayType {
         REPLAY_IF_NO_DELEGATE,
         DELEGATE_AND_REPLAY

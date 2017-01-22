@@ -22,7 +22,7 @@ package com.aniruddhfichadia.replayableinterface;
  * @author Aniruddh Fichadia
  * @date 19/1/17
  */
-public interface Delegatable<DelegateT> {
+public interface Delegator<DelegateT> {
     void bindDelegate(DelegateT delegate);
 
     void unBindDelegate();

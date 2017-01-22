@@ -19,9 +19,9 @@ import javax.lang.model.element.Name;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
 
-import static com.aniruddhfichadia.replayableinterface.DelegatableBuilder.FIELD_NAME_DELEGATE;
-import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.fieldNameActions;
-import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.paramNameTarget;
+import static com.aniruddhfichadia.replayableinterface.DelegatorBuilder.FIELD_NAME_DELEGATE;
+import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.FIELD_NAME_ACTIONS;
+import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.PARAM_NAME_TARGET;
 import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.REPLAYABLE_ACTION;
 
 
@@ -32,8 +32,7 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
 public class ReplayableInterfaceTargetBuilder {
     public static final ClassName UUID = ClassName.get("java.util", "UUID");
 
-
-    private static final String varNameActionKey = "_actionKey";
+    private static final String VAR_NAME_ACTION_KEY = "_actionKey";
 
 
     private final TypeSpec.Builder classBuilder;
@@ -65,15 +64,13 @@ public class ReplayableInterfaceTargetBuilder {
         List<ExecutableElement> methods = ElementFilter.methodsIn(
                 baseElement.getEnclosedElements());
 
-        System.out.println(methods);
-
         for (ExecutableElement method : methods) {
             String methodName = method.getSimpleName().toString();
             List<? extends VariableElement> methodParameters = method.getParameters();
 
             ReplayableMethod methodAnnotation = method.getAnnotation(ReplayableMethod.class);
             ReplayStrategy replayStrategy = resolveStrategy(methodAnnotation);
-            String group = methodAnnotation != null ? methodAnnotation.group() : null;
+            String group = methodAnnotation == null ? null : methodAnnotation.group();
 
             classBuilder.addMethod(createImplementedMethod(methodName, methodParameters,
                                                            replayStrategy, group));
@@ -87,9 +84,9 @@ public class ReplayableInterfaceTargetBuilder {
         if (methodAnnotation != null) {
             ReplayStrategy methodReplayStrategy = methodAnnotation.value();
 
-            return methodReplayStrategy != ReplayStrategy.DEFAULT ?
-                   methodReplayStrategy :
-                   ReplayStrategy.ENQUEUE_LAST_ONLY;
+            return methodReplayStrategy != ReplayStrategy.DEFAULT
+                   ? methodReplayStrategy
+                   : ReplayStrategy.ENQUEUE_LAST_ONLY;
         } else {
             return defaultReplyStrategy;
         }
@@ -98,8 +95,6 @@ public class ReplayableInterfaceTargetBuilder {
 
     private MethodSpec createImplementedMethod(String name, List<? extends VariableElement> parameters,
                                                ReplayStrategy replayStrategy, String group) {
-        System.out.println("Creating method: " + name);
-
         MethodSpec.Builder methodBuilder =
                 MethodSpec.methodBuilder(name)
                           .addAnnotation(Override.class)
@@ -160,11 +155,11 @@ public class ReplayableInterfaceTargetBuilder {
 
             methodCode.add(createActionKey(name, parameters, allParamTypes, group, replayStrategy))
                       .add("");
-            methodCode.addStatement("this.$L.remove($L)", fieldNameActions, varNameActionKey);
-            methodCode.addStatement("this.$L.put($L, $L)", fieldNameActions,
-                                    varNameActionKey, createAnonymousReplayableAction(name,
-                                                                                      allParamNames,
-                                                                                      castParamsFromParams));
+            methodCode.addStatement("this.$L.remove($L)", FIELD_NAME_ACTIONS, VAR_NAME_ACTION_KEY);
+            methodCode.addStatement("this.$L.put($L, $L)", FIELD_NAME_ACTIONS,
+                                    VAR_NAME_ACTION_KEY, createAnonymousReplayableAction(name,
+                                                                                         allParamNames,
+                                                                                         castParamsFromParams));
         }
 
         if (ReplayType.REPLAY_IF_NO_DELEGATE == replayType) {
@@ -180,14 +175,13 @@ public class ReplayableInterfaceTargetBuilder {
                                       String allParamTypes, String group,
                                       ReplayStrategy replayStrategy) {
         CodeBlock.Builder actionKeyCode = CodeBlock.builder()
-                                                   .add("String $L = ", varNameActionKey);
+                                                   .add("String $L = ", VAR_NAME_ACTION_KEY);
         switch (replayStrategy) {
             case ENQUEUE:
                 actionKeyCode.addStatement("$T.randomUUID().toString()", UUID);
                 break;
             case ENQUEUE_LAST_ONLY:
-                actionKeyCode.addStatement("\"$L($L)\"", methodName,
-                                           allParamTypes);
+                actionKeyCode.addStatement("\"$L($L)\"", methodName, allParamTypes);
                 break;
             case ENQUEUE_LAST_IN_GROUP:
                 actionKeyCode.addStatement("\"group: $L\"", group);
@@ -215,11 +209,10 @@ public class ReplayableInterfaceTargetBuilder {
                     }
                 }
                 actionKeyCode.add(" + \")\"");
-                actionKeyCode.add(";");
+                actionKeyCode.add(";\n");
                 break;
             default:
-                // TODO: problem
-                break;
+                throw new IllegalArgumentException("Unsupported ReplayStrategy " + replayStrategy);
         }
 
         return actionKeyCode.build();
@@ -233,10 +226,10 @@ public class ReplayableInterfaceTargetBuilder {
                        .addMethod(MethodSpec.methodBuilder("replayOnTarget")
                                             .addAnnotation(Override.class)
                                             .addModifiers(Modifier.PUBLIC)
-                                            .addParameter(targetClassName, paramNameTarget)
+                                            .addParameter(targetClassName, PARAM_NAME_TARGET)
                                             .addCode(CodeBlock.builder()
                                                               .addStatement("$L.$L($L)",
-                                                                            paramNameTarget,
+                                                                            PARAM_NAME_TARGET,
                                                                             methodName,
                                                                             castParamsFromParams)
                                                               .build())

@@ -18,7 +18,7 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.replayableinterface.Delegatable;
+import com.aniruddhfichadia.replayableinterface.Delegator;
 import com.aniruddhfichadia.replayableinterface.ReplaySource;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2017-01-17
  */
 public abstract class BaseReplayablePresenter<UiT extends PresenterUi,
-        UiCommanderT extends PresenterUi & Delegatable<UiT> & ReplaySource<UiT>>
+        UiCommanderT extends PresenterUi & Delegator<UiT> & ReplaySource<UiT>>
         extends BasePresenter<UiT> {
     @NotNull
     private final UiCommanderT uiCommander;
@@ -48,7 +48,6 @@ public abstract class BaseReplayablePresenter<UiT extends PresenterUi,
     protected abstract UiCommanderT createUiCommander();
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public void bindUi(@NotNull UiT ui) {
         uiCommander.bindDelegate(ui);

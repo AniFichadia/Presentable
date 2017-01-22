@@ -7,6 +7,7 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeSpec.Builder;
 
 import javax.lang.model.element.Modifier;
 
@@ -26,22 +27,24 @@ public class ReplaySourceBuilder {
     public static final ClassName LINKED_HASH_MAP = ClassName.get("java.util", "LinkedHashMap");
     public static final ClassName ENTRY           = ClassName.get("java.util.Map", "Entry");
 
-    public static final String fieldNameActions = "actions";
-    public static final String paramNameTarget  = "classBuilder";
+    public static final String FIELD_NAME_ACTIONS = "actions";
+    public static final String PARAM_NAME_TARGET  = "target";
 
     private final TypeSpec.Builder classBuilder;
     private final ClassName        targetClassName;
+    private final boolean          clearAfterReplaying;
 
     private final ClassName typeKey = STRING;
     private final ParameterizedTypeName typeValue;
 
 
-    public ReplaySourceBuilder(TypeSpec.Builder classBuilder, ClassName targetClassName) {
+    public ReplaySourceBuilder(Builder classBuilder, ClassName targetClassName, boolean clearAfterReplaying) {
         super();
 
         this.classBuilder = classBuilder;
         this.targetClassName = targetClassName;
         this.typeValue = ParameterizedTypeName.get(REPLAYABLE_ACTION, targetClassName);
+        this.clearAfterReplaying = clearAfterReplaying;
     }
 
 
@@ -63,7 +66,7 @@ public class ReplaySourceBuilder {
 
     private FieldSpec createFieldActions() {
         return FieldSpec.builder(ParameterizedTypeName.get(LINKED_HASH_MAP, typeKey, typeValue),
-                                 fieldNameActions)
+                                 FIELD_NAME_ACTIONS)
                         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                         .initializer(CodeBlock.of("new LinkedHashMap<>()"))
                         .build();
@@ -71,22 +74,22 @@ public class ReplaySourceBuilder {
 
 
     private MethodSpec createMethodReplay() {
+        CodeBlock.Builder replayMethodBody =
+                CodeBlock.builder()
+                         .beginControlFlow("for ($T entry : $L.entrySet())",
+                                           ParameterizedTypeName.get(ENTRY, typeKey, typeValue),
+                                           FIELD_NAME_ACTIONS)
+                         .addStatement("entry.getValue().replayOnTarget($L)", PARAM_NAME_TARGET)
+                         .endControlFlow();
+        if (clearAfterReplaying) {
+            replayMethodBody.addStatement("$L.clear()", FIELD_NAME_ACTIONS);
+        }
+
         return MethodSpec.methodBuilder("replay")
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC)
-                         .addParameter(targetClassName, paramNameTarget)
-                         .addCode(CodeBlock.builder()
-                                           .beginControlFlow(
-                                                   "for ($T entry : $L.entrySet())",
-                                                   ParameterizedTypeName.get(ENTRY, typeKey,
-                                                                             typeValue),
-                                                   fieldNameActions)
-                                           .addStatement("entry.getValue().replayOnTarget($L)",
-                                                         paramNameTarget)
-                                           .endControlFlow()
-                                           .addStatement("$L.clear()", fieldNameActions)
-                                           .build()
-                         )
+                         .addParameter(targetClassName, PARAM_NAME_TARGET)
+                         .addCode(replayMethodBody.build())
                          .build();
     }
 }

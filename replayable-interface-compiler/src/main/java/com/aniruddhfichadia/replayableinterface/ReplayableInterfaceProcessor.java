@@ -93,6 +93,7 @@ public class ReplayableInterfaceProcessor
                         ReplayableInterface.class);
                 ReplayStrategy defaultReplyStrategy = replayableInterface.value();
                 ReplayType replayType = replayableInterface.replayType();
+                boolean clearAfterReplaying = replayableInterface.clearAfterReplaying();
 
                 TypeSpec.Builder classBuilder = TypeSpec.classBuilder(replayableClassName)
                                                         .addModifiers(Modifier.PUBLIC);
@@ -102,12 +103,12 @@ public class ReplayableInterfaceProcessor
                         .applyClassDefinition()
                         .applyMethods();
 
-                new DelegatableBuilder(classBuilder, targetClassName)
+                new DelegatorBuilder(classBuilder, targetClassName)
                         .applyClassDefinition()
                         .applyFields()
                         .applyMethods();
 
-                new ReplaySourceBuilder(classBuilder, targetClassName)
+                new ReplaySourceBuilder(classBuilder, targetClassName, clearAfterReplaying)
                         .applyClassDefinition()
                         .applyFields()
                         .applyMethods();
