@@ -5,7 +5,6 @@ import com.aniruddhfichadia.replayableinterface.ReplayableInterface.ReplayType;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -17,20 +16,27 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
 import static com.aniruddhfichadia.replayableinterface.DelegatorBuilder.FIELD_NAME_DELEGATE;
+import static com.aniruddhfichadia.replayableinterface.DelegatorBuilder.METHOD_NAME_IS_DELEGATE_BOUND;
 import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.FIELD_NAME_ACTIONS;
-import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.PARAM_NAME_TARGET;
-import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.REPLAYABLE_ACTION;
+import static com.aniruddhfichadia.replayableinterface.ReplayableActionBuilder.FIELD_NAME_PARAMS;
+import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.REPLAY_STRATEGY;
 
 
 /**
+ * TODO: rename, not really a builder?
+ *
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
 public class ReplayableInterfaceTargetBuilder {
-    public static final ClassName UUID = ClassName.get("java.util", "UUID");
+    public static final ClassName UUID                   = ClassName.get("java.util", "UUID");
+    public static final ClassName NULL_POINTER_EXCEPTION = ClassName.get("java.lang",
+                                                                         "NullPointerException");
 
     private static final String VAR_NAME_ACTION_KEY = "_actionKey";
 
@@ -65,47 +71,46 @@ public class ReplayableInterfaceTargetBuilder {
                 baseElement.getEnclosedElements());
 
         for (ExecutableElement method : methods) {
-            String methodName = method.getSimpleName().toString();
-            List<? extends VariableElement> methodParameters = method.getParameters();
-
-            ReplayableMethod methodAnnotation = method.getAnnotation(ReplayableMethod.class);
-            ReplayStrategy replayStrategy = resolveStrategy(methodAnnotation);
-            String group = methodAnnotation == null ? null : methodAnnotation.group();
-
-            classBuilder.addMethod(createImplementedMethod(methodName, methodParameters,
-                                                           replayStrategy, group));
+            classBuilder.addMethod(createImplementedMethod(method));
         }
 
         return this;
     }
 
 
-    private ReplayStrategy resolveStrategy(ReplayableMethod methodAnnotation) {
-        if (methodAnnotation != null) {
-            ReplayStrategy methodReplayStrategy = methodAnnotation.value();
+    private MethodSpec createImplementedMethod(ExecutableElement method) {
+        String methodName = method.getSimpleName().toString();
+        List<? extends VariableElement> methodParameters = method.getParameters();
+        TypeMirror methodReturnType = method.getReturnType();
+        boolean methodReturnsNonVoidValue = methodReturnType.getKind() != TypeKind.VOID;
 
-            return methodReplayStrategy != ReplayStrategy.DEFAULT
-                   ? methodReplayStrategy
-                   : ReplayStrategy.ENQUEUE_LAST_ONLY;
-        } else {
-            return defaultReplyStrategy;
+        ReplayableMethod methodAnnotation = method.getAnnotation(ReplayableMethod.class);
+        ReplayStrategy replayStrategy = resolveStrategy(methodAnnotation);
+        String group = methodAnnotation == null ? null : methodAnnotation.group();
+
+        if (methodReturnsNonVoidValue) {
+            // TODO log better
+            // TODO probably should not get to this point at all
+            System.out.println(methodName + " returns a value, this will throw a " +
+                                       "NullPointerException when the delegate is not bound");
         }
-    }
 
-
-    private MethodSpec createImplementedMethod(String name, List<? extends VariableElement> parameters,
-                                               ReplayStrategy replayStrategy, String group) {
         MethodSpec.Builder methodBuilder =
-                MethodSpec.methodBuilder(name)
+                MethodSpec.methodBuilder(methodName)
                           .addAnnotation(Override.class)
                           .addModifiers(Modifier.PUBLIC)
-                          .addJavadoc("@ReplayStrategy " + replayStrategy + "\n");
+                          .returns(TypeName.get(methodReturnType))
+                          .addJavadoc("Built using {@link $T#" + replayStrategy + "}\n",
+                                      REPLAY_STRATEGY);
 
         StringBuilder allParamNamesBuilder = new StringBuilder();
         StringBuilder allParamTypesBuilder = new StringBuilder();
-        StringBuilder castParamsFromParamsBuilder = new StringBuilder();
-        for (int i = 0; i < parameters.size(); i++) {
-            VariableElement parameter = parameters.get(i);
+        CodeBlock.Builder replayOnTargetBuilder =
+                CodeBlock.builder()
+                         .add("$L.$L(", ReplayableActionBuilder.PARAM_NAME_TARGET, methodName);
+
+        for (int i = 0; i < methodParameters.size(); i++) {
+            VariableElement parameter = methodParameters.get(i);
 
             TypeName paramType = TypeName.get(parameter.asType());
             Name paramName = parameter.getSimpleName();
@@ -120,50 +125,63 @@ public class ReplayableInterfaceTargetBuilder {
 
             allParamNamesBuilder.append(paramName);
             allParamTypesBuilder.append(paramType);
-            // TODO: pretty this
-            castParamsFromParamsBuilder.append("(")
-                                       .append(paramType)
-                                       .append(") params[")
-                                       .append(i)
-                                       .append("]");
+            replayOnTargetBuilder.add("($T) $L[$L]", paramType, FIELD_NAME_PARAMS, i);
 
-            if (i < parameters.size() - 1) {
+            if (i < methodParameters.size() - 1) {
                 final String separator = ", ";
 
                 allParamNamesBuilder.append(separator);
                 allParamTypesBuilder.append(separator);
-                castParamsFromParamsBuilder.append(separator);
+                replayOnTargetBuilder.add(separator);
             }
         }
+        replayOnTargetBuilder.add(");\n");
 
         String allParamNames = allParamNamesBuilder.toString();
         String allParamTypes = allParamTypesBuilder.toString();
-        String castParamsFromParams = castParamsFromParamsBuilder.toString();
 
         CodeBlock.Builder methodCode = CodeBlock.builder();
-        methodCode.beginControlFlow("if (this.$L != null)", FIELD_NAME_DELEGATE)
-                  .addStatement("this.$L.$L($L)", FIELD_NAME_DELEGATE, name, allParamNames);
+        methodCode.beginControlFlow("if ($L())", METHOD_NAME_IS_DELEGATE_BOUND);
+        if (methodReturnsNonVoidValue) {
+            methodBuilder.addException(NULL_POINTER_EXCEPTION);
+            methodBuilder.addJavadoc("@throws $T if {@link $L} is null\n", NULL_POINTER_EXCEPTION,
+                                     FIELD_NAME_DELEGATE);
 
-        if (ReplayType.DELEGATE_AND_REPLAY == replayType) {
-            methodCode.endControlFlow();
-        }
+            methodCode.addStatement("return this.$L.$L($L)", FIELD_NAME_DELEGATE, methodName,
+                                    allParamNames)
+                      .nextControlFlow("else")
+                      .addStatement("throw new $T($S)", NULL_POINTER_EXCEPTION,
+                                    FIELD_NAME_DELEGATE + " == null because it is not bound. " +
+                                            "This method cannot be invoked since it returns a " +
+                                            "non-void value and is auto-generated")
+                      .endControlFlow();
+        } else {
+            methodCode.addStatement("this.$L.$L($L)", FIELD_NAME_DELEGATE, methodName,
+                                    allParamNames);
 
-        if (!ReplayStrategy.NONE.equals(replayStrategy)) {
-            if (ReplayType.REPLAY_IF_NO_DELEGATE == replayType) {
-                methodCode.nextControlFlow("else");
+            if (ReplayType.DELEGATE_AND_REPLAY == replayType) {
+                methodCode.endControlFlow();
             }
 
-            methodCode.add(createActionKey(name, parameters, allParamTypes, group, replayStrategy))
-                      .add("");
-            methodCode.addStatement("this.$L.remove($L)", FIELD_NAME_ACTIONS, VAR_NAME_ACTION_KEY);
-            methodCode.addStatement("this.$L.put($L, $L)", FIELD_NAME_ACTIONS,
-                                    VAR_NAME_ACTION_KEY, createAnonymousReplayableAction(name,
-                                                                                         allParamNames,
-                                                                                         castParamsFromParams));
-        }
+            if (!ReplayStrategy.NONE.equals(replayStrategy)) {
+                if (ReplayType.REPLAY_IF_NO_DELEGATE == replayType) {
+                    methodCode.nextControlFlow("else");
+                }
 
-        if (ReplayType.REPLAY_IF_NO_DELEGATE == replayType) {
-            methodCode.endControlFlow();
+                methodCode.add(createActionKey(methodName, methodParameters, allParamTypes, group,
+                                               replayStrategy))
+                          .add("");
+                methodCode.addStatement("this.$L.remove($L)", FIELD_NAME_ACTIONS,
+                                        VAR_NAME_ACTION_KEY);
+                methodCode.addStatement("this.$L.put($L, $L)", FIELD_NAME_ACTIONS,
+                                        VAR_NAME_ACTION_KEY,
+                                        createAnonymousReplayableAction(allParamNames,
+                                                                        replayOnTargetBuilder.build()));
+            }
+
+            if (ReplayType.REPLAY_IF_NO_DELEGATE == replayType) {
+                methodCode.endControlFlow();
+            }
         }
 
         methodBuilder.addCode(methodCode.build());
@@ -171,9 +189,20 @@ public class ReplayableInterfaceTargetBuilder {
         return methodBuilder.build();
     }
 
+    private ReplayStrategy resolveStrategy(ReplayableMethod methodAnnotation) {
+        if (methodAnnotation != null) {
+            ReplayStrategy methodReplayStrategy = methodAnnotation.value();
+
+            return methodReplayStrategy != ReplayStrategy.DEFAULT
+                   ? methodReplayStrategy
+                   : ReplayStrategy.ENQUEUE_LAST_ONLY;
+        } else {
+            return defaultReplyStrategy;
+        }
+    }
+
     private CodeBlock createActionKey(String methodName, List<? extends VariableElement> parameters,
-                                      String allParamTypes, String group,
-                                      ReplayStrategy replayStrategy) {
+                                      String allParamTypes, String group, ReplayStrategy replayStrategy) {
         CodeBlock.Builder actionKeyCode = CodeBlock.builder()
                                                    .add("String $L = ", VAR_NAME_ACTION_KEY);
         switch (replayStrategy) {
@@ -187,6 +216,8 @@ public class ReplayableInterfaceTargetBuilder {
                 actionKeyCode.addStatement("\"group: $L\"", group);
                 break;
             case ENQUEUE_PARAM_UNIQUE:
+                // Generated a method signature with unique parameter values as part of the
+                // signature to avoid hashCode or hash collisions. Also this is more readable
                 actionKeyCode.add("\"$L(", methodName);
 
                 for (int i = 0; i < parameters.size(); i++) {
@@ -198,7 +229,7 @@ public class ReplayableInterfaceTargetBuilder {
                     actionKeyCode.add("$L: \" + ", paramType.toString());
 
                     if (paramType.isPrimitive()) {
-                        actionKeyCode.add(paramName.toString());
+                        actionKeyCode.add("$L", paramName);
                     } else {
                         actionKeyCode.add("($L == null ? \"null\" : $L.hashCode())", paramName,
                                           paramName);
@@ -212,6 +243,7 @@ public class ReplayableInterfaceTargetBuilder {
                 actionKeyCode.add(";\n");
                 break;
             default:
+                // TODO: log better
                 throw new IllegalArgumentException("Unsupported ReplayStrategy " + replayStrategy);
         }
 
@@ -219,21 +251,10 @@ public class ReplayableInterfaceTargetBuilder {
     }
 
 
-    private TypeSpec createAnonymousReplayableAction(String methodName, String allParamNames,
-                                                     String castParamsFromParams) {
-        return TypeSpec.anonymousClassBuilder(allParamNames)
-                       .superclass(ParameterizedTypeName.get(REPLAYABLE_ACTION, targetClassName))
-                       .addMethod(MethodSpec.methodBuilder("replayOnTarget")
-                                            .addAnnotation(Override.class)
-                                            .addModifiers(Modifier.PUBLIC)
-                                            .addParameter(targetClassName, PARAM_NAME_TARGET)
-                                            .addCode(CodeBlock.builder()
-                                                              .addStatement("$L.$L($L)",
-                                                                            PARAM_NAME_TARGET,
-                                                                            methodName,
-                                                                            castParamsFromParams)
-                                                              .build())
-                                            .build())
-                       .build();
+    private TypeSpec createAnonymousReplayableAction(String allParamNames, CodeBlock code) {
+        return new ReplayableActionBuilder(targetClassName)
+                .constructorArgumentNames(allParamNames)
+                .replayOnTargetBody(code)
+                .build();
     }
 }

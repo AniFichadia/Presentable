@@ -159,4 +159,10 @@ public class DemoActivity
 
         btnLoad.setEnabled(allowed);
     }
+
+
+    @Override
+    public int returnsSomething() {
+        return 0;
+    }
 }

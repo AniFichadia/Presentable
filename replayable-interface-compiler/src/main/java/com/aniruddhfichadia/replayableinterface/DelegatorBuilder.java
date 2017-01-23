@@ -16,6 +16,8 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
 
 
 /**
+ * TODO: rename, not really a builder?
+ *
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
@@ -24,6 +26,10 @@ public class DelegatorBuilder {
                                                               "Delegator");
 
     public static final String FIELD_NAME_DELEGATE = "delegate";
+
+    public static final String METHOD_NAME_IS_DELEGATE_BOUND = "isDelegateBound";
+    public static final String METHOD_NAME_BIND_DELEGATE     = "bindDelegate";
+    public static final String METHOD_NAME_UN_BIND_DELEGATE  = "unBindDelegate";
 
     private final TypeSpec.Builder classBuilder;
     private final ClassName        targetClassName;
@@ -62,7 +68,7 @@ public class DelegatorBuilder {
     }
 
     private MethodSpec createMethodBindDelegate() {
-        return MethodSpec.methodBuilder("bindDelegate")
+        return MethodSpec.methodBuilder(METHOD_NAME_BIND_DELEGATE)
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .addParameter(ParameterSpec.builder(targetClassName, FIELD_NAME_DELEGATE)
@@ -76,19 +82,18 @@ public class DelegatorBuilder {
     }
 
     private MethodSpec createMethodUnBindDelegate() {
-        return MethodSpec.methodBuilder("unBindDelegate")
+        return MethodSpec.methodBuilder(METHOD_NAME_UN_BIND_DELEGATE)
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .addCode(CodeBlock.builder()
-                                           .addStatement("this.$L = $L", FIELD_NAME_DELEGATE,
-                                                         "null")
+                                           .addStatement("this.$L = null", FIELD_NAME_DELEGATE)
                                            .build()
                          )
                          .build();
     }
 
     private MethodSpec createMethodIsDelegateBound() {
-        return MethodSpec.methodBuilder("isDelegateBound")
+        return MethodSpec.methodBuilder(METHOD_NAME_IS_DELEGATE_BOUND)
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .returns(TypeName.BOOLEAN)

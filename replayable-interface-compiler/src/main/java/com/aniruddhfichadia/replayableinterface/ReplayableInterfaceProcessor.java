@@ -33,13 +33,13 @@ import static com.google.auto.common.MoreElements.getPackage;
 @AutoService(Processor.class)
 public class ReplayableInterfaceProcessor
         extends AbstractProcessor {
-    private static final boolean IS_TEST = true;
+    private static final boolean IS_TEST = false;
 
     public static final String PACKAGE_REPLAYABLE_INTERFACE = "com.aniruddhfichadia.replayableinterface";
 
-    public static final ClassName REPLAYABLE_ACTION = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
-                                                                    "ReplayableAction");
-    public static final ClassName STRING            = ClassName.get("java.lang", "String");
+    public static final ClassName REPLAY_STRATEGY = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
+                                                                  "ReplayStrategy");
+    public static final ClassName STRING          = ClassName.get("java.lang", "String");
 
 
     private Filer filer;
@@ -127,6 +127,10 @@ public class ReplayableInterfaceProcessor
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else {
+                // TODO log better
+                System.out.println(element.toString() + " is not supported. " + element.toString()
+                                           + " must be an interface.");
             }
         }
 

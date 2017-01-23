@@ -49,4 +49,7 @@ public interface DemoUi
     void setMessage(String text);
 
     void setLoadingAllowed(boolean allowed);
+
+
+    int returnsSomething();
 }

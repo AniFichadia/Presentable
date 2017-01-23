@@ -11,12 +11,15 @@ import com.squareup.javapoet.TypeSpec.Builder;
 
 import javax.lang.model.element.Modifier;
 
+import static com.aniruddhfichadia.replayableinterface.ReplayableActionBuilder.METHOD_NAME_REPLAY_ON_TARGET;
+import static com.aniruddhfichadia.replayableinterface.ReplayableActionBuilder.REPLAYABLE_ACTION;
 import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.PACKAGE_REPLAYABLE_INTERFACE;
-import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.REPLAYABLE_ACTION;
 import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.STRING;
 
 
 /**
+ * TODO: rename, not really a builder?
+ *
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
@@ -28,6 +31,7 @@ public class ReplaySourceBuilder {
     public static final ClassName ENTRY           = ClassName.get("java.util.Map", "Entry");
 
     public static final String FIELD_NAME_ACTIONS = "actions";
+    public static final String METHOD_NAME_REPLAY = "replay";
     public static final String PARAM_NAME_TARGET  = "target";
 
     private final TypeSpec.Builder classBuilder;
@@ -79,13 +83,14 @@ public class ReplaySourceBuilder {
                          .beginControlFlow("for ($T entry : $L.entrySet())",
                                            ParameterizedTypeName.get(ENTRY, typeKey, typeValue),
                                            FIELD_NAME_ACTIONS)
-                         .addStatement("entry.getValue().replayOnTarget($L)", PARAM_NAME_TARGET)
+                         .addStatement("entry.getValue().$L($L)", METHOD_NAME_REPLAY_ON_TARGET,
+                                       PARAM_NAME_TARGET)
                          .endControlFlow();
         if (clearAfterReplaying) {
             replayMethodBody.addStatement("$L.clear()", FIELD_NAME_ACTIONS);
         }
 
-        return MethodSpec.methodBuilder("replay")
+        return MethodSpec.methodBuilder(METHOD_NAME_REPLAY)
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC)
                          .addParameter(targetClassName, PARAM_NAME_TARGET)
