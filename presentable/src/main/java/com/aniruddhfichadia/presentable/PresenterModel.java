@@ -22,8 +22,7 @@ import java.io.Serializable;
 
 
 /**
- * A savable model of a {@link Presenter}'s state. Allows {@link Presenter}'s to be saved and restored based on
- * lifecycle events, such as Android's Fragment.onSaveInstanceState(Bundle) and Fragment.onViewStateRestore(Bundle)
+ * TODO: this is more like the 'interactor' in clean, not really a data model or similar
  */
 public interface PresenterModel
         extends Serializable {

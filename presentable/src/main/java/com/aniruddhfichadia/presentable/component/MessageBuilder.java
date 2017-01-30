@@ -30,7 +30,7 @@ import java.io.Serializable;
 public class MessageBuilder
         implements Serializable {
     /** Generic int. Implement as required and handle in your {@link MessageComponent} */
-    private int          errorType;
+    private int          messageType;
     @Nullable
     private CharSequence title;
     @Nullable
@@ -45,12 +45,12 @@ public class MessageBuilder
     private boolean dismissible = false;
 
 
-    public int getErrorType() {
-        return errorType;
+    public int getMessageType() {
+        return messageType;
     }
 
-    public MessageBuilder setErrorType(int errorType) {
-        this.errorType = errorType;
+    public MessageBuilder setMessageType(int messageType) {
+        this.messageType = messageType;
         return this;
     }
 
