@@ -62,23 +62,27 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
+    //region Lifecycle
     @SuppressWarnings("unchecked")
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
             presenter = createPresenter();
         } else {
+            restoreUiState(savedInstanceState);
+
             presenter = (PresenterT) objectRegistry.remove(
                     savedInstanceState.getString(KEY_PRESENTER));
         }
 
         lifecycleHooks = presenter.getLifecycleHooks();
+
+        getPresenter().bindUi((UiT) this);
     }
 
 
-    //region Lifecycle
     @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -97,6 +101,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         }
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -109,8 +114,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public void onResume() {
         super.onResume();
 
-        getPresenter().bindUi((UiT) this);
-
         lifecycleHooks.onResume();
     }
 
@@ -119,15 +122,14 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         super.onPause();
 
         lifecycleHooks.onPause();
-
-        getPresenter().unBindUi();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         lifecycleHooks.onDestroy();
+
+        getPresenter().unBindUi();
     }
 
     @Override
@@ -137,22 +139,32 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         unbindView();
     }
 
+
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String presenterKey = UUID.randomUUID().toString();
-        objectRegistry.put(presenterKey, presenter);
-        outState.putString(KEY_PRESENTER, presenterKey);
+        if (getPresenter().shouldRetainPresenter()) {
+            String presenterKey = UUID.randomUUID().toString();
+            objectRegistry.put(presenterKey, presenter);
+            outState.putString(KEY_PRESENTER, presenterKey);
+        }
+
+        saveUiState(outState);
+    }
+
+
+    protected void saveUiState(@NonNull Bundle outState) {
+    }
+
+    protected void restoreUiState(@NonNull Bundle savedState) {
     }
     //endregion
 
 
     //region Dependency Injection
 
-    /**
-     * Performs dependency injection for your fragment. You can override this as necessary or not implement it at all!
-     */
+    /** Override as necessary */
     protected void inject() {
     }
     //endregion

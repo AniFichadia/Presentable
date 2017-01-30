@@ -62,7 +62,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         bindView(contentView);
         afterBindView(contentView);
 
-        // TODO: wrap in delegate
         if (savedInstanceState == null) {
             presenter = createPresenter();
         } else {
@@ -71,6 +70,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
             presenter = (PresenterT) objectRegistry.remove(
                     savedInstanceState.getString(KEY_PRESENTER));
         }
+
         lifecycleHooks = presenter.getLifecycleHooks();
 
         // TODO: wrap in delegate
@@ -127,7 +127,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     }
 
     protected void restoreUiState(@NonNull Bundle savedState) {
-
     }
     //endregion
 
