@@ -40,8 +40,6 @@ import java.util.UUID;
  * <p>
  * For applications that require dependency injection (eg. Dagger), you can implement the {@link #inject()} method.
  * <p>
- * <p>
- * todo queue up events for the ui when detached
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */

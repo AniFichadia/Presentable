@@ -73,7 +73,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         lifecycleHooks = presenter.getLifecycleHooks();
 
-        // TODO: wrap in delegate
         getPresenter().bindUi((UiT) this);
 
         lifecycleHooks.onCreate();
@@ -113,7 +112,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         super.onSaveInstanceState(outState);
 
         if (getPresenter().shouldRetainPresenter()) {
-            // TODO: wrap in delegate
             String presenterKey = UUID.randomUUID().toString();
             objectRegistry.put(presenterKey, presenter);
             outState.putString(KEY_PRESENTER, presenterKey);

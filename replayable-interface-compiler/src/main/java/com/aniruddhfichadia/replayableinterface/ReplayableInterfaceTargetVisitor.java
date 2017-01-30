@@ -29,8 +29,6 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
 
 
 /**
- * TODO: rename, not really a builder?
- *
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
@@ -96,7 +94,6 @@ public class ReplayableInterfaceTargetVisitor {
         String group = methodAnnotation == null ? null : methodAnnotation.group();
 
         if (methodReturnsNonVoidValue) {
-            // TODO log better
             // TODO probably should not get to this point at all
             warnings.add(String.format(
                     "%s returns a value, this will throw a NullPointerException when the delegate is not bound",
@@ -249,7 +246,6 @@ public class ReplayableInterfaceTargetVisitor {
                 actionKeyCode.add(";\n");
                 break;
             default:
-                // TODO: log better
                 throw new IllegalArgumentException("Unsupported ReplayStrategy " + replayStrategy);
         }
 

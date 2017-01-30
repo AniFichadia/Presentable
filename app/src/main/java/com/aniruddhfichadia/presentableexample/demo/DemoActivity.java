@@ -42,6 +42,8 @@ import static android.view.View.VISIBLE;
 
 
 /**
+ * TODO: don't keep activities + replay = loading... -> loading done doesn't update
+ *
  * @author Aniruddh Fichadia
  * @date 18/1/17
  */
@@ -58,7 +60,6 @@ public class DemoActivity
     Button      btnLoad;
     @BindView(R.id.demo_chk_something)
     CheckBox    chkSomething;
-
 
     @Nullable
     private Unbinder unbinder;

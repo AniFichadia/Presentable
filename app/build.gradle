@@ -29,7 +29,6 @@ dependencies {
     compile project(':presentable-android')
     compile project(':replayable-interface')
 
-    // TODO: annotationProcessor
     annotationProcessor project(':replayable-interface-compiler')
 
     // ButterKnife

@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class BasePresenter<UiT extends PresenterUi>
         implements Presenter<UiT> {
     @Nullable
-    protected UiT ui;
+    private UiT ui;
 
 
     public BasePresenter() {
