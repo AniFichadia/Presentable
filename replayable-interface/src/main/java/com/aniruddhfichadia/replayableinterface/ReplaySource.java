@@ -23,5 +23,7 @@ package com.aniruddhfichadia.replayableinterface;
  * @date 17/1/17
  */
 public interface ReplaySource<TargetT> {
+    void addReplayableAction(String key, ReplayableAction<TargetT> action);
+
     void replay(TargetT target);
 }

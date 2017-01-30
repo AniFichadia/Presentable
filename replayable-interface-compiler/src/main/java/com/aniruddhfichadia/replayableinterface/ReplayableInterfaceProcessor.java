@@ -10,7 +10,9 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -22,6 +24,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 
 import static com.google.auto.common.MoreElements.getPackage;
 
@@ -46,10 +49,10 @@ public class ReplayableInterfaceProcessor
 
 
     @Override
-    public synchronized void init(ProcessingEnvironment env) {
-        super.init(env);
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
 
-        filer = env.getFiler();
+        this.filer = processingEnv.getFiler();
     }
 
     @Override
@@ -78,6 +81,9 @@ public class ReplayableInterfaceProcessor
                 continue;
             }
 
+            List<String> warnings = new ArrayList<>();
+            List<String> errors = new ArrayList<>();
+
             if (ElementKind.INTERFACE.equals(element.getKind())) {
                 TypeElement enclosingElement = findEnclosingTypeElement(element);
 
@@ -98,17 +104,21 @@ public class ReplayableInterfaceProcessor
                 TypeSpec.Builder classBuilder = TypeSpec.classBuilder(replayableClassName)
                                                         .addModifiers(Modifier.PUBLIC);
 
-                new ReplayableInterfaceTargetBuilder(classBuilder, targetClassName, element,
-                                                     replayType, defaultReplyStrategy)
-                        .applyClassDefinition()
-                        .applyMethods();
+                ReplayableInterfaceTargetVisitor replayableInterfaceTargetVisitor =
+                        new ReplayableInterfaceTargetVisitor(classBuilder, targetClassName, element,
+                                                             replayType, defaultReplyStrategy)
+                                .applyClassDefinition()
+                                .applyMethods();
+                warnings.addAll(replayableInterfaceTargetVisitor.getWarnings());
+                errors.addAll(replayableInterfaceTargetVisitor.getErrors());
 
-                new DelegatorBuilder(classBuilder, targetClassName)
+
+                new DelegatorVisitor(classBuilder, targetClassName)
                         .applyClassDefinition()
                         .applyFields()
                         .applyMethods();
 
-                new ReplaySourceBuilder(classBuilder, targetClassName, clearAfterReplaying)
+                new ReplaySourceVisitor(classBuilder, targetClassName, clearAfterReplaying)
                         .applyClassDefinition()
                         .applyFields()
                         .applyMethods();
@@ -128,9 +138,16 @@ public class ReplayableInterfaceProcessor
                     e.printStackTrace();
                 }
             } else {
-                // TODO log better
-                System.out.println(element.toString() + " is not supported. " + element.toString()
-                                           + " must be an interface.");
+                errors.add(String.format("%s is not supported. %s must be an interface.",
+                                         element.getSimpleName(), element.getSimpleName()));
+            }
+
+            for (String warning : warnings) {
+                warning(element, warning);
+            }
+
+            for (String error : errors) {
+                error(element, error);
             }
         }
 
@@ -143,4 +160,27 @@ public class ReplayableInterfaceProcessor
         }
         return TypeElement.class.cast(e);
     }
+
+
+    //region Logging
+    private void error(Element element, String message, Object... args) {
+        printMessage(Kind.ERROR, element, message, args);
+    }
+
+    private void note(Element element, String message, Object... args) {
+        printMessage(Kind.NOTE, element, message, args);
+    }
+
+    private void warning(Element element, String message, Object... args) {
+        printMessage(Kind.WARNING, element, message, args);
+    }
+
+    private void printMessage(Kind kind, Element element, String message, Object[] args) {
+        if (args.length > 0) {
+            message = String.format(message, args);
+        }
+
+        processingEnv.getMessager().printMessage(kind, message, element);
+    }
+    //endregion
 }

@@ -23,16 +23,19 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
-public class ReplaySourceBuilder {
+public class ReplaySourceVisitor {
     public static final ClassName REPLAY_SOURCE = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
                                                                 "ReplaySource");
 
     public static final ClassName LINKED_HASH_MAP = ClassName.get("java.util", "LinkedHashMap");
     public static final ClassName ENTRY           = ClassName.get("java.util.Map", "Entry");
 
-    public static final String FIELD_NAME_ACTIONS = "actions";
-    public static final String METHOD_NAME_REPLAY = "replay";
-    public static final String PARAM_NAME_TARGET  = "target";
+    public static final String FIELD_NAME_ACTIONS                = "actions";
+    public static final String METHOD_NAME_ADD_REPLAYABLE_ACTION = "addReplayableAction";
+    public static final String METHOD_NAME_REPLAY                = "replay";
+    public static final String PARAM_NAME_KEY                    = "key";
+    public static final String PARAM_NAME_ACTION                 = "action";
+    public static final String PARAM_NAME_TARGET                 = "target";
 
     private final TypeSpec.Builder classBuilder;
     private final ClassName        targetClassName;
@@ -42,7 +45,7 @@ public class ReplaySourceBuilder {
     private final ParameterizedTypeName typeValue;
 
 
-    public ReplaySourceBuilder(Builder classBuilder, ClassName targetClassName, boolean clearAfterReplaying) {
+    public ReplaySourceVisitor(Builder classBuilder, ClassName targetClassName, boolean clearAfterReplaying) {
         super();
 
         this.classBuilder = classBuilder;
@@ -52,17 +55,18 @@ public class ReplaySourceBuilder {
     }
 
 
-    public ReplaySourceBuilder applyClassDefinition() {
+    public ReplaySourceVisitor applyClassDefinition() {
         classBuilder.addSuperinterface(ParameterizedTypeName.get(REPLAY_SOURCE, targetClassName));
         return this;
     }
 
-    public ReplaySourceBuilder applyFields() {
+    public ReplaySourceVisitor applyFields() {
         classBuilder.addField(createFieldActions());
         return this;
     }
 
-    public ReplaySourceBuilder applyMethods() {
+    public ReplaySourceVisitor applyMethods() {
+        classBuilder.addMethod(createMethodAddReplayableAction());
         classBuilder.addMethod(createMethodReplay());
         return this;
     }
@@ -76,6 +80,23 @@ public class ReplaySourceBuilder {
                         .build();
     }
 
+
+    private MethodSpec createMethodAddReplayableAction() {
+        return MethodSpec.methodBuilder(METHOD_NAME_ADD_REPLAYABLE_ACTION)
+                         .addAnnotation(Override.class)
+                         .addModifiers(Modifier.PUBLIC)
+                         .addParameter(STRING, PARAM_NAME_KEY)
+                         .addParameter(
+                                 ParameterizedTypeName.get(REPLAYABLE_ACTION, targetClassName),
+                                 PARAM_NAME_ACTION)
+                         .addCode(CodeBlock.builder()
+                                           .addStatement("this.$L.remove($L)", FIELD_NAME_ACTIONS,
+                                                         PARAM_NAME_KEY)
+                                           .addStatement("this.$L.put($L, $L)", FIELD_NAME_ACTIONS,
+                                                         PARAM_NAME_KEY, PARAM_NAME_ACTION)
+                                           .build())
+                         .build();
+    }
 
     private MethodSpec createMethodReplay() {
         CodeBlock.Builder replayMethodBody =

@@ -8,6 +8,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,9 +21,9 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
-import static com.aniruddhfichadia.replayableinterface.DelegatorBuilder.FIELD_NAME_DELEGATE;
-import static com.aniruddhfichadia.replayableinterface.DelegatorBuilder.METHOD_NAME_IS_DELEGATE_BOUND;
-import static com.aniruddhfichadia.replayableinterface.ReplaySourceBuilder.FIELD_NAME_ACTIONS;
+import static com.aniruddhfichadia.replayableinterface.DelegatorVisitor.FIELD_NAME_DELEGATE;
+import static com.aniruddhfichadia.replayableinterface.DelegatorVisitor.METHOD_NAME_IS_DELEGATE_BOUND;
+import static com.aniruddhfichadia.replayableinterface.ReplaySourceVisitor.METHOD_NAME_ADD_REPLAYABLE_ACTION;
 import static com.aniruddhfichadia.replayableinterface.ReplayableActionBuilder.FIELD_NAME_PARAMS;
 import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.REPLAY_STRATEGY;
 
@@ -33,7 +34,7 @@ import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProces
  * @author Aniruddh Fichadia
  * @date 21/1/17
  */
-public class ReplayableInterfaceTargetBuilder {
+public class ReplayableInterfaceTargetVisitor {
     public static final ClassName UUID                   = ClassName.get("java.util", "UUID");
     public static final ClassName NULL_POINTER_EXCEPTION = ClassName.get("java.lang",
                                                                          "NullPointerException");
@@ -48,7 +49,11 @@ public class ReplayableInterfaceTargetBuilder {
     private final ReplayStrategy   defaultReplyStrategy;
 
 
-    public ReplayableInterfaceTargetBuilder(TypeSpec.Builder classBuilder, ClassName targetClassName,
+    private final List<String> warnings;
+    private final List<String> errors;
+
+
+    public ReplayableInterfaceTargetVisitor(TypeSpec.Builder classBuilder, ClassName targetClassName,
                                             Element baseElement, ReplayType replayType,
                                             ReplayStrategy defaultReplyStrategy) {
         super();
@@ -58,15 +63,17 @@ public class ReplayableInterfaceTargetBuilder {
         this.baseElement = baseElement;
         this.replayType = replayType;
         this.defaultReplyStrategy = defaultReplyStrategy;
+        this.warnings = new ArrayList<>();
+        this.errors = new ArrayList<>();
     }
 
-    public ReplayableInterfaceTargetBuilder applyClassDefinition() {
+    public ReplayableInterfaceTargetVisitor applyClassDefinition() {
         classBuilder.addSuperinterface(targetClassName);
         return this;
     }
 
 
-    public ReplayableInterfaceTargetBuilder applyMethods() {
+    public ReplayableInterfaceTargetVisitor applyMethods() {
         List<ExecutableElement> methods = ElementFilter.methodsIn(
                 baseElement.getEnclosedElements());
 
@@ -91,8 +98,9 @@ public class ReplayableInterfaceTargetBuilder {
         if (methodReturnsNonVoidValue) {
             // TODO log better
             // TODO probably should not get to this point at all
-            System.out.println(methodName + " returns a value, this will throw a " +
-                                       "NullPointerException when the delegate is not bound");
+            warnings.add(String.format(
+                    "%s returns a value, this will throw a NullPointerException when the delegate is not bound",
+                    methodName));
         }
 
         MethodSpec.Builder methodBuilder =
@@ -171,9 +179,7 @@ public class ReplayableInterfaceTargetBuilder {
                 methodCode.add(createActionKey(methodName, methodParameters, allParamTypes, group,
                                                replayStrategy))
                           .add("");
-                methodCode.addStatement("this.$L.remove($L)", FIELD_NAME_ACTIONS,
-                                        VAR_NAME_ACTION_KEY);
-                methodCode.addStatement("this.$L.put($L, $L)", FIELD_NAME_ACTIONS,
+                methodCode.addStatement("$L($L, $L)", METHOD_NAME_ADD_REPLAYABLE_ACTION,
                                         VAR_NAME_ACTION_KEY,
                                         createAnonymousReplayableAction(allParamNames,
                                                                         replayOnTargetBuilder.build()));
@@ -256,5 +262,14 @@ public class ReplayableInterfaceTargetBuilder {
                 .constructorArgumentNames(allParamNames)
                 .replayOnTargetBody(code)
                 .build();
+    }
+
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public List<String> getErrors() {
+        return errors;
     }
 }
