@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 13/1/17
  */
 public class MessageBuilder

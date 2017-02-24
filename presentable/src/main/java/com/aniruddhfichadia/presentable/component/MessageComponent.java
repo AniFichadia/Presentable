@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 29/12/16
  */
 public abstract class MessageComponent {

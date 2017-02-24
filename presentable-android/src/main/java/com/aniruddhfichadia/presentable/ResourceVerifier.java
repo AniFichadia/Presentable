@@ -7,7 +7,7 @@ import java.util.List;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 3/1/17
  */
 public class ResourceVerifier {

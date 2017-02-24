@@ -19,7 +19,7 @@ package com.aniruddhfichadia.presentable.component;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 13/1/17
  */
 public interface OnActionClickListener {
