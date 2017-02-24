@@ -89,11 +89,12 @@ public class ReplayableInterfaceProcessor
 
                 String packageName = getPackage(enclosingElement).getQualifiedName().toString();
                 String className = enclosingElement.getQualifiedName().toString().substring(
-                        packageName.length() + 1).replace('.', '$');
+                        packageName.length() + 1);
 
                 ClassName targetClassName = ClassName.get(packageName, className);
                 ClassName replayableClassName = ClassName.get(packageName,
-                                                              "Replayable" + className);
+                                                              "Replayable" +
+                                                                      className.replace('.', '$'));
 
                 ReplayableInterface replayableInterface = element.getAnnotation(
                         ReplayableInterface.class);
