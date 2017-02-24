@@ -22,6 +22,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.aniruddhfichadia.presentable.BaseReplayablePresenter;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoUi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,11 +31,11 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 17/1/17
  */
 public class DemoPresenterImpl
-        extends BaseReplayablePresenter<DemoUi, ReplayableDemoUi>
+        extends BaseReplayablePresenter<DemoUi, ReplayableDemoContract$DemoUi>
         implements DemoPresenter {
     private static final String TAG = DemoPresenterImpl.class.getSimpleName();
 
@@ -42,8 +44,8 @@ public class DemoPresenterImpl
 
     @NotNull
     @Override
-    protected ReplayableDemoUi createUiCommander() {
-        return new ReplayableDemoUi();
+    protected ReplayableDemoContract$DemoUi createUiCommander() {
+        return new ReplayableDemoContract$DemoUi();
     }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Aniruddh Fichadia
+ * Copyright (C) 2017 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -15,17 +15,33 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.presentableexample;
 
 
-import com.aniruddhfichadia.presentable.Presenter;
+import android.app.Application;
+
+import com.aniruddhfichadia.presentable.ObjectRegistry;
+import com.aniruddhfichadia.presentable.Registry;
 
 
 /**
- * @author Aniruddh Fichadia
- * @date 17/1/17
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
+ * @date 2017-02-25
  */
-public interface DemoPresenter
-        extends Presenter<DemoUi> {
-    void loadSomething();
+public class DemoApplication
+        extends Application {
+    private Registry registry;
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        registry = new ObjectRegistry();
+    }
+
+
+    public Registry getRegistry() {
+        return registry;
+    }
 }

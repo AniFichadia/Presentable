@@ -30,7 +30,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aniruddhfichadia.presentable.PresentableActivity;
+import com.aniruddhfichadia.presentable.Registry;
+import com.aniruddhfichadia.presentableexample.DemoApplication;
 import com.aniruddhfichadia.presentableexample.R;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoUi;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +48,7 @@ import static android.view.View.VISIBLE;
 /**
  * TODO: don't keep activities + replay = loading... -> loading done doesn't update
  *
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
  */
 public class DemoActivity
@@ -68,6 +72,12 @@ public class DemoActivity
     @Override
     public int getLayoutResource() {
         return R.layout.activity_demo;
+    }
+
+    @NonNull
+    @Override
+    protected Registry getRegistry() {
+        return ((DemoApplication) getApplication()).getRegistry();
     }
 
     @NonNull
