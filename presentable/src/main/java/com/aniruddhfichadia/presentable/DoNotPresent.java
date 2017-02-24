@@ -18,58 +18,57 @@
 package com.aniruddhfichadia.presentable;
 
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.replayableinterface.Delegator;
-import com.aniruddhfichadia.replayableinterface.ReplaySource;
+import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
 
 
 /**
- * TODO: document
+ * Convenience class for when your UI doesn't require a {@link Presenter}.
+ * <p>
+ * Returns {@link NoLifecycleHooks} for {@link #getLifecycleHooks()}.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 2017-01-17
  */
-public abstract class BaseReplayablePresenter<UiT extends Ui,
-        UiCommanderT extends Ui & Delegator<UiT> & ReplaySource<UiT>>
-        extends BasePresenter<UiT> {
+public final class DoNotPresent<UiT extends Ui>
+        implements Presenter<UiT> {
     @NotNull
-    private final UiCommanderT uiCommander;
-
-
-    public BaseReplayablePresenter() {
-        super();
-
-        uiCommander = createUiCommander();
+    @Override
+    public LifecycleHooks getLifecycleHooks() {
+        return new NoLifecycleHooks();
     }
 
 
-    @NotNull
-    protected abstract UiCommanderT createUiCommander();
+    @Override
+    public boolean shouldRetainPresenter() {
+        return true;
+    }
 
 
     @Override
     public void bindUi(@NotNull UiT ui) {
-        uiCommander.bindDelegate(ui);
-        uiCommander.replay(ui);
+        // No-op
+    }
 
-        afterBindUi();
+    @Override
+    public void afterBindUi() {
+        // No-op
     }
 
     @Override
     public void unBindUi() {
-        uiCommander.unBindDelegate();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public UiT getUi() {
-        return (UiT) uiCommander;
+        // No-op
     }
 
     @Override
     public boolean isUiAttached() {
-        return uiCommander.isDelegateBound();
+        return false;
+    }
+
+    @Override
+    public UiT getUi() {
+        return null;
     }
 }

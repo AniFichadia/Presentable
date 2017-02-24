@@ -18,6 +18,8 @@
 package com.aniruddhfichadia.presentable;
 
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A convenient, extensible implementation of the {@link Presenter} interface. The constructor associates a {@link
- * PresenterUi} with it and provides {@link NoLifecycleHooks} by default.
+ * Ui} with it and provides {@link NoLifecycleHooks} by default.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public class BasePresenter<UiT extends PresenterUi>
+public class BasePresenter<UiT extends Ui>
         implements Presenter<UiT> {
     @Nullable
     private UiT ui;
@@ -38,6 +40,11 @@ public class BasePresenter<UiT extends PresenterUi>
 
     public BasePresenter() {
         super();
+    }
+
+    public BasePresenter(UiT ui) {
+        this();
+        bindUi(ui);
     }
 
 

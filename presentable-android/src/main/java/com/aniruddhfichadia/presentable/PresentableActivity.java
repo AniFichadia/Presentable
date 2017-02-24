@@ -19,11 +19,15 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +37,7 @@ import java.util.UUID;
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends PresenterUi>
+public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
         implements ViewBindable {
     private static final String              KEY_PRESENTER  = "presenter";
@@ -51,6 +55,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
 
     //region Lifecycle
+    @CallSuper
     @SuppressWarnings("unchecked")
     @Override
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         lifecycleHooks = presenter.getLifecycleHooks();
 
         getPresenter().bindUi((UiT) this);
+
+        afterCreate();
 
         lifecycleHooks.onCreate();
     }
@@ -121,6 +128,10 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     }
 
 
+    protected void afterCreate() {
+
+    }
+
     protected void saveUiState(@NonNull Bundle outState) {
     }
 
@@ -140,8 +151,8 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     //region Presenter
 
     /**
-     * Provide your {@link Presenter} instance through this method. If no presenter is required, return {@link
-     * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
+     * Provide your {@link Presenter} instance through this method. If no presenter is required,
+     * return {@link DoNotPresent}
      */
     @NonNull
     protected abstract PresenterT createPresenter();
