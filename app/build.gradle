@@ -24,7 +24,7 @@ ext {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile project(':presentable')
     compile project(':presentable-android')
     compile project(':replayable-interface')
