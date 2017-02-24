@@ -29,10 +29,6 @@ import android.view.View;
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -40,8 +36,7 @@ import java.util.UUID;
 public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
         implements ViewBindable {
-    private static final String              KEY_PRESENTER  = "presenter";
-    private static final Map<String, Object> objectRegistry = new HashMap<>();
+    private static final String KEY_PRESENTER = "presenter";
 
     private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
@@ -67,13 +62,12 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         bindView(contentView);
         afterBindView(contentView);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_PRESENTER)) {
             presenter = createPresenter();
         } else {
             restoreUiState(savedInstanceState);
 
-            presenter = (PresenterT) objectRegistry.remove(
-                    savedInstanceState.getString(KEY_PRESENTER));
+            presenter = getRegistry().getAndRemove(savedInstanceState.getString(KEY_PRESENTER));
         }
 
         lifecycleHooks = presenter.getLifecycleHooks();
@@ -119,8 +113,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         super.onSaveInstanceState(outState);
 
         if (getPresenter().shouldRetainPresenter()) {
-            String presenterKey = UUID.randomUUID().toString();
-            objectRegistry.put(presenterKey, presenter);
+            String presenterKey = getRegistry().put(this);
             outState.putString(KEY_PRESENTER, presenterKey);
         }
 
@@ -129,7 +122,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
 
     protected void afterCreate() {
-
     }
 
     protected void saveUiState(@NonNull Bundle outState) {
@@ -146,6 +138,10 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     protected void inject() {
     }
     //endregion
+
+
+    @NonNull
+    protected abstract Registry getRegistry();
 
 
     //region Presenter

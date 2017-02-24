@@ -31,10 +31,6 @@ import android.view.ViewGroup;
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 
 /**
  * A {@link Fragment} with appropriate hook-ins and abstractions to interact with a {@link Presenter}. Also adds a bit
@@ -50,8 +46,7 @@ import java.util.UUID;
 public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
         extends Fragment
         implements ViewBindable {
-    private static final String              KEY_PRESENTER  = "presenter";
-    private static final Map<String, Object> objectRegistry = new HashMap<>();
+    private static final String KEY_PRESENTER = "presenter";
 
     private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
@@ -71,13 +66,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_PRESENTER)) {
             presenter = createPresenter();
         } else {
             restoreUiState(savedInstanceState);
 
-            presenter = (PresenterT) objectRegistry.remove(
-                    savedInstanceState.getString(KEY_PRESENTER));
+            presenter = getRegistry().getAndRemove(savedInstanceState.getString(KEY_PRESENTER));
         }
 
         lifecycleHooks = presenter.getLifecycleHooks();
@@ -150,8 +144,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         super.onSaveInstanceState(outState);
 
         if (getPresenter().shouldRetainPresenter()) {
-            String presenterKey = UUID.randomUUID().toString();
-            objectRegistry.put(presenterKey, presenter);
+            String presenterKey = getRegistry().put(this);
             outState.putString(KEY_PRESENTER, presenterKey);
         }
 
@@ -176,6 +169,10 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     protected void inject() {
     }
     //endregion
+
+
+    @NonNull
+    protected abstract Registry getRegistry();
 
 
     //region Presenter
