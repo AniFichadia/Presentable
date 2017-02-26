@@ -76,19 +76,19 @@ public class DemoActivity
 
     @NonNull
     @Override
-    protected Registry getRegistry() {
+    public Registry getRegistry() {
         return ((DemoApplication) getApplication()).getRegistry();
     }
 
     @NonNull
     @Override
-    protected DemoPresenter createPresenter() {
+    public DemoPresenter createPresenter() {
         return new DemoPresenterImpl();
     }
 
 
     @Override
-    protected void restoreUiState(@NonNull Bundle savedInstanceState) {
+    public void restoreUiState(@NonNull Bundle savedInstanceState) {
         super.restoreUiState(savedInstanceState);
 
         progressLoading.setVisibility(

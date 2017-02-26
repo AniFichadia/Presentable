@@ -35,9 +35,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
  */
 public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
-        implements ViewBindable {
-    private static final String KEY_PRESENTER = "presenter";
-
+        implements PresentableUiAndroid<PresenterT> {
     private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
 
@@ -62,13 +60,8 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         bindView(contentView);
         afterBindView(contentView);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_PRESENTER)) {
-            presenter = createPresenter();
-        } else {
-            restoreUiState(savedInstanceState);
+        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
-            presenter = getRegistry().getAndRemove(savedInstanceState.getString(KEY_PRESENTER));
-        }
 
         lifecycleHooks = presenter.getLifecycleHooks();
 
@@ -112,57 +105,37 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (getPresenter().shouldRetainPresenter()) {
-            String presenterKey = getRegistry().put(this);
-            outState.putString(KEY_PRESENTER, presenterKey);
-        }
+        PresentableUiDelegateImpl.handleSave(this, outState);
+    }
+    //endregion
 
-        saveUiState(outState);
+    //region Overrideable lifecycle events
+    public void afterCreate() {
     }
 
-
-    protected void afterCreate() {
+    public void saveUiState(@NonNull Bundle outState) {
     }
 
-    protected void saveUiState(@NonNull Bundle outState) {
-    }
-
-    protected void restoreUiState(@NonNull Bundle savedState) {
+    public void restoreUiState(@NonNull Bundle savedState) {
     }
     //endregion
 
 
-    //region Dependency Injection
-
-    /** Override as necessary */
-    protected void inject() {
+    public void inject() {
     }
-    //endregion
+
+    @NonNull
+    public abstract Registry getRegistry();
 
 
     @NonNull
-    protected abstract Registry getRegistry();
+    public abstract PresenterT createPresenter();
 
-
-    //region Presenter
-
-    /**
-     * Provide your {@link Presenter} instance through this method. If no presenter is required,
-     * return {@link DoNotPresent}
-     */
-    @NonNull
-    protected abstract PresenterT createPresenter();
-
-    /**
-     * Internal access to the {@link Presenter}
-     */
-    protected final PresenterT getPresenter() {
+    public final PresenterT getPresenter() {
         return presenter;
     }
-    //endregion
 
 
-    //region ViewBindable
     @LayoutRes
     @Override
     public abstract int getLayoutResource();
@@ -178,5 +151,4 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     @Override
     public void unbindView() {
     }
-    //endregion
 }
