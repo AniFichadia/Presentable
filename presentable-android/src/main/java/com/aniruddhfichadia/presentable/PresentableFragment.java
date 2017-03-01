@@ -138,8 +138,9 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         PresentableUiDelegateImpl.handleSave(this, outState);
     }
+    //endregion
 
-
+    //region Overrideable lifecycle events
     public void afterCreate() {
     }
 
