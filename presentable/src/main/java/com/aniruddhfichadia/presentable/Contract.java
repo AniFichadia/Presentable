@@ -42,8 +42,6 @@ public interface Contract {
      * <p>
      * Ideally the presenter implementation should be platform agnostic and have no or platform agnostic references to
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
-     *
-     * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
      */
     interface Presenter<UiT extends Ui> {
         /**
@@ -67,11 +65,11 @@ public interface Contract {
 
         void unBindUi();
 
+        void afterUnBindUi();
+
         boolean isUiAttached();
 
         UiT getUi();
-
-
     }
 
     interface PresenterState
@@ -79,8 +77,9 @@ public interface Contract {
     }
 
     /**
-     * Data layer interactor (inter-actor). Coordinates data retrieval, etc.
+     * Clean architecture data layer interactor (inter-actor). Coordinates data retrieval and
+     * notifies the {@link Presenter}
      */
-    interface Interactor {
+    interface InterActor {
     }
 }

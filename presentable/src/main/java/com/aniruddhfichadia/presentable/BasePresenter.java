@@ -42,6 +42,7 @@ public class BasePresenter<UiT extends Ui>
         super();
     }
 
+    @Deprecated
     public BasePresenter(UiT ui) {
         this();
         bindUi(ui);
@@ -80,6 +81,12 @@ public class BasePresenter<UiT extends Ui>
     @Override
     public void unBindUi() {
         ui = null;
+
+        afterUnBindUi();
+    }
+
+    @Override
+    public void afterUnBindUi() {
     }
 
     @Override

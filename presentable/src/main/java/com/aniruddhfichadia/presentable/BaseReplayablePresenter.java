@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- *
- *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17
  */
@@ -60,6 +58,8 @@ public abstract class BaseReplayablePresenter<UiT extends Ui,
     @Override
     public void unBindUi() {
         uiCommander.unBindDelegate();
+
+        afterUnBindUi();
     }
 
     @SuppressWarnings("unchecked")

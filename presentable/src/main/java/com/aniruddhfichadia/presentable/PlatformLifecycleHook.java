@@ -15,22 +15,17 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.data;
+package com.aniruddhfichadia.presentable;
 
 
 /**
+ * TODO: Update to use this instead of {@link LifecycleHooks}. This should be the base contract
+ * for {@link LifecycleHooks}
+ *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 27/12/16
+ * @date 2017-03-02
  */
-public interface ChangeListenableRepository {
-    void notifyRepositoryUpdated(String key);
-
-    void addListener(RepositoryChangeListener listener);
-
-    void removeListener(RepositoryChangeListener listener);
-
-
-    interface RepositoryChangeListener {
-        void onRepositoryChanged(String key);
-    }
+public interface PlatformLifecycleHook {
+    String PLATFORM_ANDROID = "Android";
+    String PLATFORM_IOS     = "iOS";
 }

@@ -15,22 +15,32 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.data;
+package com.aniruddhfichadia.presentable;
+
+
+import com.aniruddhfichadia.presentable.Contract.InterActor;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.Executor;
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 27/12/16
+ * @date 2017-03-02
  */
-public interface ChangeListenableRepository {
-    void notifyRepositoryUpdated(String key);
-
-    void addListener(RepositoryChangeListener listener);
-
-    void removeListener(RepositoryChangeListener listener);
+public class BaseInterActor
+        implements InterActor {
+    @NotNull
+    private final Executor executor;
 
 
-    interface RepositoryChangeListener {
-        void onRepositoryChanged(String key);
+    public BaseInterActor(@NotNull Executor executor) {
+        this.executor = executor;
+    }
+
+
+    protected void execute(@NotNull Runnable runnable) {
+        executor.execute(runnable);
     }
 }

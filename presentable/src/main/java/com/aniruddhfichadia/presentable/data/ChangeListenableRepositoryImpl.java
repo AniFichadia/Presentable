@@ -28,7 +28,7 @@ import java.util.List;
  * Basic implementation of {@link ChangeListenableRepository}. Either extend from or compose your
  * repository implementation using this
  *
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 27/12/16
  */
 public class ChangeListenableRepositoryImpl

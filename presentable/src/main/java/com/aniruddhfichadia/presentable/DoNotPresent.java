@@ -63,6 +63,11 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
+    public void afterUnBindUi() {
+        // No-op
+    }
+
+    @Override
     public boolean isUiAttached() {
         return false;
     }
