@@ -57,8 +57,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
+    public void runOnUiThread(Runnable runnable) {
+        getActivity().runOnUiThread(runnable);
+    }
+
+
     //region Lifecycle
-    @SuppressWarnings("unchecked")
     @CallSuper
     @Override
     public final void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,8 +72,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
 
         lifecycleHooks = presenter.getLifecycleHooks();
-
-        getPresenter().bindUi((UiT) this);
 
         afterCreate();
     }
@@ -94,9 +96,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        getPresenter().bindUi((UiT) this);
 
         lifecycleHooks.onCreate();
     }

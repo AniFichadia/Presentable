@@ -31,9 +31,7 @@ import java.io.Serializable;
  * @date 2017-02-25
  */
 public interface Contract {
-    /**
-     * A generalised User Interface contract for a {@link Presenter}
-     */
+    /** A generalised User Interface contract for a {@link Presenter} */
     interface Ui {
     }
 
