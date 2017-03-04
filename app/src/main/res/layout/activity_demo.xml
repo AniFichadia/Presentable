@@ -19,7 +19,6 @@
         android:id="@+id/demo_txt_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:freezesText="true"
         android:gravity="center"
         android:text="no status"/>
 

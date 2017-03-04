@@ -47,6 +47,8 @@ import static android.view.View.VISIBLE;
 
 /**
  * TODO: don't keep activities + replay = loading... -> loading done doesn't update
+ * View.dispatchRestoreInstanceState gets called with a delay AFTER ... the state is restored by
+ * replay
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
@@ -83,7 +85,11 @@ public class DemoActivity
     @NonNull
     @Override
     public DemoPresenter createPresenter() {
-        return new DemoPresenterImpl();
+        DemoInterActorImpl interActor = new DemoInterActorImpl(
+                ((DemoApplication) getApplication()).getSharedExecutor());
+        DemoPresenterImpl presenter = new DemoPresenterImpl(interActor);
+
+        return presenter;
     }
 
 
@@ -95,6 +101,7 @@ public class DemoActivity
                 savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
                                                                         : INVISIBLE);
         btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
+        txtMessage.setText(savedInstanceState.getString("txtMessageText"));
     }
 
     @Override
@@ -103,6 +110,7 @@ public class DemoActivity
 
         outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
         outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
+        outState.putCharSequence("txtMessageText", txtMessage.getText());
     }
 
 
@@ -126,49 +134,93 @@ public class DemoActivity
     }
 
 
+    //region DemoUi
     @Override
     public void doMeaninglessThing() {
-        Toast.makeText(this, "Meaningless thing", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "doMeaninglessThing() called");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DemoActivity.this, "Meaningless thing", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
-    public void doSomethingElseMeaningLess(String aParam, boolean anotherParam) {
-        Toast.makeText(this, "Another meaningless thing " + aParam + " " + anotherParam,
-                       Toast.LENGTH_LONG)
-             .show();
+    public void doSomethingElseMeaningLess(final String aParam, final boolean anotherParam) {
+        Log.d(TAG,
+              "doSomethingElseMeaningLess() called with: aParam = [" + aParam + "], anotherParam = [" + anotherParam + "]");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DemoActivity.this,
+                               "Another meaningless thing " + aParam + " " + anotherParam,
+                               Toast.LENGTH_LONG)
+                     .show();
+            }
+        });
     }
 
     @Override
-    public void somethingEnqueueable(String aParam) {
-        Toast.makeText(this, aParam, Toast.LENGTH_SHORT).show();
+    public void somethingEnqueueable(final String aParam) {
+        Log.d(TAG, "somethingEnqueueable() called with: aParam = [" + aParam + "]");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(DemoActivity.this, aParam, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void showLoading() {
         Log.d(TAG, "showLoading()");
 
-        progressLoading.setVisibility(VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLoading.setVisibility(VISIBLE);
+            }
+        });
     }
 
     @Override
     public void hideLoading() {
         Log.d(TAG, "hideLoading()");
 
-        progressLoading.setVisibility(INVISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressLoading.setVisibility(INVISIBLE);
+            }
+        });
     }
 
     @Override
-    public void setMessage(String text) {
+    public void setMessage(final String text) {
         Log.d(TAG, "setMessage(text: " + text + ")" + " from " + txtMessage.getText().toString());
 
-        txtMessage.setText(text);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtMessage.setText(text);
+            }
+        });
     }
 
     @Override
-    public void setLoadingAllowed(boolean allowed) {
+    public void setLoadingAllowed(final boolean allowed) {
         Log.d(TAG, "setLoadingAllowed(allowed: " + allowed + ")");
 
-        btnLoad.setEnabled(allowed);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                btnLoad.setEnabled(allowed);
+            }
+        });
     }
 
 
@@ -176,4 +228,5 @@ public class DemoActivity
     public int returnsSomething() {
         return 0;
     }
+    //endregion
 }

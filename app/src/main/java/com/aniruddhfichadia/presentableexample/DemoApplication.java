@@ -23,6 +23,9 @@ import android.app.Application;
 import com.aniruddhfichadia.presentable.ObjectRegistry;
 import com.aniruddhfichadia.presentable.Registry;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -30,18 +33,21 @@ import com.aniruddhfichadia.presentable.Registry;
  */
 public class DemoApplication
         extends Application {
-    private Registry registry;
+    private final Registry registry;
+    private final Executor sharedExecutor;
 
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
+    public DemoApplication() {
         registry = new ObjectRegistry();
+        sharedExecutor = Executors.newCachedThreadPool();
     }
 
 
     public Registry getRegistry() {
         return registry;
+    }
+
+    public Executor getSharedExecutor() {
+        return sharedExecutor;
     }
 }

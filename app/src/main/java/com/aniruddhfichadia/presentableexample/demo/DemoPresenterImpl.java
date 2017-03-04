@@ -18,16 +18,15 @@
 package com.aniruddhfichadia.presentableexample.demo;
 
 
-import android.os.Handler;
 import android.util.Log;
 
 import com.aniruddhfichadia.presentable.BaseReplayablePresenter;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActor;
+import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActorListener;
 import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoPresenter;
 import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoUi;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -36,10 +35,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class DemoPresenterImpl
         extends BaseReplayablePresenter<DemoUi, ReplayableDemoContract$DemoUi>
-        implements DemoPresenter {
+        implements DemoPresenter, DemoInterActorListener {
     private static final String TAG = DemoPresenterImpl.class.getSimpleName();
 
-    private final Handler handler = new Handler();
+    private final DemoInterActor interactor;
+
+
+    public DemoPresenterImpl(DemoInterActor interactor) {
+        this.interactor = interactor;
+        interactor.setListener(this);
+    }
 
 
     @NotNull
@@ -53,20 +58,22 @@ public class DemoPresenterImpl
     public void loadSomething() {
         Log.d(TAG, "loadSomething");
 
-        getUi().showLoading();
-        getUi().setMessage("Loading ...");
-        getUi().setLoadingAllowed(false);
+        if (!interactor.isDoingAsyncStuff()) {
+            getUi().showLoading();
+            getUi().setMessage("Loading ...");
+            getUi().setLoadingAllowed(false);
 
-        // Emulate a long running task
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Loading done");
-                getUi().setLoadingAllowed(true);
-                getUi().hideLoading();
-                getUi().setMessage("Loading done");
-                getUi().doMeaninglessThing();
-            }
-        }, TimeUnit.SECONDS.toMillis(5));
+            interactor.doAsyncStuff();
+        }
+    }
+
+    @Override
+    public void onAsyncStuffComplete() {
+        Log.d(TAG, "Loading done");
+        getUi().setLoadingAllowed(true);
+        getUi().hideLoading();
+        getUi().setMessage("Loading done");
+        getUi().doMeaninglessThing();
+        getUi().doSomethingElseMeaningLess("blah", false);
     }
 }

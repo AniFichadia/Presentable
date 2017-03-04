@@ -18,6 +18,7 @@
 package com.aniruddhfichadia.presentableexample.demo;
 
 
+import com.aniruddhfichadia.presentable.Contract.InterActor;
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.replayableinterface.ReplayStrategy;
@@ -59,5 +60,18 @@ public interface DemoContract {
     interface DemoPresenter
             extends Presenter<DemoUi> {
         void loadSomething();
+    }
+
+    interface DemoInterActor
+            extends InterActor {
+        void setListener(DemoInterActorListener listener);
+
+        boolean isDoingAsyncStuff();
+
+        void doAsyncStuff();
+    }
+
+    interface DemoInterActorListener {
+        void onAsyncStuffComplete();
     }
 }
