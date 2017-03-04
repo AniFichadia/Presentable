@@ -23,6 +23,8 @@ import android.support.annotation.NonNull;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 
+import org.jetbrains.annotations.Nullable;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -31,7 +33,11 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 public interface PresentableUiAndroid<PresenterT extends Presenter>
         extends ViewBindable {
     //region Lifecycle
-    void afterCreate();
+
+    /**
+     * Since onCreate... methods are intentionally final, this allows you do perform initialisation
+     */
+    void afterOnCreate(@Nullable Bundle savedInstanceState);
 
     void saveUiState(@NonNull Bundle outState);
 

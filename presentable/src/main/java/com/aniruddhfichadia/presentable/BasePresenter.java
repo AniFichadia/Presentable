@@ -42,10 +42,17 @@ public class BasePresenter<UiT extends Ui>
         super();
     }
 
+    /**
+     * @deprecated Really should not use this. There are consequences for binding too early in the
+     * UI lifecycle, such as NPEs.
+     */
     @Deprecated
     public BasePresenter(UiT ui) {
         this();
-        bindUi(ui);
+
+        // TODO prevents calling afterBind when the UIs lifecycle hasn't properly bound the
+        // presenter
+        this.ui = ui;
     }
 
 

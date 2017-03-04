@@ -67,7 +67,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         getPresenter().bindUi((UiT) this);
 
-        afterCreate();
+        afterOnCreate(savedInstanceState);
 
         lifecycleHooks.onCreate();
     }
@@ -110,7 +110,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     //endregion
 
     //region Overrideable lifecycle events
-    public void afterCreate() {
+    public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
     public void saveUiState(@NonNull Bundle outState) {

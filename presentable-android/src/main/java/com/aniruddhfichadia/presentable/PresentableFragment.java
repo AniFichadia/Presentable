@@ -19,6 +19,8 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -49,6 +51,9 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
 
+    @Nullable
+    private Handler uiHandler;
+
 
     public PresentableFragment() {
         super();
@@ -57,8 +62,17 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
-    public void runOnUiThread(Runnable runnable) {
-        getActivity().runOnUiThread(runnable);
+    protected void runOnUiThread(@NonNull Runnable runnable) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            // This is the main looper/thread, just execute the runnable
+            runnable.run();
+        } else {
+            // Not the main looper, post event on it
+            if (uiHandler == null) {
+                uiHandler = new Handler(Looper.getMainLooper());
+            }
+            uiHandler.post(runnable);
+        }
     }
 
 
@@ -73,7 +87,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         lifecycleHooks = presenter.getLifecycleHooks();
 
-        afterCreate();
+        afterOnCreate(savedInstanceState);
     }
 
 
@@ -146,7 +160,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     //endregion
 
     //region Overrideable lifecycle events
-    public void afterCreate() {
+    public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
     public void saveUiState(@NonNull Bundle outState) {
