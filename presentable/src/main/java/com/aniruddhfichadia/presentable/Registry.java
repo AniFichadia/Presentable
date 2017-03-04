@@ -27,9 +27,7 @@ package com.aniruddhfichadia.presentable;
 public interface Registry {
     <T> String put(T value);
 
-    <T> T getAndRemove(String key);
-
-    <T> T getWithoutRemoving(String key);
+    <T> T get(String key);
 
 
     void clear();

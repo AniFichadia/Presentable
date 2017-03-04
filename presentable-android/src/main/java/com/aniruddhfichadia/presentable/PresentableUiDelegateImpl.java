@@ -42,7 +42,7 @@ public class PresentableUiDelegateImpl {
         } else {
             ui.restoreUiState(savedInstanceState);
 
-            presenter = ui.getRegistry().getAndRemove(savedInstanceState.getString(KEY_PRESENTER));
+            presenter = ui.getRegistry().get(savedInstanceState.getString(KEY_PRESENTER));
         }
 
         return presenter;

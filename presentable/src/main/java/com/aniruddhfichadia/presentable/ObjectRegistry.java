@@ -48,14 +48,8 @@ public class ObjectRegistry
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getAndRemove(String key) {
+    public <T> T get(String key) {
         return (T) objectRegistry.remove(key);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getWithoutRemoving(String key) {
-        return (T) objectRegistry.get(key);
     }
 
     @Override
