@@ -20,8 +20,6 @@ package com.aniruddhfichadia.presentable;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
@@ -72,10 +70,6 @@ public interface Contract {
         boolean isUiAttached();
 
         UiT getUi();
-    }
-
-    interface PresenterState
-            extends Serializable {
     }
 
     /**
