@@ -37,7 +37,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         extends AppCompatActivity
         implements PresentableUiAndroid<PresenterT> {
     private PresenterT     presenter;
-    private LifecycleHooks lifecycleHooks;
 
 
     public PresentableActivity() {
@@ -63,36 +62,15 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
 
-        lifecycleHooks = presenter.getLifecycleHooks();
-
         getPresenter().bindUi((UiT) this);
 
         afterOnCreate(savedInstanceState);
-
-        lifecycleHooks.onCreate();
     }
 
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        lifecycleHooks.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        lifecycleHooks.onPause();
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        lifecycleHooks.onDestroy();
 
         getPresenter().unBindUi();
 

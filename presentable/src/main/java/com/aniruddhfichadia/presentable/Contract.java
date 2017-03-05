@@ -18,9 +18,6 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
-import com.aniruddhfichadia.presentable.LifecycleHooks.SparseLifecycleHooks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -42,18 +39,6 @@ public interface Contract {
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
     interface Presenter<UiT extends Ui> {
-        /**
-         * Provides {@link LifecycleHooks} so a {@link Presenter} can interact with its {@link Ui}'s lifecycle
-         * events. The provided value is required to be non-null to simplify development and integration. Since the value is
-         * non-null, you can use {@link NoLifecycleHooks} or {@link SparseLifecycleHooks}, depending on the use case.
-         * <p>
-         * If lifecycle events aren't implemented by your UI, don't consume/invoke the appropriate method in {@link
-         * LifecycleHooks}.
-         */
-        @NotNull
-        LifecycleHooks getLifecycleHooks();
-
-
         boolean shouldRetainPresenter();
 
 

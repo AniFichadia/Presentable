@@ -20,7 +20,6 @@ package com.aniruddhfichadia.presentable;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,13 +52,6 @@ public class BasePresenter<UiT extends Ui>
         // TODO prevents calling afterBind when the UIs lifecycle hasn't properly bound the
         // presenter
         this.ui = ui;
-    }
-
-
-    @NotNull
-    @Override
-    public LifecycleHooks getLifecycleHooks() {
-        return new NoLifecycleHooks();
     }
 
 
