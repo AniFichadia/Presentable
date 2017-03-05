@@ -51,28 +51,17 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     private PresenterT     presenter;
     private LifecycleHooks lifecycleHooks;
 
+    private final Object  uiHandlerLock;
     @Nullable
-    private Handler uiHandler;
+    private       Handler uiHandler;
 
 
     public PresentableFragment() {
         super();
 
         inject();
-    }
 
-
-    protected void runOnUiThread(@NonNull Runnable runnable) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            // This is the main looper/thread, just execute the runnable
-            runnable.run();
-        } else {
-            // Not the main looper, post event on it
-            if (uiHandler == null) {
-                uiHandler = new Handler(Looper.getMainLooper());
-            }
-            uiHandler.post(runnable);
-        }
+        uiHandlerLock = new Object();
     }
 
 
@@ -201,5 +190,21 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
     @Override
     public void unbindView() {
+    }
+
+
+    protected void runOnUiThread(@NonNull Runnable runnable) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            // This is the main looper/thread, just execute the runnable
+            runnable.run();
+        } else {
+            synchronized (uiHandlerLock) {
+                // Not the main looper, post event on it
+                if (uiHandler == null) {
+                    uiHandler = new Handler(Looper.getMainLooper());
+                }
+                uiHandler.post(runnable);
+            }
+        }
     }
 }
