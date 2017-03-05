@@ -5,6 +5,10 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
     compile 'org.jetbrains:annotations-java5:15.0'
+
+    compile project(':presentable')
+
+    compile project(':replayable-interface')
 }
 
 ext {
