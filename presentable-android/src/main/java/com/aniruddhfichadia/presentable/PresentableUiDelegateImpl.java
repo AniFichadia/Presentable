@@ -35,14 +35,19 @@ public class PresentableUiDelegateImpl {
 
     public static <PresenterT extends Presenter> PresenterT createOrRestorePresenter(@NonNull PresentableUiAndroid<PresenterT> ui,
                                                                                      @Nullable Bundle savedInstanceState) {
-        PresenterT presenter;
+        PresenterT presenter = null;
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(KEY_PRESENTER)) {
-            presenter = ui.createPresenter();
-        } else {
-            ui.restoreUiState(savedInstanceState);
-
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PRESENTER)) {
             presenter = ui.getRegistry().get(savedInstanceState.getString(KEY_PRESENTER));
+        }
+
+        if (presenter != null) {
+            // The presenter has been retained, restore the UI state
+            if (savedInstanceState != null) {
+                ui.restoreUiState(savedInstanceState);
+            }
+        } else {
+            presenter = ui.createPresenter();
         }
 
         return presenter;
@@ -52,7 +57,10 @@ public class PresentableUiDelegateImpl {
                                                                  @NonNull Bundle outState) {
         if (ui.getPresenter().shouldRetainPresenter()) {
             String presenterKey = ui.getRegistry().put(ui.getPresenter());
-            outState.putString(KEY_PRESENTER, presenterKey);
+            if (presenterKey != null) {
+                // Registry has persisted a value, save its key
+                outState.putString(KEY_PRESENTER, presenterKey);
+            }
         }
 
         ui.saveUiState(outState);
