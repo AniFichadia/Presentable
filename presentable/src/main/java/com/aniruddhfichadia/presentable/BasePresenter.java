@@ -70,22 +70,22 @@ public class BasePresenter<UiT extends Ui>
     public void bindUi(@NotNull UiT ui) {
         this.ui = ui;
 
-        afterBindUi();
+        onPresenterBound();
     }
 
     @Override
-    public void afterBindUi() {
+    public void onPresenterBound() {
     }
 
     @Override
     public void unBindUi() {
         ui = null;
 
-        afterUnBindUi();
+        onPresenterUnBound();
     }
 
     @Override
-    public void afterUnBindUi() {
+    public void onPresenterUnBound() {
     }
 
     @Override

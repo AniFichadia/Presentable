@@ -44,7 +44,7 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void afterBindUi() {
+    public void onPresenterBound() {
         // No-op
     }
 
@@ -54,7 +54,7 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void afterUnBindUi() {
+    public void onPresenterUnBound() {
         // No-op
     }
 

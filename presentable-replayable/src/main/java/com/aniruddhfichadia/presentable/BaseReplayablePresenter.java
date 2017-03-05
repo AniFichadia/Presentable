@@ -52,14 +52,14 @@ public abstract class BaseReplayablePresenter<UiT extends Ui,
         uiCommander.bindDelegate(ui);
         uiCommander.replay(ui);
 
-        afterBindUi();
+        onPresenterBound();
     }
 
     @Override
     public void unBindUi() {
         uiCommander.unBindDelegate();
 
-        afterUnBindUi();
+        onPresenterUnBound();
     }
 
     @SuppressWarnings("unchecked")
