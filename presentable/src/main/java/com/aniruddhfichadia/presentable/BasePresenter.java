@@ -20,7 +20,6 @@ package com.aniruddhfichadia.presentable;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,13 +55,6 @@ public class BasePresenter<UiT extends Ui>
     }
 
 
-    @NotNull
-    @Override
-    public LifecycleHooks getLifecycleHooks() {
-        return new NoLifecycleHooks();
-    }
-
-
     @Override
     public boolean shouldRetainPresenter() {
         return true;
@@ -78,22 +70,22 @@ public class BasePresenter<UiT extends Ui>
     public void bindUi(@NotNull UiT ui) {
         this.ui = ui;
 
-        afterBindUi();
+        onPresenterBound();
     }
 
     @Override
-    public void afterBindUi() {
+    public void onPresenterBound() {
     }
 
     @Override
     public void unBindUi() {
         ui = null;
 
-        afterUnBindUi();
+        onPresenterUnBound();
     }
 
     @Override
-    public void afterUnBindUi() {
+    public void onPresenterUnBound() {
     }
 
     @Override

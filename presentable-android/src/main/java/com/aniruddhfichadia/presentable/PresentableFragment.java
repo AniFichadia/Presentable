@@ -49,7 +49,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         extends Fragment
         implements PresentableUiAndroid<PresenterT> {
     private PresenterT     presenter;
-    private LifecycleHooks lifecycleHooks;
 
     private final Object  uiHandlerLock;
     @Nullable
@@ -73,8 +72,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
-
-        lifecycleHooks = presenter.getLifecycleHooks();
 
         afterOnCreate(savedInstanceState);
     }
@@ -105,29 +102,11 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         super.onActivityCreated(savedInstanceState);
 
         getPresenter().bindUi((UiT) this);
-
-        lifecycleHooks.onCreate();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        lifecycleHooks.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        lifecycleHooks.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        lifecycleHooks.onDestroy();
 
         getPresenter().unBindUi();
     }

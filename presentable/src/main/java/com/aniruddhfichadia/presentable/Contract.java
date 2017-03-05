@@ -18,9 +18,6 @@
 package com.aniruddhfichadia.presentable;
 
 
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
-import com.aniruddhfichadia.presentable.LifecycleHooks.SparseLifecycleHooks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -36,46 +33,41 @@ public interface Contract {
     }
 
     /**
+     * The bare minimum lifecycle events required for a {@link Presenter}. These should be all
+     * you actually need. If more fine-grained events are required, specify that in your
+     * {@link Presenter} contract to the UI and implement as required
+     */
+    interface PresenterLifecycleEvents {
+        void onPresenterBound();
+
+        void onPresenterUnBound();
+    }
+
+    /**
      * A pure Java presenter.
      * <p>
      * Ideally the presenter implementation should be platform agnostic and have no or platform agnostic references to
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
-    interface Presenter<UiT extends Ui> {
-        /**
-         * Provides {@link LifecycleHooks} so a {@link Presenter} can interact with its {@link Ui}'s lifecycle
-         * events. The provided value is required to be non-null to simplify development and integration. Since the value is
-         * non-null, you can use {@link NoLifecycleHooks} or {@link SparseLifecycleHooks}, depending on the use case.
-         * <p>
-         * If lifecycle events aren't implemented by your UI, don't consume/invoke the appropriate method in {@link
-         * LifecycleHooks}.
-         */
-        @NotNull
-        LifecycleHooks getLifecycleHooks();
-
-
+    interface Presenter<UiT extends Ui>
+            extends PresenterLifecycleEvents {
         boolean shouldRetainPresenter();
 
 
         /**
-         * JUST bind the {@link Ui} to the {@link Presenter}. Implementations should call
-         * {@link #afterBindUi()} after binding is complete.
-         * <p>
-         * Work required after binding the {@link Ui} should use use {@link #afterBindUi()}
+         * Bind the {@link Ui} to the {@link Presenter}. Implementations should notify
+         * appropriate lifecycle events after binding is complete
+         * (i.e. {@link Presenter#onPresenterBound()}.
          */
         void bindUi(@NotNull UiT ui);
 
-        void afterBindUi();
-
         /**
-         * JUST perform unbinding of the {@link Ui} from the {@link Presenter}. Implementations
-         * should call {@link #afterUnBindUi()} after unbinding is complete.
-         * <p>
-         * Work required after unbinding the {@link Ui} should use use {@link #afterBindUi()}
+         * Unbind the {@link Ui} from the {@link Presenter}. Implementations should notify
+         * appropriate lifecycle events after unbinding is complete
+         * (i.e. {@link Presenter#onPresenterUnBound()}.
          */
         void unBindUi();
 
-        void afterUnBindUi();
 
         boolean isUiAttached();
 

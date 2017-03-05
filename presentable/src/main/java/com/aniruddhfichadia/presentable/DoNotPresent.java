@@ -20,7 +20,6 @@ package com.aniruddhfichadia.presentable;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,19 +27,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Convenience class for when your UI doesn't require a {@link Presenter}.
  * <p>
- * Returns {@link NoLifecycleHooks} for {@link #getLifecycleHooks()}.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public final class DoNotPresent<UiT extends Ui>
         implements Presenter<UiT> {
-    @NotNull
-    @Override
-    public LifecycleHooks getLifecycleHooks() {
-        return new NoLifecycleHooks();
-    }
-
-
     @Override
     public boolean shouldRetainPresenter() {
         return true;
@@ -53,7 +44,7 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void afterBindUi() {
+    public void onPresenterBound() {
         // No-op
     }
 
@@ -63,7 +54,7 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void afterUnBindUi() {
+    public void onPresenterUnBound() {
         // No-op
     }
 
