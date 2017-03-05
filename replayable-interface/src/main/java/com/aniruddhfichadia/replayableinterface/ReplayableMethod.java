@@ -15,13 +15,27 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.replayableinterface;
+
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 
 /**
- * Generic (but not generic) interface for a {@link Presenter}'s UI class.
- *
- * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
+ * @author Aniruddh Fichadia
+ * @date 17/1/17
  */
-public interface PresenterUi {
+@Target(METHOD)
+@Retention(CLASS)
+public @interface ReplayableMethod {
+    ReplayStrategy value() default ReplayStrategy.DEFAULT;
+
+    String group() default NO_GROUP;
+
+
+    String NO_GROUP = "";
 }

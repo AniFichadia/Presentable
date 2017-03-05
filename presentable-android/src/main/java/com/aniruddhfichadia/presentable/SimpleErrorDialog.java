@@ -14,7 +14,7 @@ import com.aniruddhfichadia.presentable.component.MessageBuilder;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 29/12/16
  */
 public class SimpleErrorDialog

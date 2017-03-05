@@ -1,0 +1,37 @@
+apply plugin: 'java'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    compile 'org.jetbrains:annotations-java5:15.0'
+
+    compile project(':presentable')
+
+    compile project(':replayable-interface')
+}
+
+ext {
+    libDir = "$rootDir/build/libs/"
+}
+
+tasks.withType(Jar) {
+    destinationDir = file(libDir)
+}
+
+clean.doFirst {
+    delete "${libDir}"
+}
+
+
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+    doLast {
+        copy {
+            from "build/libs"
+            into "dist"
+        }
+    }
+}

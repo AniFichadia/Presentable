@@ -13,7 +13,7 @@ import com.aniruddhfichadia.presentable.SimpleErrorDialog;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 29/12/16
  */
 public class AndroidDialogMessageComponent
@@ -34,7 +34,8 @@ public class AndroidDialogMessageComponent
 
 
     @Override
-    protected void showInternal(@NonNull MessageBuilder messageBuilder, @Nullable final OnActionClickListener listener) {
+    protected void showInternal(@NonNull MessageBuilder messageBuilder,
+                                @Nullable final OnActionClickListener listener) {
         dismissIfShowing();
 
         SimpleErrorDialog dialog = SimpleErrorDialog.newInstance(messageBuilder);

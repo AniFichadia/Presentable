@@ -18,19 +18,24 @@
 package com.aniruddhfichadia.presentable;
 
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.PresenterState;
+import com.aniruddhfichadia.presentable.Contract.Ui;
+
 import org.jetbrains.annotations.Nullable;
 
 
 /**
- * UI lifecycle hooks. Allows linking between a {@link Presenter} and its corresponding {@link PresenterUi}'s
+ * UI lifecycle hooks. Allows linking between a {@link Presenter} and its corresponding {@link Ui}
  * lifecycle.
  * <p>
  * This is modelled similarly to Android's lifecycle events, but makes some abstractions for saving and restoring a
- * presenters state ({@link #onSave()} and {@link #onRestore(PresenterModel)}). Each lifecycle event should be
+ * presenters state ({@link #onSave()} and {@link #onRestore(PresenterState)}). Each lifecycle event should be
  * relatively self explanatory.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
+@Deprecated
 public interface LifecycleHooks {
     void onCreate();
 
@@ -41,9 +46,9 @@ public interface LifecycleHooks {
     void onPause();
 
     @Nullable
-    PresenterModel onSave();
+    PresenterState onSave();
 
-    void onRestore(@Nullable PresenterModel savedState);
+    void onRestore(@Nullable PresenterState savedState);
 
 
     /**
@@ -66,12 +71,12 @@ public interface LifecycleHooks {
 
         @Nullable
         @Override
-        public PresenterModel onSave() {
+        public PresenterState onSave() {
             return null;
         }
 
         @Override
-        public void onRestore(@Nullable PresenterModel savedState) {
+        public void onRestore(@Nullable PresenterState savedState) {
         }
 
         @Override

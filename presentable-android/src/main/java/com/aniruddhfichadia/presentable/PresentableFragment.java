@@ -19,6 +19,9 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +29,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
 
 
 /**
@@ -35,45 +41,45 @@ import android.view.ViewGroup;
  * {@link Presenter} instantiation occurs in the constructor.
  * <p>
  * For applications that require dependency injection (eg. Dagger), you can implement the {@link #inject()} method.
- * Depending on how your dependency injection is configured (constructor vs post instantiation), you can to control the
- * point of injection using {@link #shouldInjectBeforeInitialisingPresenter()}.
+ * <p>
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableFragment<P extends Presenter>
+public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
         extends Fragment
-        implements ViewBindable {
-    /**
-     * A format for {@link PresenterModel} persistence. Refer to {@link #generatePresenterModelKey()} for the actual key
-     * used in the bundle for {@link #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
-     */
-    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
+        implements PresentableUiAndroid<PresenterT> {
+    private PresenterT     presenter;
+    private LifecycleHooks lifecycleHooks;
 
-    @NonNull
-    private final P              presenter;
-    @NonNull
-    private final LifecycleHooks lifecycleHooks;
+    private final Object  uiHandlerLock;
+    @Nullable
+    private       Handler uiHandler;
 
 
     public PresentableFragment() {
         super();
 
-        boolean injectBeforeInitialisingPresenter = shouldInjectBeforeInitialisingPresenter();
+        inject();
 
-        if (injectBeforeInitialisingPresenter) {
-            inject();
-        }
-
-        presenter = createPresenter();
-        lifecycleHooks = presenter.getLifecycleHooks();
-
-        if (!injectBeforeInitialisingPresenter) {
-            inject();
-        }
+        uiHandlerLock = new Object();
     }
 
 
     //region Lifecycle
+    @CallSuper
+    @Override
+    public final void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
+
+
+        lifecycleHooks = presenter.getLifecycleHooks();
+
+        afterOnCreate(savedInstanceState);
+    }
+
+
     @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -92,13 +98,18 @@ public abstract class PresentableFragment<P extends Presenter>
         }
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        getPresenter().bindUi((UiT) this);
+
         lifecycleHooks.onCreate();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
@@ -116,8 +127,9 @@ public abstract class PresentableFragment<P extends Presenter>
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         lifecycleHooks.onDestroy();
+
+        getPresenter().unBindUi();
     }
 
     @Override
@@ -127,75 +139,43 @@ public abstract class PresentableFragment<P extends Presenter>
         unbindView();
     }
 
+
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterModel presenterModel = lifecycleHooks.onSave();
-        if (presenterModel != null) {
-            outState.putSerializable(generatePresenterModelKey(), presenterModel);
-        }
+        PresentableUiDelegateImpl.handleSave(this, outState);
     }
+    //endregion
+
+    //region Overrideable lifecycle events
+    public void afterOnCreate(@Nullable Bundle savedInstanceState) {
+    }
+
+    public void saveUiState(@NonNull Bundle outState) {
+    }
+
+    public void restoreUiState(@NonNull Bundle savedState) {
+    }
+    //endregion
+
+
+    public void inject() {
+    }
+
+    @NonNull
+    public abstract Registry getRegistry();
+
+
+    @NonNull
+    public abstract PresenterT createPresenter();
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        PresenterModel presenterModel = null;
-
-        if (savedInstanceState != null) {
-            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
-                    generatePresenterModelKey());
-        }
-
-        lifecycleHooks.onRestore(presenterModel);
-    }
-
-
-    /**
-     * Generates a key unique to the {@link Fragment} class to persist {@link PresenterModel} during {@link
-     * #onSaveInstanceState(Bundle)} and {@link #onViewStateRestored(Bundle)}
-     */
-    protected String generatePresenterModelKey() {
-        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
-    }
-    //endregion
-
-
-    //region Dependency Injection
-    protected boolean shouldInjectBeforeInitialisingPresenter() {
-        return true;
-    }
-
-    /**
-     * Performs dependency injection for your fragment. You can override this as necessary or not implement it at all!
-     * <p>
-     * {@link #shouldInjectBeforeInitialisingPresenter()} controls when injection occurs.
-     */
-    protected void inject() {
-    }
-    //endregion
-
-
-    //region Presenter
-
-    /**
-     * Provide your {@link Presenter} instance through this method. If no presenter is required, return {@link
-     * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
-     */
-    @NonNull
-    protected abstract P createPresenter();
-
-    /**
-     * Internal access to the {@link Presenter}
-     */
-    protected final P getPresenter() {
+    public final PresenterT getPresenter() {
         return presenter;
     }
-    //endregion
 
 
-    //region ViewBindable
     @LayoutRes
     @Override
     public abstract int getLayoutResource();
@@ -211,5 +191,21 @@ public abstract class PresentableFragment<P extends Presenter>
     @Override
     public void unbindView() {
     }
-    //endregion
+
+
+    /** A {@link Fragment} equivalent of {@link android.app.Activity#runOnUiThread(Runnable)}. */
+    protected void runOnUiThread(@NonNull Runnable runnable) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            // This is the main looper/thread, just execute the runnable
+            runnable.run();
+        } else {
+            synchronized (uiHandlerLock) {
+                // Not the main looper, post event on it
+                if (uiHandler == null) {
+                    uiHandler = new Handler(Looper.getMainLooper());
+                }
+                uiHandler.post(runnable);
+            }
+        }
+    }
 }

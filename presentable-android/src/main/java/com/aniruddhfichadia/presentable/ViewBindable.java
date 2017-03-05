@@ -7,7 +7,7 @@ import android.view.View;
 
 
 /**
- * @author Aniruddh Fichadia
+ * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 28/12/16
  */
 public interface ViewBindable {

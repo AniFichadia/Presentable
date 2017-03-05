@@ -19,41 +19,39 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
+
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableActivity<P extends Presenter>
+public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
-        implements ViewBindable {
-    private static final String KEY_PRESENTER_MODEL = "key_presenter_model";
-
-
-    @NonNull
-    protected final P              presenter;
-    @NonNull
-    private final   LifecycleHooks lifecycleHooks;
+        implements PresentableUiAndroid<PresenterT> {
+    private PresenterT     presenter;
+    private LifecycleHooks lifecycleHooks;
 
 
     public PresentableActivity() {
         super();
 
         inject();
-
-        presenter = createPresenter();
-        lifecycleHooks = presenter.getLifecycleHooks();
     }
 
 
     //region Lifecycle
+    @CallSuper
+    @SuppressWarnings("unchecked")
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(getLayoutResource());
@@ -62,9 +60,20 @@ public abstract class PresentableActivity<P extends Presenter>
         bindView(contentView);
         afterBindView(contentView);
 
+        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
+
+
+        lifecycleHooks = presenter.getLifecycleHooks();
+
+        getPresenter().bindUi((UiT) this);
+
+        afterOnCreate(savedInstanceState);
+
         lifecycleHooks.onCreate();
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
     protected void onResume() {
         super.onResume();
@@ -85,69 +94,48 @@ public abstract class PresentableActivity<P extends Presenter>
 
         lifecycleHooks.onDestroy();
 
+        getPresenter().unBindUi();
+
         // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
         // this is explicitly necessary
         unbindView();
     }
 
-
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresenterModel presenterModel = lifecycleHooks.onSave();
-        if (presenterModel != null) {
-            outState.putSerializable(generatePresenterModelKey(), presenterModel);
-        }
+        PresentableUiDelegateImpl.handleSave(this, outState);
+    }
+    //endregion
+
+    //region Overrideable lifecycle events
+    public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        PresenterModel presenterModel = null;
-
-        if (savedInstanceState != null) {
-            presenterModel = (PresenterModel) savedInstanceState.getSerializable(
-                    generatePresenterModelKey());
-        }
-
-        lifecycleHooks.onRestore(presenterModel);
+    public void saveUiState(@NonNull Bundle outState) {
     }
 
-
-    protected String generatePresenterModelKey() {
-        return getClass().getSimpleName() + "." + KEY_PRESENTER_MODEL;
+    public void restoreUiState(@NonNull Bundle savedState) {
     }
     //endregion
 
 
-    //region Dependency Injection
-    // Override as necessary
-    protected void inject() {
+    public void inject() {
     }
-    //endregion
 
-
-    //region Presenter
-
-    /**
-     * Provide your {@link Presenter} instance through this method. If no presenter is required, return {@link
-     * com.aniruddhfichadia.presentable.Presenter.DoNotPresent}
-     */
     @NonNull
-    protected abstract P createPresenter();
+    public abstract Registry getRegistry();
 
-    /**
-     * Internal access to the {@link Presenter}
-     */
-    protected final P getPresenter() {
+
+    @NonNull
+    public abstract PresenterT createPresenter();
+
+    public final PresenterT getPresenter() {
         return presenter;
     }
-    //endregion
 
 
-    //region ViewBindable
     @LayoutRes
     @Override
     public abstract int getLayoutResource();
@@ -163,5 +151,4 @@ public abstract class PresentableActivity<P extends Presenter>
     @Override
     public void unbindView() {
     }
-    //endregion
 }

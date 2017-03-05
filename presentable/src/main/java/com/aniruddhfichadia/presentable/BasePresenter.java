@@ -18,24 +18,40 @@
 package com.aniruddhfichadia.presentable;
 
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.presentable.LifecycleHooks.NoLifecycleHooks;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 /**
  * A convenient, extensible implementation of the {@link Presenter} interface. The constructor associates a {@link
- * PresenterUi} with it and provides {@link NoLifecycleHooks} by default.
+ * Ui} with it and provides {@link NoLifecycleHooks} by default.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public class BasePresenter<Ui extends PresenterUi>
-        implements Presenter<Ui> {
-    @NotNull
-    private final Ui ui;
+public class BasePresenter<UiT extends Ui>
+        implements Presenter<UiT> {
+    @Nullable
+    private UiT ui;
 
 
-    public BasePresenter(@NotNull Ui ui) {
+    public BasePresenter() {
+        super();
+    }
+
+    /**
+     * @deprecated Really should not use this. There are consequences for binding too early in the
+     * UI lifecycle, such as NPEs.
+     */
+    @Deprecated
+    public BasePresenter(UiT ui) {
+        this();
+
+        // TODO prevents calling afterBind when the UIs lifecycle hasn't properly bound the
+        // presenter
         this.ui = ui;
     }
 
@@ -46,8 +62,42 @@ public class BasePresenter<Ui extends PresenterUi>
         return new NoLifecycleHooks();
     }
 
+
     @Override
-    public Ui getUi() {
+    public boolean shouldRetainPresenter() {
+        return true;
+    }
+
+
+    @Override
+    public boolean isUiAttached() {
+        return ui != null;
+    }
+
+    @Override
+    public void bindUi(@NotNull UiT ui) {
+        this.ui = ui;
+
+        afterBindUi();
+    }
+
+    @Override
+    public void afterBindUi() {
+    }
+
+    @Override
+    public void unBindUi() {
+        ui = null;
+
+        afterUnBindUi();
+    }
+
+    @Override
+    public void afterUnBindUi() {
+    }
+
+    @Override
+    public UiT getUi() {
         return ui;
     }
 }
