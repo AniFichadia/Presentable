@@ -24,7 +24,7 @@ import java.util.UUID;
 
 
 /**
- * TODO: document
+ * A default implementation of {@link Registry}. Stores entries in a {@link HashMap}.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17

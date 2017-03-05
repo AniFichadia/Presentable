@@ -193,6 +193,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
+    /** A {@link Fragment} equivalent of {@link android.app.Activity#runOnUiThread(Runnable)}. */
     protected void runOnUiThread(@NonNull Runnable runnable) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             // This is the main looper/thread, just execute the runnable

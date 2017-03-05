@@ -39,8 +39,15 @@ public interface PresentableUiAndroid<PresenterT extends Presenter>
      */
     void afterOnCreate(@Nullable Bundle savedInstanceState);
 
+    /**
+     * Persist the important UI state using the provided {@link Bundle}.
+     * <p>
+     * You may have to persist properties of views that don't immediately restore their state,
+     * such as {@link android.widget.TextView}'s text value.
+     */
     void saveUiState(@NonNull Bundle outState);
 
+    /** Restore important UI state. */
     void restoreUiState(@NonNull Bundle savedState);
     //endregion
 

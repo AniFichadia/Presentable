@@ -46,10 +46,6 @@ import static android.view.View.VISIBLE;
 
 
 /**
- * TODO: don't keep activities + replay = loading... -> loading done doesn't update
- * View.dispatchRestoreInstanceState gets called with a delay AFTER ... the state is restored by
- * replay
- *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
  */

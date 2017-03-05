@@ -18,26 +18,23 @@
 package com.aniruddhfichadia.presentable;
 
 
-import org.jetbrains.annotations.Nullable;
-
-
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 2017-01-17
+ * @date 2017-03-05
  */
-public interface Registry {
-    /**
-     * Adds a value to the {@link Registry}
-     *
-     * @return A key which can be used to retrieve the entry
-     */
-    @Nullable
-    <T> String put(T value);
+public class EmptyRegistry
+        implements Registry {
+    @Override
+    public <T> String put(T value) {
+        return null;
+    }
 
-    /** Returns a value with the corresponding key. May return null */
-    @Nullable
-    <T> T get(String key);
+    @Override
+    public <T> T get(String key) {
+        return null;
+    }
 
-
-    void clear();
+    @Override
+    public void clear() {
+    }
 }
