@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
  * relatively self explanatory.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
+ * @deprecated Use {@link Presenter#afterBindUi()} and {@link Presenter#afterUnBindUi()} instead
  */
 @Deprecated
 public interface LifecycleHooks {

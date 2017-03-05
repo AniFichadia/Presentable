@@ -57,10 +57,22 @@ public interface Contract {
         boolean shouldRetainPresenter();
 
 
+        /**
+         * JUST bind the {@link Ui} to the {@link Presenter}. Implementations should call
+         * {@link #afterBindUi()} after binding is complete.
+         * <p>
+         * Work required after binding the {@link Ui} should use use {@link #afterBindUi()}
+         */
         void bindUi(@NotNull UiT ui);
 
         void afterBindUi();
 
+        /**
+         * JUST perform unbinding of the {@link Ui} from the {@link Presenter}. Implementations
+         * should call {@link #afterUnBindUi()} after unbinding is complete.
+         * <p>
+         * Work required after unbinding the {@link Ui} should use use {@link #afterBindUi()}
+         */
         void unBindUi();
 
         void afterUnBindUi();
