@@ -36,7 +36,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
 public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
         implements PresentableUiAndroid<PresenterT> {
-    private PresenterT     presenter;
+    private PresenterT presenter;
 
 
     public PresentableActivity() {
@@ -48,7 +48,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
     //region Lifecycle
     @CallSuper
-    @SuppressWarnings("unchecked")
     @Override
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,12 +60,24 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
         presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
-
-        getPresenter().bindUi((UiT) this);
-
         afterOnCreate(savedInstanceState);
     }
 
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        getPresenter().bindUi((UiT) this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        getPresenter().unBindUi();
+    }
 
     @Override
     protected void onDestroy() {

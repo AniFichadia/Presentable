@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 
+import org.jetbrains.annotations.NotNull;
+
 
 /**
  * A {@link Fragment} with appropriate hook-ins and abstractions to interact with a {@link Presenter}. Also adds a bit
@@ -48,19 +50,18 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
 public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
         extends Fragment
         implements PresentableUiAndroid<PresenterT> {
-    private PresenterT     presenter;
+    private PresenterT presenter;
 
-    private final Object  uiHandlerLock;
-    @Nullable
-    private       Handler uiHandler;
+    @NotNull
+    private final Handler uiHandler;
 
 
     public PresentableFragment() {
         super();
 
-        inject();
+        uiHandler = new Handler(Looper.getMainLooper());
 
-        uiHandlerLock = new Object();
+        inject();
     }
 
 
@@ -98,15 +99,15 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
         getPresenter().bindUi((UiT) this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
 
         getPresenter().unBindUi();
     }
@@ -178,13 +179,8 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
             // This is the main looper/thread, just execute the runnable
             runnable.run();
         } else {
-            synchronized (uiHandlerLock) {
-                // Not the main looper, post event on it
-                if (uiHandler == null) {
-                    uiHandler = new Handler(Looper.getMainLooper());
-                }
-                uiHandler.post(runnable);
-            }
+            // Not the main looper, post event on it
+            uiHandler.post(runnable);
         }
     }
 }
