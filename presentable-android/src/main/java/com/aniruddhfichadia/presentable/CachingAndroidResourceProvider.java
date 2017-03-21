@@ -60,11 +60,4 @@ public class CachingAndroidResourceProvider
 
         return string;
     }
-
-
-    @Override
-    protected int lookupColor(@NotNull String identifier) {
-        // TODO cache this?
-        return super.lookupColor(identifier);
-    }
 }
