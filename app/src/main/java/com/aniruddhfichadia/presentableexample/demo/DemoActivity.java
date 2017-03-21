@@ -97,7 +97,6 @@ public class DemoActivity
                 savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
                                                                         : INVISIBLE);
         btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
-        txtMessage.setText(savedInstanceState.getString("txtMessageText"));
     }
 
     @Override
@@ -106,7 +105,6 @@ public class DemoActivity
 
         outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
         outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
-        outState.putCharSequence("txtMessageText", txtMessage.getText());
     }
 
 

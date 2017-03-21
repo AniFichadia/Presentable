@@ -38,12 +38,12 @@ public class DemoPresenterImpl
         implements DemoPresenter, DemoInterActorListener {
     private static final String TAG = DemoPresenterImpl.class.getSimpleName();
 
-    private final DemoInterActor interactor;
+    private final DemoInterActor interActor;
 
 
-    public DemoPresenterImpl(DemoInterActor interactor) {
-        this.interactor = interactor;
-        interactor.setListener(this);
+    public DemoPresenterImpl(DemoInterActor interActor) {
+        this.interActor = interActor;
+        interActor.setListener(this);
     }
 
 
@@ -58,12 +58,12 @@ public class DemoPresenterImpl
     public void loadSomething() {
         Log.d(TAG, "loadSomething");
 
-        if (!interactor.isDoingAsyncStuff()) {
+        if (!interActor.isDoingAsyncStuff()) {
             getUi().showLoading();
             getUi().setMessage("Loading ...");
             getUi().setLoadingAllowed(false);
 
-            interactor.doAsyncStuff();
+            interActor.doAsyncStuff();
         }
     }
 
