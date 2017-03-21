@@ -53,8 +53,8 @@ public class PresentableUiDelegateImpl {
         return presenter;
     }
 
-    public static <PresenterT extends Presenter> void handleSave(@NonNull PresentableUiAndroid<PresenterT> ui,
-                                                                 @NonNull Bundle outState) {
+    public static <PresenterT extends Presenter> void savePresenter(@NonNull PresentableUiAndroid<PresenterT> ui,
+                                                                    @NonNull Bundle outState) {
         if (ui.getPresenter().shouldRetainPresenter()) {
             String presenterKey = ui.getRegistry().put(ui.getPresenter());
             if (presenterKey != null) {

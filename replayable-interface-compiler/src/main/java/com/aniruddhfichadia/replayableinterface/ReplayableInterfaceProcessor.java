@@ -97,7 +97,8 @@ public class ReplayableInterfaceProcessor
                                                                       className.replace('.', '$'));
 
                 ReplayableInterface replayableInterface = element.getAnnotation(
-                        ReplayableInterface.class);
+                        ReplayableInterface.class
+                );
                 ReplayStrategy defaultReplyStrategy = replayableInterface.value();
                 ReplayType replayType = replayableInterface.replayType();
                 boolean clearAfterReplaying = replayableInterface.clearAfterReplaying();

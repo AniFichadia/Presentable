@@ -54,6 +54,8 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        beforeOnCreate(savedInstanceState);
+
         setContentView(getLayoutResource());
 
         View contentView = getWindow().getDecorView();
@@ -102,11 +104,15 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresentableUiDelegateImpl.handleSave(this, outState);
+        PresentableUiDelegateImpl.savePresenter(this, outState);
     }
     //endregion
 
     //region Overrideable lifecycle events
+    @Override
+    public void beforeOnCreate(@Nullable Bundle savedInstanceState) {
+    }
+
     public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 

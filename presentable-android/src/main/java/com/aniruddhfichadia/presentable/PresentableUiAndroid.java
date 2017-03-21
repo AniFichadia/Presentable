@@ -20,10 +20,9 @@ package com.aniruddhfichadia.presentable;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
-
-import org.jetbrains.annotations.Nullable;
 
 
 /**
@@ -33,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 public interface PresentableUiAndroid<PresenterT extends Presenter>
         extends ViewBindable {
     //region Lifecycle
+    void beforeOnCreate(@Nullable Bundle savedInstanceState);
 
     /**
      * Since onCreate... methods are intentionally final, this allows you do perform initialisation

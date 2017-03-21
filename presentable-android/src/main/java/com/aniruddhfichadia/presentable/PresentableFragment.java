@@ -71,6 +71,8 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        beforeOnCreate(savedInstanceState);
+
         presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
 
@@ -130,11 +132,15 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresentableUiDelegateImpl.handleSave(this, outState);
+        PresentableUiDelegateImpl.savePresenter(this, outState);
     }
     //endregion
 
     //region Overrideable lifecycle events
+    @Override
+    public void beforeOnCreate(@Nullable Bundle savedInstanceState) {
+    }
+
     public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
