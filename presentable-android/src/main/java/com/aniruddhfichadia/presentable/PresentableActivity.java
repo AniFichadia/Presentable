@@ -19,6 +19,8 @@ package com.aniruddhfichadia.presentable;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -69,7 +71,13 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     protected void onStart() {
         super.onStart();
 
-        getPresenter().bindUi((UiT) this);
+        // Allow any other events on the main looper to settle and then bind the presenter
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                getPresenter().bindUi((UiT) PresentableActivity.this);
+            }
+        });
     }
 
     @Override

@@ -102,7 +102,13 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public void onStart() {
         super.onStart();
 
-        getPresenter().bindUi((UiT) this);
+        // Use a minor delay to allow the view to restore itself
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                getPresenter().bindUi((UiT) PresentableFragment.this);
+            }
+        });
     }
 
     @Override
