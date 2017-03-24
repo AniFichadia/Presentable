@@ -1,65 +1,62 @@
-*Please note*: Presentable is a work in progress and there may be some code flux at this time.
-Most of the fundamentals have been setup however.
+**Please note**: Presentable is a work in progress and there may be some code flux at this time.
+Most of the fundamentals have been setup and the tool is in a usable state.
 
 
 # Presentable
 Presentable is a high level framework to implement a Model View Presenter (MVP) and Clean inspired architecture for Java, Android and iOS applications.
 
-Presentable aims to achieve this by producing reusable and translatable domain model and presentation layer code across a variety of platforms, with Java as the base language.
+Presentable aims to achieve this by producing reusable and translatable domain models, core functionality and business logic across a variety of platforms, with Java as the base language.
 
 This tool weighs up the learnings from cross platform tools like Xamarin.
 
-TODO
-
 ## Concepts
-TODO
 
 ### Strong contracts between layers
-TODO
-
 Interface between UI <--> Presenter <--> InterActor
+
+Developers can make the choice to replace the `InterActor` with a `Model` and follow MVP strictly.
+It is your choice though.
 
 
 ### High level lifecycle binding
 
-There are only 2 lifecycle events exposed at the Presenter layer from the UI: binding and unbinding.
-These events are intentionally generalised and as bare bones as possible.
-It's too complex to shoehorn different UI components and platforms into following the same lifecycle.
+There are only 2 lifecycle events exposed to the Presentation layer: binding and unbinding.
+These events are intentionally generalised and are as simple as possible.
+This prevents shoehorning different lifecycles provided by different UI components and platforms.
+If there are other lifecycle events that need to be used, these can simply be exposed as a method through your contracts. 
 
 
 ## Framework and design decisions
 
 
 ### Contract
-This is a conglomeration of all things required to represent a UI component or a screen.
-This includes 'base' interfaces for all components:
- - User Interface (UI)
- - Presenter
- - InterActors
+An interface that provides all contracts between application layers for your UI component or screen.
+This keeps all interfaces between application layers in a single place.
+Base interfaces have been provided for all layers.
 
 
-### UI
-TODO
+### Ui
+Info coming soon
 
 ### Presenter
-TODO
+Info coming soon
 
 ### InterActor
+Info coming soon
 
 ## Naming choices
-When using generalised naming, there can be some confusion and some lost in translation moments.
-Here's a breakdown of some naming choices
+Naming is hard.
+Quite often things are lost in translation when there's different understandings of words.
+Here's a breakdown of some naming choices:
 
 
 ### InterActor vs Interactor
-This is a clean interactor.
-Decomposing the words an 'inter-actor' sits in between two components.
-I've found that this term is generally confusing for developers new to or unfamiliar with clean architecture and this naming.
-Hence the naming `InterActor`
+An 'inter-actor' sits in between two components, as with the Clean architecture interactor.
+The term can be confused and the intentional uppercasing of the 'A' in actor helps emphasise the meaning.
 
 ### Repositories
 It stores and retrieves something.
-This is inclusive of APIs, epiphermal stores, etc. and not just databases.
+This is not restricted to databases, and can include data provided by APIs, epiphermal stores, preference stores, etc.
 
 
 ## Modules
@@ -68,20 +65,26 @@ This is inclusive of APIs, epiphermal stores, etc. and not just databases.
 The core, pure java implementation of the framework
 
 ### presentable-replayable
-TODO
+Info coming soon
 
 ### presentable-android
 Android specific implementations
 
 ### presentable-ios?
-To be implemented???
+Info coming soon, to be developed
+
+
+## Replayable code generation
+Info coming soon
 
 
 ## Inspirations
-The framework takes inspiration from and is based on
- - Model View Presenter (MVP) architecture
- - Clean architecture
- - Square coordinators (https://github.com/square/coordinators) general purpose binding
- - Google/Square Dagger (https://github.com/google/dagger) and Jake Wharton's ButterKnife (https://github.com/JakeWharton/butterknife) Code generation
- - Dagger Non-configuration scope
- - Commander Pattern
+The framework is inspired by and based on:
+
+* Model View Presenter (MVP) architecture
+* (Uncle Bob's) Clean architecture
+* The Mysterious CJ (you know who you are! Thanks for your feedback and mentoring)
+* [Square Coordinators](https://github.com/square/coordinators) general purpose binding
+* [Google/Square Dagger](https://github.com/google/dagger) and [Jake Wharton's ButterKnife](https://github.com/JakeWharton/butterknife) Code generation
+* Dagger Non-configuration scope
+* Commander Pattern
