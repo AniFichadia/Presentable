@@ -22,36 +22,25 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 
 /**
- * A convenient, extensible implementation of the {@link Presenter} interface. The constructor associates a {@link
- * Ui} with it and provides {@link NoLifecycleHooks} by default.
+ * A convenient, extensible implementation of the {@link Presenter} interface.
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public class BasePresenter<UiT extends Ui>
         implements Presenter<UiT> {
-    @Nullable
-    private UiT ui;
+    @NotNull
+    private WeakReference<UiT> uiReference;
 
 
     public BasePresenter() {
         super();
-    }
 
-    /**
-     * @deprecated Really should not use this. There are consequences for binding too early in the
-     * UI lifecycle, such as NPEs.
-     */
-    @Deprecated
-    public BasePresenter(UiT ui) {
-        this();
-
-        // TODO prevents calling afterBind when the UIs lifecycle hasn't properly bound the
-        // presenter
-        this.ui = ui;
+        this.uiReference = new WeakReference<>(null);
     }
 
 
@@ -63,12 +52,12 @@ public class BasePresenter<UiT extends Ui>
 
     @Override
     public boolean isUiAttached() {
-        return ui != null;
+        return uiReference.get() != null;
     }
 
     @Override
     public void bindUi(@NotNull UiT ui) {
-        this.ui = ui;
+        this.uiReference = new WeakReference<>(ui);
 
         onPresenterBound();
     }
@@ -79,7 +68,7 @@ public class BasePresenter<UiT extends Ui>
 
     @Override
     public void unBindUi() {
-        ui = null;
+        uiReference = new WeakReference<>(null);
 
         onPresenterUnBound();
     }
@@ -90,6 +79,6 @@ public class BasePresenter<UiT extends Ui>
 
     @Override
     public UiT getUi() {
-        return ui;
+        return uiReference.get();
     }
 }
