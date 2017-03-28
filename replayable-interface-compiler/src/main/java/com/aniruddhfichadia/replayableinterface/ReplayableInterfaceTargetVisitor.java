@@ -21,7 +21,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
-import static com.aniruddhfichadia.replayableinterface.DelegatorVisitor.FIELD_NAME_DELEGATE;
+import static com.aniruddhfichadia.replayableinterface.DelegatorVisitor.FIELD_NAME_DELEGATE_REFERENCE;
 import static com.aniruddhfichadia.replayableinterface.DelegatorVisitor.METHOD_NAME_IS_DELEGATE_BOUND;
 import static com.aniruddhfichadia.replayableinterface.ReplaySourceVisitor.METHOD_NAME_ADD_REPLAYABLE_ACTION;
 import static com.aniruddhfichadia.replayableinterface.ReplayableActionBuilder.FIELD_NAME_PARAMS;
@@ -150,19 +150,20 @@ public class ReplayableInterfaceTargetVisitor {
         if (methodReturnsNonVoidValue) {
             methodBuilder.addException(NULL_POINTER_EXCEPTION);
             methodBuilder.addJavadoc("@throws $T if {@link $L} is null\n", NULL_POINTER_EXCEPTION,
-                                     FIELD_NAME_DELEGATE);
+                                     FIELD_NAME_DELEGATE_REFERENCE);
 
-            methodCode.addStatement("return this.$L.$L($L)", FIELD_NAME_DELEGATE, methodName,
-                                    allParamNames)
+            methodCode.addStatement("return this.$L.get().$L($L)", FIELD_NAME_DELEGATE_REFERENCE,
+                                    methodName, allParamNames)
                       .nextControlFlow("else")
                       .addStatement("throw new $T($S)", NULL_POINTER_EXCEPTION,
-                                    FIELD_NAME_DELEGATE + " == null because it is not bound. " +
-                                            "This method cannot be invoked since it returns a " +
-                                            "non-void value and is auto-generated")
+                                    FIELD_NAME_DELEGATE_REFERENCE + " contains a null reference " +
+                                            "because it is not bound. This method cannot be " +
+                                            "invoked since it returns a non-void value and is " +
+                                            "auto-generated")
                       .endControlFlow();
         } else {
-            methodCode.addStatement("this.$L.$L($L)", FIELD_NAME_DELEGATE, methodName,
-                                    allParamNames);
+            methodCode.addStatement("this.$L.get().$L($L)", FIELD_NAME_DELEGATE_REFERENCE,
+                                    methodName, allParamNames);
 
             if (ReplayType.DELEGATE_AND_REPLAY == replayType) {
                 methodCode.endControlFlow();

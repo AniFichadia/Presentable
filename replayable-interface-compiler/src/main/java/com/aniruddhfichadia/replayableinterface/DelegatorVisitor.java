@@ -13,6 +13,7 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 
 import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.PACKAGE_REPLAYABLE_INTERFACE;
+import static com.aniruddhfichadia.replayableinterface.ReplayableInterfaceProcessor.WEAK_REFERENCE;
 
 
 /**
@@ -23,14 +24,16 @@ public class DelegatorVisitor {
     public static final ClassName DELEGATABLE = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
                                                               "Delegator");
 
-    public static final String FIELD_NAME_DELEGATE = "delegate";
+    public static final String FIELD_NAME_DELEGATE_REFERENCE = "delegateReference";
+    public static final String PARAM_NAME_DELEGATE           = "delegate";
 
     public static final String METHOD_NAME_IS_DELEGATE_BOUND = "isDelegateBound";
     public static final String METHOD_NAME_BIND_DELEGATE     = "bindDelegate";
     public static final String METHOD_NAME_UN_BIND_DELEGATE  = "unBindDelegate";
 
-    private final TypeSpec.Builder classBuilder;
-    private final ClassName        targetClassName;
+    private final TypeSpec.Builder      classBuilder;
+    private final ClassName             targetClassName;
+    private final ParameterizedTypeName delegateReferenceType;
 
 
     public DelegatorVisitor(TypeSpec.Builder classBuilder, ClassName targetClassName) {
@@ -38,6 +41,7 @@ public class DelegatorVisitor {
 
         this.classBuilder = classBuilder;
         this.targetClassName = targetClassName;
+        this.delegateReferenceType = ParameterizedTypeName.get(WEAK_REFERENCE, targetClassName);
     }
 
 
@@ -47,7 +51,7 @@ public class DelegatorVisitor {
     }
 
     public DelegatorVisitor applyFields() {
-        classBuilder.addField(createFieldDelegate());
+        classBuilder.addField(createFieldDelegateReference());
         return this;
     }
 
@@ -59,9 +63,10 @@ public class DelegatorVisitor {
     }
 
 
-    private FieldSpec createFieldDelegate() {
-        return FieldSpec.builder(targetClassName, FIELD_NAME_DELEGATE)
+    private FieldSpec createFieldDelegateReference() {
+        return FieldSpec.builder(delegateReferenceType, FIELD_NAME_DELEGATE_REFERENCE)
                         .addModifiers(Modifier.PRIVATE)
+                        .initializer(CodeBlock.of("new $T(null)", delegateReferenceType))
                         .build();
     }
 
@@ -69,11 +74,14 @@ public class DelegatorVisitor {
         return MethodSpec.methodBuilder(METHOD_NAME_BIND_DELEGATE)
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                         .addParameter(ParameterSpec.builder(targetClassName, FIELD_NAME_DELEGATE)
-                                                    .build())
+                         .addParameter(ParameterSpec.builder(targetClassName, PARAM_NAME_DELEGATE)
+                                                    .build()
+                         )
                          .addCode(CodeBlock.builder()
-                                           .addStatement("this.$L = $L", FIELD_NAME_DELEGATE,
-                                                         FIELD_NAME_DELEGATE)
+                                           .addStatement("this.$L = new $T($L)",
+                                                         FIELD_NAME_DELEGATE_REFERENCE,
+                                                         delegateReferenceType,
+                                                         PARAM_NAME_DELEGATE)
                                            .build()
                          )
                          .build();
@@ -84,7 +92,9 @@ public class DelegatorVisitor {
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .addCode(CodeBlock.builder()
-                                           .addStatement("this.$L = null", FIELD_NAME_DELEGATE)
+                                           .addStatement("this.$L = new $T(null)",
+                                                         FIELD_NAME_DELEGATE_REFERENCE,
+                                                         delegateReferenceType)
                                            .build()
                          )
                          .build();
@@ -96,8 +106,8 @@ public class DelegatorVisitor {
                          .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                          .returns(TypeName.BOOLEAN)
                          .addCode(CodeBlock.builder()
-                                           .addStatement("return this.$L != null",
-                                                         FIELD_NAME_DELEGATE)
+                                           .addStatement("return this.$L.get() != null",
+                                                         FIELD_NAME_DELEGATE_REFERENCE)
                                            .build()
                          )
                          .build();

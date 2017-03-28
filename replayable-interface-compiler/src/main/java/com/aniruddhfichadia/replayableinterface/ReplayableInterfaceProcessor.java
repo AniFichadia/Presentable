@@ -43,6 +43,7 @@ public class ReplayableInterfaceProcessor
     public static final ClassName REPLAY_STRATEGY = ClassName.get(PACKAGE_REPLAYABLE_INTERFACE,
                                                                   "ReplayStrategy");
     public static final ClassName STRING          = ClassName.get("java.lang", "String");
+    public static final ClassName WEAK_REFERENCE  = ClassName.get("java.lang.ref", "WeakReference");
 
 
     private Filer filer;
