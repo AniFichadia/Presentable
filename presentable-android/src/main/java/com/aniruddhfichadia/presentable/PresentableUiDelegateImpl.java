@@ -37,8 +37,9 @@ public class PresentableUiDelegateImpl {
                                                                                      @Nullable Bundle savedInstanceState) {
         PresenterT presenter = null;
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PRESENTER)) {
-            presenter = ui.getRegistry().get(savedInstanceState.getString(KEY_PRESENTER));
+        String bundleKey = generateBundleKeyForUi(ui);
+        if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
+            presenter = ui.getRegistry().get(savedInstanceState.getString(bundleKey));
         }
 
         if (presenter != null) {
@@ -55,14 +56,24 @@ public class PresentableUiDelegateImpl {
 
     public static <PresenterT extends Presenter> void savePresenter(@NonNull PresentableUiAndroid<PresenterT> ui,
                                                                     @NonNull Bundle outState) {
-        if (ui.getPresenter().shouldRetainPresenter()) {
-            String presenterKey = ui.getRegistry().put(ui.getPresenter());
+        PresenterT presenter = ui.getPresenter();
+        if (presenter.shouldRetainPresenter()) {
+            String presenterKey = ui.getRegistry().put(presenter);
             if (presenterKey != null) {
                 // Registry has persisted a value, save its key
-                outState.putString(KEY_PRESENTER, presenterKey);
+                outState.putString(generateBundleKeyForUi(ui), presenterKey);
             }
         }
 
         ui.saveUiState(outState);
+    }
+
+
+    /**
+     * Generates a key that includes the UI classes name. This prevents the keys getting
+     * overwritten by other UI elements. This may happen in UIs with nested fragments.
+     */
+    private static String generateBundleKeyForUi(@NonNull PresentableUiAndroid<?> ui) {
+        return ui.getClass().getName() + "." + KEY_PRESENTER;
     }
 }
