@@ -75,7 +75,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
 
-
         afterOnCreate(savedInstanceState);
     }
 
@@ -105,7 +104,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         super.onStart();
 
         // Use a minor delay to allow the view to restore itself
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        uiHandler.post(new Runnable() {
             @Override
             public void run() {
                 getPresenter().bindUi((UiT) PresentableFragment.this);
@@ -194,5 +193,9 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
             // Not the main looper, post event on it
             uiHandler.post(runnable);
         }
+    }
+
+    protected Handler getUiHandler() {
+        return uiHandler;
     }
 }
