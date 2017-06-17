@@ -1,12 +1,10 @@
 package com.aniruddhfichadia.presentable.component;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 
 import com.aniruddhfichadia.presentable.SimpleErrorDialog;
@@ -19,16 +17,10 @@ import com.aniruddhfichadia.presentable.SimpleErrorDialog;
 public class AndroidDialogMessageComponent
         extends MessageComponent {
     @NonNull
-    private final Context         context;
-    @NonNull
     private final FragmentManager fragmentManager;
 
-    @Nullable
-    private DialogFragment currentlyShowing;
 
-
-    public AndroidDialogMessageComponent(@NonNull Context context, @NonNull FragmentManager fragmentManager) {
-        this.context = context;
+    public AndroidDialogMessageComponent(@NonNull FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
     }
 
@@ -36,8 +28,6 @@ public class AndroidDialogMessageComponent
     @Override
     protected void showInternal(@NonNull MessageBuilder messageBuilder,
                                 @Nullable final OnActionClickListener listener) {
-        dismissIfShowing();
-
         SimpleErrorDialog dialog = SimpleErrorDialog.newInstance(messageBuilder);
 
         if (listener != null) {
@@ -62,14 +52,5 @@ public class AndroidDialogMessageComponent
         }
 
         dialog.show(fragmentManager, SimpleErrorDialog.class.getSimpleName());
-
-        currentlyShowing = dialog;
-    }
-
-
-    private void dismissIfShowing() {
-        if (currentlyShowing != null) {
-            currentlyShowing.dismissAllowingStateLoss();
-        }
     }
 }
