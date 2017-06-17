@@ -43,8 +43,6 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
 
     public PresentableActivity() {
         super();
-
-        inject();
     }
 
 
@@ -53,6 +51,8 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     @Override
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        inject();
 
         beforeOnCreate(savedInstanceState);
 

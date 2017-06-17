@@ -60,8 +60,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         super();
 
         uiHandler = new Handler(Looper.getMainLooper());
-
-        inject();
     }
 
 
@@ -70,6 +68,8 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     @Override
     public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        inject();
 
         beforeOnCreate(savedInstanceState);
 
