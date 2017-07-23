@@ -2,5 +2,9 @@ include ':app'
 include ':presentable'
 include ':presentable-replayable'
 include ':presentable-android'
+
 include ':replayable-interface'
+project(':replayable-interface').projectDir = new File(settingsDir, '../ReplayableInterface/replayable-interface')
+
 include ':replayable-interface-compiler'
+project(':replayable-interface-compiler').projectDir = new File(settingsDir, '../ReplayableInterface/replayable-interface-compiler')
