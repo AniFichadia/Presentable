@@ -29,35 +29,34 @@ import org.jetbrains.annotations.NotNull;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17
  */
-public abstract class BaseReplayablePresenter<UiT extends Ui,
-        UiCommanderT extends Ui & Delegator<UiT> & ReplaySource<UiT>>
+public abstract class BaseReplayablePresenter<UiT extends Ui, UiProxyT extends Ui & Delegator<UiT> & ReplaySource<UiT>>
         extends BasePresenter<UiT> {
     @NotNull
-    private final UiCommanderT uiCommander;
+    private final UiProxyT uiProxy;
 
 
     public BaseReplayablePresenter() {
         super();
 
-        uiCommander = createUiCommander();
+        uiProxy = createUiProxy();
     }
 
 
     @NotNull
-    protected abstract UiCommanderT createUiCommander();
+    protected abstract UiProxyT createUiProxy();
 
 
     @Override
     public void bindUi(@NotNull UiT ui) {
-        uiCommander.bindDelegate(ui);
-        uiCommander.replay(ui);
+        uiProxy.bindDelegate(ui);
+        uiProxy.replay(ui);
 
         onPresenterBound();
     }
 
     @Override
     public void unBindUi() {
-        uiCommander.unBindDelegate();
+        uiProxy.unBindDelegate();
 
         onPresenterUnBound();
     }
@@ -65,11 +64,11 @@ public abstract class BaseReplayablePresenter<UiT extends Ui,
     @SuppressWarnings("unchecked")
     @Override
     public UiT getUi() {
-        return (UiT) uiCommander;
+        return (UiT) uiProxy;
     }
 
     @Override
     public boolean isUiAttached() {
-        return uiCommander.isDelegateBound();
+        return uiProxy.isDelegateBound();
     }
 }

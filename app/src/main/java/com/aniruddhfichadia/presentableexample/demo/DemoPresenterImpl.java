@@ -49,7 +49,7 @@ public class DemoPresenterImpl
 
     @NotNull
     @Override
-    protected ReplayableDemoContract$DemoUi createUiCommander() {
+    protected ReplayableDemoContract$DemoUi createUiProxy() {
         return new ReplayableDemoContract$DemoUi();
     }
 
