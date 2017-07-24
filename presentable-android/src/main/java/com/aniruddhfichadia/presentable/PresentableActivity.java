@@ -108,22 +108,29 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     }
     //endregion
 
-    //region Overrideable lifecycle events
+    //region PresentableUiAndroid
     @Override
     public void beforeOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
+    @Override
     public void afterOnCreate(@Nullable Bundle savedInstanceState) {
     }
 
+    @Override
     public void saveUiState(@NonNull Bundle outState) {
     }
 
+    @Override
+    public void onNewInstance() {
+    }
+
+    @Override
     public void restoreUiState(@NonNull Bundle savedState) {
     }
-    //endregion
 
 
+    @Override
     public void inject() {
     }
 
@@ -137,8 +144,9 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     public final PresenterT getPresenter() {
         return presenter;
     }
+    //endregion
 
-
+    //region ViewBindable
     @LayoutRes
     @Override
     public abstract int getLayoutResource();
@@ -154,6 +162,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     @Override
     public void unbindView() {
     }
+    //endregion
 
     //region Nestable
     @Nullable

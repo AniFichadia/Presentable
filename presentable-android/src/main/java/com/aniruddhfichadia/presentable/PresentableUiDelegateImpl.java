@@ -42,13 +42,14 @@ public class PresentableUiDelegateImpl {
             presenter = ui.getRegistry().get(savedInstanceState.getString(bundleKey));
         }
 
-        if (presenter != null) {
-            // The presenter has been retained, restore the UI state
-            if (savedInstanceState != null) {
-                ui.restoreUiState(savedInstanceState);
-            }
-        } else {
+        if (presenter == null) {
+            // Create a new presenter instance
             presenter = ui.createPresenter();
+
+            ui.onNewInstance();
+        } else {
+            // The presenter has been retained, restore the UI state
+            ui.restoreUiState(savedInstanceState);
         }
 
         return presenter;

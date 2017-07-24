@@ -35,7 +35,7 @@ public interface PresentableUiAndroid<PresenterT extends Presenter>
     void beforeOnCreate(@Nullable Bundle savedInstanceState);
 
     /**
-     * Since onCreate... methods are intentionally final, this allows you do perform initialisation
+     * Since onCreate... methods are intentionally final, this allows you to perform initialisation
      */
     void afterOnCreate(@Nullable Bundle savedInstanceState);
 
@@ -46,6 +46,8 @@ public interface PresentableUiAndroid<PresenterT extends Presenter>
      * such as {@link android.widget.TextView}'s text value.
      */
     void saveUiState(@NonNull Bundle outState);
+
+    void onNewInstance();
 
     /** Restore important UI state. */
     void restoreUiState(@NonNull Bundle savedState);
