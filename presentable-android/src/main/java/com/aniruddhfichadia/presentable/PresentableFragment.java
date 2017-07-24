@@ -49,7 +49,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
         extends Fragment
-        implements PresentableUiAndroid<PresenterT> {
+        implements PresentableUiAndroid<PresenterT>, Nestable {
     private PresenterT presenter;
 
     @NotNull
@@ -181,6 +181,38 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
     @Override
     public void unbindView() {
+    }
+
+    //region Nestable
+    @Nullable
+    @Override
+    public Nestable getNestableParent() {
+        Object nestableParent = getParentFragment();
+        if (nestableParent == null) {
+            nestableParent = getActivity();
+        }
+
+        if (nestableParent instanceof Nestable) {
+            return (Nestable) nestableParent;
+        } else {
+            return null;
+        }
+    }
+    //endregion
+
+
+    @SuppressWarnings("unchecked")
+    protected <ClassT> ClassT findParentWithImplementation(Class<ClassT> clazz) {
+        Nestable parent = getNestableParent();
+        while (parent != null && !clazz.isAssignableFrom(parent.getClass())) {
+            parent = parent.getNestableParent();
+        }
+
+        if (parent != null) {
+            return (ClassT) parent;
+        } else {
+            return null;
+        }
     }
 
 

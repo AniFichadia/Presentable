@@ -37,7 +37,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
  */
 public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
         extends AppCompatActivity
-        implements PresentableUiAndroid<PresenterT> {
+        implements PresentableUiAndroid<PresenterT>, Nestable {
     private PresenterT presenter;
 
 
@@ -154,4 +154,12 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     @Override
     public void unbindView() {
     }
+
+    //region Nestable
+    @Nullable
+    @Override
+    public Nestable getNestableParent() {
+        return null;
+    }
+    //endregion
 }
