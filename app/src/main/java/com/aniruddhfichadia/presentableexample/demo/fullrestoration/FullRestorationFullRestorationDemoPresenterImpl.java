@@ -15,16 +15,16 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.presentableexample.demo.fullrestoration;
 
 
 import android.util.Log;
 
 import com.aniruddhfichadia.presentable.BaseReplayablePresenter;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActor;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActorListener;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoPresenter;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoUi;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoInterActor;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoInterActorListener;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoUi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,15 +33,16 @@ import org.jetbrains.annotations.NotNull;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 17/1/17
  */
-public class DemoPresenterImpl
-        extends BaseReplayablePresenter<DemoUi, ReplayableDemoContract$DemoUi>
-        implements DemoPresenter, DemoInterActorListener {
-    private static final String TAG = DemoPresenterImpl.class.getSimpleName();
+public class FullRestorationFullRestorationDemoPresenterImpl
+        extends
+        BaseReplayablePresenter<FullRestorationDemoUi, ReplayableFullRestorationDemoContract$FullRestorationDemoUi>
+        implements FullRestorationDemoPresenter, FullRestorationDemoInterActorListener {
+    private static final String TAG = FullRestorationFullRestorationDemoPresenterImpl.class.getSimpleName();
 
-    private final DemoInterActor interActor;
+    private final FullRestorationDemoInterActor interActor;
 
 
-    public DemoPresenterImpl(DemoInterActor interActor) {
+    public FullRestorationFullRestorationDemoPresenterImpl(FullRestorationDemoInterActor interActor) {
         this.interActor = interActor;
         interActor.setListener(this);
     }
@@ -49,8 +50,8 @@ public class DemoPresenterImpl
 
     @NotNull
     @Override
-    protected ReplayableDemoContract$DemoUi createUiProxy() {
-        return new ReplayableDemoContract$DemoUi();
+    protected ReplayableFullRestorationDemoContract$FullRestorationDemoUi createUiProxy() {
+        return new ReplayableFullRestorationDemoContract$FullRestorationDemoUi();
     }
 
 

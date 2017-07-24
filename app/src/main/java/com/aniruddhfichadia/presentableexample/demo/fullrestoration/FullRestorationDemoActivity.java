@@ -15,7 +15,7 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.presentableexample.demo.fullrestoration;
 
 
 import android.os.Bundle;
@@ -33,8 +33,8 @@ import com.aniruddhfichadia.presentable.PresentableActivity;
 import com.aniruddhfichadia.presentable.Registry;
 import com.aniruddhfichadia.presentableexample.DemoApplication;
 import com.aniruddhfichadia.presentableexample.R;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoPresenter;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoUi;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoUi;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,10 +49,10 @@ import static android.view.View.VISIBLE;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
  */
-public class DemoActivity
-        extends PresentableActivity<DemoPresenter, DemoUi>
-        implements DemoUi {
-    private static final String TAG = DemoActivity.class.getSimpleName();
+public class FullRestorationDemoActivity
+        extends PresentableActivity<FullRestorationDemoPresenter, FullRestorationDemoUi>
+        implements FullRestorationDemoUi {
+    private static final String TAG = FullRestorationDemoActivity.class.getSimpleName();
 
     @BindView(R.id.demo_progress_loading)
     ProgressBar progressLoading;
@@ -80,10 +80,13 @@ public class DemoActivity
 
     @NonNull
     @Override
-    public DemoPresenter createPresenter() {
-        DemoInterActorImpl interActor = new DemoInterActorImpl(
-                ((DemoApplication) getApplication()).getSharedExecutor());
-        DemoPresenterImpl presenter = new DemoPresenterImpl(interActor);
+    public FullRestorationDemoPresenter createPresenter() {
+        FullRestorationDemoInterActorImpl interActor = new FullRestorationDemoInterActorImpl(
+                ((DemoApplication) getApplication()).getSharedExecutor()
+        );
+        FullRestorationFullRestorationDemoPresenterImpl presenter = new FullRestorationFullRestorationDemoPresenterImpl(
+                interActor
+        );
 
         return presenter;
     }
@@ -128,7 +131,7 @@ public class DemoActivity
     }
 
 
-    //region DemoUi
+    //region PartialRestorationDemoUi
     @Override
     public void doMeaninglessThing() {
         Log.d(TAG, "doMeaninglessThing() called");
@@ -136,7 +139,8 @@ public class DemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(DemoActivity.this, "Meaningless thing", Toast.LENGTH_LONG).show();
+                Toast.makeText(FullRestorationDemoActivity.this, "Meaningless thing",
+                               Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -149,7 +153,7 @@ public class DemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(DemoActivity.this,
+                Toast.makeText(FullRestorationDemoActivity.this,
                                "Another meaningless thing " + aParam + " " + anotherParam,
                                Toast.LENGTH_LONG)
                      .show();
@@ -164,7 +168,7 @@ public class DemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(DemoActivity.this, aParam, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FullRestorationDemoActivity.this, aParam, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -15,12 +15,12 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.presentableexample.demo.partialrestoration;
 
 
 import com.aniruddhfichadia.presentable.BaseInterActor;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActor;
-import com.aniruddhfichadia.presentableexample.demo.DemoContract.DemoInterActorListener;
+import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoInterActor;
+import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoInterActorListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,20 +32,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Aniruddh Fichadia
  * @date 2017-03-02
  */
-public class DemoInterActorImpl
+public class PartialRestorationDemoInterActorImpl
         extends BaseInterActor
-        implements DemoInterActor {
-    private DemoInterActorListener listener;
+        implements PartialRestorationDemoInterActor {
+    private PartialRestorationDemoInterActorListener listener;
     private AtomicBoolean doingAsyncStuff = new AtomicBoolean(false);
 
 
-    public DemoInterActorImpl(@NotNull Executor executor) {
+    public PartialRestorationDemoInterActorImpl(@NotNull Executor executor) {
         super(executor);
     }
 
 
     @Override
-    public void setListener(DemoInterActorListener listener) {
+    public void setListener(PartialRestorationDemoInterActorListener listener) {
         this.listener = listener;
     }
 

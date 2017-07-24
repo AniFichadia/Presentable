@@ -15,7 +15,7 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo;
+package com.aniruddhfichadia.presentableexample.demo.partialrestoration;
 
 
 import com.aniruddhfichadia.presentable.Contract.InterActor;
@@ -23,6 +23,7 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.replayableinterface.ReplayStrategy;
 import com.aniruddhfichadia.replayableinterface.ReplayableInterface;
+import com.aniruddhfichadia.replayableinterface.ReplayableInterface.ReplayType;
 import com.aniruddhfichadia.replayableinterface.ReplayableMethod;
 
 
@@ -30,9 +31,9 @@ import com.aniruddhfichadia.replayableinterface.ReplayableMethod;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-02-25
  */
-public interface DemoContract {
-    @ReplayableInterface
-    interface DemoUi
+public interface PartialRestorationDemoContract {
+    @ReplayableInterface(clearAfterReplaying = true, replayType = ReplayType.DELEGATE_OR_REPLAY)
+    interface PartialRestorationDemoUi
             extends Ui {
         @ReplayableMethod(ReplayStrategy.NONE)
         void doMeaninglessThing();
@@ -57,21 +58,21 @@ public interface DemoContract {
         int returnsSomething();
     }
 
-    interface DemoPresenter
-            extends Presenter<DemoUi> {
+    interface PartialRestorationDemoPresenter
+            extends Presenter<PartialRestorationDemoUi> {
         void loadSomething();
     }
 
-    interface DemoInterActor
+    interface PartialRestorationDemoInterActor
             extends InterActor {
-        void setListener(DemoInterActorListener listener);
+        void setListener(PartialRestorationDemoInterActorListener listener);
 
         boolean isDoingAsyncStuff();
 
         void doAsyncStuff();
     }
 
-    interface DemoInterActorListener {
+    interface PartialRestorationDemoInterActorListener {
         void onAsyncStuffComplete();
     }
 }
