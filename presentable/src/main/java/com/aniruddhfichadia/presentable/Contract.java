@@ -31,27 +31,12 @@ public interface Contract {
     }
 
     /**
-     * The bare minimum lifecycle events required for a {@link Presenter}. These should be all
-     * you actually need. If more fine-grained events are required, specify that in your
-     * {@link Presenter} contract to the UI and implement as required
-     */
-    interface PresenterLifecycleBinding<UiT extends Ui> {
-        void onPresenterBound();
-
-        void onPresenterUnBound();
-
-        /** Update the UI when it is ready/stable */
-        void onUiReady(@NotNull UiT ui);
-    }
-
-    /**
      * A pure Java presenter.
      * <p>
      * Ideally the presenter implementation should be platform agnostic and have no or platform agnostic references to
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
-    interface Presenter<UiT extends Ui>
-            extends PresenterLifecycleBinding<UiT> {
+    interface Presenter<UiT extends Ui> {
         boolean shouldRetainPresenter();
 
 
@@ -68,6 +53,14 @@ public interface Contract {
          * (i.e. {@link Presenter#onPresenterUnBound()}.
          */
         void unBindUi();
+
+
+        void onPresenterBound();
+
+        void onPresenterUnBound();
+
+        /** Update the UI when it is ready/stable */
+        void onUiReady(@NotNull UiT ui);
 
 
         boolean isUiAttached();
