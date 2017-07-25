@@ -35,7 +35,7 @@ public interface Contract {
      * you actually need. If more fine-grained events are required, specify that in your
      * {@link Presenter} contract to the UI and implement as required
      */
-    interface PresenterLifecycleEvents {
+    interface PresenterLifecycleBinding<UiT extends Ui> {
         void onPresenterBound();
 
         void onPresenterUnBound();
@@ -48,7 +48,7 @@ public interface Contract {
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
     interface Presenter<UiT extends Ui>
-            extends PresenterLifecycleEvents {
+            extends PresenterLifecycleBinding<UiT> {
         boolean shouldRetainPresenter();
 
 
