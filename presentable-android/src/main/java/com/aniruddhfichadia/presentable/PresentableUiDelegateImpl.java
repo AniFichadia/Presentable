@@ -26,6 +26,8 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 
 
 /**
+ * TODO-ani: re-implement as a 'binder'
+ *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-02-25
  */

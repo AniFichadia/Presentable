@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
+public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends Fragment
         implements PresentableUiAndroid<PresenterT>, Nestable {
     private PresenterT presenter;
@@ -103,13 +103,15 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     public void onStart() {
         super.onStart();
 
-        // Use a minor delay to allow the view to restore itself
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                getPresenter().bindUi((UiT) PresentableFragment.this);
-            }
-        });
+        getPresenter().bindUi((UiT) this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getPresenter().onUiReady((UiT) this);
     }
 
     @Override

@@ -39,6 +39,9 @@ public interface Contract {
         void onPresenterBound();
 
         void onPresenterUnBound();
+
+        /** Update the UI when it is ready/stable */
+        void onUiReady(@NotNull UiT ui);
     }
 
     /**
