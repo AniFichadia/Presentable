@@ -15,12 +15,14 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable.provider;
 
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
+
+import com.aniruddhfichadia.presentable.provider.AndroidResourceProvider;
 
 import org.jetbrains.annotations.NotNull;
 
