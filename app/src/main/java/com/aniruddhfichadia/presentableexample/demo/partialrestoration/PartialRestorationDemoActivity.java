@@ -15,9 +15,10 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo.fullrestoration;
+package com.aniruddhfichadia.presentableexample.demo.partialrestoration;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -32,8 +33,9 @@ import com.aniruddhfichadia.presentable.PresentableActivity;
 import com.aniruddhfichadia.presentable.Registry;
 import com.aniruddhfichadia.presentableexample.DemoApplication;
 import com.aniruddhfichadia.presentableexample.R;
-import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoPresenter;
-import com.aniruddhfichadia.presentableexample.demo.fullrestoration.FullRestorationDemoContract.FullRestorationDemoUi;
+import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoUi;
+import com.tierable.stasis.StasisPreserve;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,22 +50,30 @@ import static android.view.View.VISIBLE;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
  */
-public class FullRestorationDemoActivity
-        extends PresentableActivity<FullRestorationDemoPresenter, FullRestorationDemoUi>
-        implements FullRestorationDemoUi {
-    private static final String TAG = FullRestorationDemoActivity.class.getSimpleName();
+public class PartialRestorationDemoActivity
+        extends PresentableActivity<PartialRestorationDemoPresenter, PartialRestorationDemoUi>
+        implements PartialRestorationDemoUi {
+    private static final String TAG                       = PartialRestorationDemoActivity.class
+            .getSimpleName();
+    private static final String KEY_PRESERVATION_STRATEGY = "key_preservation_strategy";
 
     @BindView(R.id.demo_progress_loading)
+    @StasisPreserve
     ProgressBar progressLoading;
     @BindView(R.id.demo_txt_message)
+    @StasisPreserve
     TextView    txtMessage;
     @BindView(R.id.demo_btn_load)
+    @StasisPreserve
     Button      btnLoad;
     @BindView(R.id.demo_chk_something)
+    @StasisPreserve
     CheckBox    chkSomething;
 
     @Nullable
     private Unbinder unbinder;
+
+    private StasisPreservationStrategyPartialRestorationDemoActivity preservationStrategy;
 
 
     @Override
@@ -79,12 +89,43 @@ public class FullRestorationDemoActivity
 
     @NonNull
     @Override
-    public FullRestorationDemoPresenter createPresenter() {
-        FullRestorationDemoInterActorImpl interActor = new FullRestorationDemoInterActorImpl(
+    public PartialRestorationDemoPresenter createPresenter() {
+        PartialRestorationDemoInterActorImpl interActor = new PartialRestorationDemoInterActorImpl(
                 ((DemoApplication) getApplication()).getSharedExecutor()
         );
+        return new PartialRestorationDemoPresenterImpl(interActor);
+    }
 
-        return new FullRestorationDemoPresenterImpl(interActor);
+
+    @Override
+    public void beforeOnCreate(@Nullable Bundle savedInstanceState) {
+        super.beforeOnCreate(savedInstanceState);
+
+        if (savedInstanceState != null &&
+                savedInstanceState.containsKey(KEY_PRESERVATION_STRATEGY)) {
+            preservationStrategy = getRegistry().get(
+                    savedInstanceState.getString(KEY_PRESERVATION_STRATEGY)
+            );
+        }
+
+        if (preservationStrategy == null) {
+            preservationStrategy = new StasisPreservationStrategyPartialRestorationDemoActivity();
+        }
+    }
+
+    @Override
+    public void restoreUiState(@NonNull Bundle savedInstanceState) {
+        super.restoreUiState(savedInstanceState);
+
+        preservationStrategy.unFreeze(this);
+    }
+
+    @Override
+    public void saveUiState(@NonNull Bundle outState) {
+        super.saveUiState(outState);
+
+        preservationStrategy.freeze(this);
+        outState.putString(KEY_PRESERVATION_STRATEGY, getRegistry().put(preservationStrategy));
     }
 
 
@@ -116,8 +157,8 @@ public class FullRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FullRestorationDemoActivity.this, "Meaningless thing",
-                               Toast.LENGTH_LONG).show();
+                Toast.makeText(PartialRestorationDemoActivity.this,
+                               "Meaningless thing", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -130,10 +171,9 @@ public class FullRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FullRestorationDemoActivity.this,
+                Toast.makeText(PartialRestorationDemoActivity.this,
                                "Another meaningless thing " + aParam + " " + anotherParam,
-                               Toast.LENGTH_LONG)
-                     .show();
+                               Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -145,7 +185,8 @@ public class FullRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FullRestorationDemoActivity.this, aParam, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PartialRestorationDemoActivity.this, aParam, Toast.LENGTH_SHORT)
+                     .show();
             }
         });
     }

@@ -15,10 +15,9 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo.partialrestoration;
+package com.aniruddhfichadia.presentableexample.demo.nouipreservation;
 
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -33,8 +32,9 @@ import com.aniruddhfichadia.presentable.PresentableActivity;
 import com.aniruddhfichadia.presentable.Registry;
 import com.aniruddhfichadia.presentableexample.DemoApplication;
 import com.aniruddhfichadia.presentableexample.R;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoUi;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoUi;
+import com.tierable.stasis.StasisPreserve;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,22 +49,28 @@ import static android.view.View.VISIBLE;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 18/1/17
  */
-public class PartialRestorationPartialRestorationDemoActivity
+public class PartialRestorationDemoActivity
         extends PresentableActivity<PartialRestorationDemoPresenter, PartialRestorationDemoUi>
         implements PartialRestorationDemoUi {
-    private static final String TAG = PartialRestorationPartialRestorationDemoActivity.class.getSimpleName();
+    private static final String TAG = PartialRestorationDemoActivity.class.getSimpleName();
 
     @BindView(R.id.demo_progress_loading)
+    @StasisPreserve
     ProgressBar progressLoading;
     @BindView(R.id.demo_txt_message)
+    @StasisPreserve
     TextView    txtMessage;
     @BindView(R.id.demo_btn_load)
+    @StasisPreserve
     Button      btnLoad;
     @BindView(R.id.demo_chk_something)
+    @StasisPreserve
     CheckBox    chkSomething;
 
     @Nullable
     private Unbinder unbinder;
+
+    private StasisPreservationStrategyPartialRestorationDemoActivity preservationStrategy;
 
 
     @Override
@@ -84,28 +90,7 @@ public class PartialRestorationPartialRestorationDemoActivity
         PartialRestorationDemoInterActorImpl interActor = new PartialRestorationDemoInterActorImpl(
                 ((DemoApplication) getApplication()).getSharedExecutor()
         );
-        PartialRestorationPartialRestorationDemoPresenterImpl presenter = new PartialRestorationPartialRestorationDemoPresenterImpl(interActor);
-
-        return presenter;
-    }
-
-
-    @Override
-    public void restoreUiState(@NonNull Bundle savedInstanceState) {
-        super.restoreUiState(savedInstanceState);
-
-        progressLoading.setVisibility(
-                savedInstanceState.getBoolean("progressLoadingVisible") ? VISIBLE
-                                                                        : INVISIBLE);
-        btnLoad.setEnabled(savedInstanceState.getBoolean("btnLoadEnabled"));
-    }
-
-    @Override
-    public void saveUiState(@NonNull Bundle outState) {
-        super.saveUiState(outState);
-
-        outState.putBoolean("progressLoadingVisible", progressLoading.getVisibility() == VISIBLE);
-        outState.putBoolean("btnLoadEnabled", btnLoad.isEnabled());
+        return new PartialRestorationDemoPresenterImpl(interActor);
     }
 
 
@@ -137,7 +122,8 @@ public class PartialRestorationPartialRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(PartialRestorationPartialRestorationDemoActivity.this, "Meaningless thing", Toast.LENGTH_LONG).show();
+                Toast.makeText(PartialRestorationDemoActivity.this,
+                               "Meaningless thing", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -150,10 +136,9 @@ public class PartialRestorationPartialRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(PartialRestorationPartialRestorationDemoActivity.this,
+                Toast.makeText(PartialRestorationDemoActivity.this,
                                "Another meaningless thing " + aParam + " " + anotherParam,
-                               Toast.LENGTH_LONG)
-                     .show();
+                               Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -165,7 +150,8 @@ public class PartialRestorationPartialRestorationDemoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(PartialRestorationPartialRestorationDemoActivity.this, aParam, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PartialRestorationDemoActivity.this, aParam, Toast.LENGTH_SHORT)
+                     .show();
             }
         });
     }

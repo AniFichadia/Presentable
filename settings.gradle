@@ -3,8 +3,19 @@ include ':presentable'
 include ':presentable-replayable'
 include ':presentable-android'
 
+
 include ':replayable-interface'
 project(':replayable-interface').projectDir = new File(settingsDir, '../ReplayableInterface/replayable-interface')
 
 include ':replayable-interface-compiler'
 project(':replayable-interface-compiler').projectDir = new File(settingsDir, '../ReplayableInterface/replayable-interface-compiler')
+
+
+include ':stasis-lib'
+project(':stasis-lib').projectDir = new File(settingsDir, '../Tierable/Stasis/stasis-lib')
+
+include ':stasis-lib-android'
+project(':stasis-lib-android').projectDir = new File(settingsDir, '../Tierable/Stasis/stasis-lib-android')
+
+include ':stasis-compiler'
+project(':stasis-compiler').projectDir = new File(settingsDir, '../Tierable/Stasis/stasis-compiler')

@@ -15,16 +15,16 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentableexample.demo.partialrestoration;
+package com.aniruddhfichadia.presentableexample.demo.nouipreservation;
 
 
 import android.util.Log;
 
 import com.aniruddhfichadia.presentable.BaseReplayablePresenter;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoInterActor;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoInterActorListener;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
-import com.aniruddhfichadia.presentableexample.demo.partialrestoration.PartialRestorationDemoContract.PartialRestorationDemoUi;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoInterActor;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoInterActorListener;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
+import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoUi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,15 +33,16 @@ import org.jetbrains.annotations.NotNull;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 17/1/17
  */
-public class PartialRestorationPartialRestorationDemoPresenterImpl
-        extends BaseReplayablePresenter<PartialRestorationDemoUi, ReplayablePartialRestorationDemoContract$PartialRestorationDemoUi>
+public class PartialRestorationDemoPresenterImpl
+        extends
+        BaseReplayablePresenter<PartialRestorationDemoUi, ReplayablePartialRestorationDemoContract$PartialRestorationDemoUi>
         implements PartialRestorationDemoPresenter, PartialRestorationDemoInterActorListener {
-    private static final String TAG = PartialRestorationPartialRestorationDemoPresenterImpl.class.getSimpleName();
+    private static final String TAG = PartialRestorationDemoPresenterImpl.class.getSimpleName();
 
     private final PartialRestorationDemoInterActor interActor;
 
 
-    public PartialRestorationPartialRestorationDemoPresenterImpl(PartialRestorationDemoInterActor interActor) {
+    public PartialRestorationDemoPresenterImpl(PartialRestorationDemoInterActor interActor) {
         this.interActor = interActor;
         interActor.setListener(this);
     }

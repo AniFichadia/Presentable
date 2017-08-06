@@ -25,16 +25,20 @@ ext {
 
 dependencies {
     compile "com.android.support:appcompat-v7:$supportLibVersion"
+
     compile project(':presentable')
     compile project(':presentable-replayable')
     compile project(':presentable-android')
-    compile project(':replayable-interface')
 
+    compile project(':replayable-interface')
     annotationProcessor project(':replayable-interface-compiler')
 
+    compile project(':stasis-lib-android')
+    annotationProcessor project(':stasis-compiler')
+
     // ButterKnife
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     compile "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
