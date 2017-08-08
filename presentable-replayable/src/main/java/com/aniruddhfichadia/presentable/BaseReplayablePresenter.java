@@ -58,6 +58,8 @@ public abstract class BaseReplayablePresenter<UiT extends Ui, UiProxyT extends U
         uiProxy.unBindDelegate();
 
         onPresenterUnBound();
+
+        setFirstTimeBound(false);
     }
 
     @Override
@@ -66,6 +68,7 @@ public abstract class BaseReplayablePresenter<UiT extends Ui, UiProxyT extends U
     }
 
     @SuppressWarnings("unchecked")
+    @NotNull
     @Override
     public UiT getUi() {
         return (UiT) uiProxy;

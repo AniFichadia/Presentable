@@ -36,12 +36,14 @@ public class BasePresenter<UiT extends Ui>
         implements Presenter<UiT> {
     @NotNull
     private WeakReference<UiT> uiReference;
+    private boolean            firstTimeBound;
 
 
     public BasePresenter() {
         super();
 
         this.uiReference = new WeakReference<>(null);
+        this.firstTimeBound = true;
     }
 
 
@@ -63,6 +65,8 @@ public class BasePresenter<UiT extends Ui>
         uiReference = new WeakReference<>(null);
 
         onPresenterUnBound();
+
+        setFirstTimeBound(false);
     }
 
 
@@ -88,5 +92,14 @@ public class BasePresenter<UiT extends Ui>
     @Override
     public UiT getUi() {
         return uiReference.get();
+    }
+
+
+    protected boolean isFirstTimeBound() {
+        return firstTimeBound;
+    }
+
+    protected void setFirstTimeBound(boolean firstTimeBound) {
+        this.firstTimeBound = firstTimeBound;
     }
 }
