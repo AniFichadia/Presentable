@@ -117,20 +117,18 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onStart() {
         super.onStart();
 
-        getPresenter().bindUi((UiT) this);
+        getPresenter().bindUi(getUi());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
 
-        getPresenter().onUiReady((UiT) this);
+        getPresenter().onUiReady(getUi());
     }
 
     @Override
@@ -139,6 +137,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
 
         getPresenter().unBindUi();
     }
+
 
     @Override
     public void onDestroyView() {
@@ -229,6 +228,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         }
     }
     //endregion
+
+
+    @SuppressWarnings("unchecked")
+    protected UiT getUi() {
+        return (UiT) this;
+    }
 
 
     @SuppressWarnings("unchecked")

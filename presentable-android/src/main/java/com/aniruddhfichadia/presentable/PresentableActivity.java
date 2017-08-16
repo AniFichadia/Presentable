@@ -33,7 +33,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableActivity<PresenterT extends Presenter, UiT extends Ui>
+public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends AppCompatActivity
         implements PresentableUiAndroid<PresenterT>, Nestable {
     private PresenterT presenter;
@@ -66,20 +66,18 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onStart() {
         super.onStart();
 
-        getPresenter().bindUi((UiT) this);
+        getPresenter().bindUi(getUi());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onResume() {
         super.onResume();
 
-        getPresenter().onUiReady((UiT) this);
+        getPresenter().onUiReady(getUi());
     }
 
     @Override
@@ -171,4 +169,10 @@ public abstract class PresentableActivity<PresenterT extends Presenter, UiT exte
         return null;
     }
     //endregion
+
+
+    @SuppressWarnings("unchecked")
+    protected UiT getUi() {
+        return (UiT) this;
+    }
 }
