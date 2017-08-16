@@ -73,11 +73,30 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
 
         beforeOnCreate(savedInstanceState);
 
-        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
+        String bundleKey = PresentableUiDelegateImpl.generateBundleKeyForUi(this);
+        if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
+            presenter = getRegistry().get(savedInstanceState.getString(bundleKey));
+        }
+
+        if (presenter == null) {
+            // Create a new presenter instance
+            presenter = createPresenter();
+
+            onNewInstance();
+        }
 
         afterOnCreate(savedInstanceState);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // UI restoration when the UI has been appropriately bound
+            restoreUiState(savedInstanceState);
+        }
+    }
 
     @Nullable
     @Override

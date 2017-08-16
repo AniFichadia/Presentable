@@ -35,8 +35,8 @@ public class PresentableUiDelegateImpl {
     private static final String KEY_PRESENTER = "presenter";
 
 
-    public static <PresenterT extends Presenter> PresenterT createOrRestorePresenter(@NonNull PresentableUiAndroid<PresenterT> ui,
-                                                                                     @Nullable Bundle savedInstanceState) {
+    public static <PresenterT extends Presenter> PresenterT createOrRestorePresenter(
+            @NonNull PresentableUiAndroid<PresenterT> ui, @Nullable Bundle savedInstanceState) {
         PresenterT presenter = null;
 
         String bundleKey = generateBundleKeyForUi(ui);
@@ -76,7 +76,7 @@ public class PresentableUiDelegateImpl {
      * Generates a key that includes the UI classes name. This prevents the keys getting
      * overwritten by other UI elements. This may happen in UIs with nested fragments.
      */
-    private static String generateBundleKeyForUi(@NonNull PresentableUiAndroid<?> ui) {
+    public static String generateBundleKeyForUi(@NonNull PresentableUiAndroid<?> ui) {
         return ui.getClass().getName() + "." + KEY_PRESENTER;
     }
 }
