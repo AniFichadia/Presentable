@@ -35,7 +35,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
  */
 public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends AppCompatActivity
-        implements PresentableUiAndroid<PresenterT>, Nestable {
+        implements PresentableUiAndroid<PresenterT, UiT>, Nestable {
     private PresenterT presenter;
 
 
@@ -139,8 +139,20 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     @NonNull
     public abstract PresenterT createPresenter();
 
+    @Override
     public final PresenterT getPresenter() {
         return presenter;
+    }
+
+    @Override
+    public void setPresenter(PresenterT presenter) {
+        this.presenter = presenter;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public UiT getUi() {
+        return (UiT) this;
     }
     //endregion
 
@@ -169,10 +181,4 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
         return null;
     }
     //endregion
-
-
-    @SuppressWarnings("unchecked")
-    protected UiT getUi() {
-        return (UiT) this;
-    }
 }
