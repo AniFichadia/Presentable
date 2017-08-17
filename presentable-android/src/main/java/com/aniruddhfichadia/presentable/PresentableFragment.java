@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -227,32 +228,14 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     @Nullable
     @Override
     public Nestable getNestableParent() {
-        Object nestableParent = getParentFragment();
-        if (nestableParent == null) {
-            nestableParent = getActivity();
-        }
-
-        if (nestableParent instanceof Nestable) {
-            return (Nestable) nestableParent;
-        } else {
-            return null;
-        }
+        return NestableUtilAndroid.getNestableParent(this);
     }
     //endregion
 
 
-    @SuppressWarnings("unchecked")
+    @Nullable
     protected <ClassT> ClassT findParentWithImplementation(Class<ClassT> clazz) {
-        Nestable parent = getNestableParent();
-        while (parent != null && !clazz.isAssignableFrom(parent.getClass())) {
-            parent = parent.getNestableParent();
-        }
-
-        if (parent != null) {
-            return (ClassT) parent;
-        } else {
-            return null;
-        }
+        return NestableUtil.findParentWithImplementation(this, clazz);
     }
 
 

@@ -28,6 +28,7 @@ import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 
 /**
@@ -178,7 +179,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     @Nullable
     @Override
     public Nestable getNestableParent() {
-        return null;
+        return NestableUtilAndroid.getNestableParent(this);
     }
     //endregion
 }
