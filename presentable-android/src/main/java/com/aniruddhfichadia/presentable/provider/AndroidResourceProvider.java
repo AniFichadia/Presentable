@@ -24,6 +24,10 @@ import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.ColorProvider;
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.LocaleProvider;
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.StringProvider;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -33,9 +37,7 @@ import java.util.Locale;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public class AndroidResourceProvider
-        implements com.aniruddhfichadia.presentable.provider.ResourceProvider.StringProvider,
-                   com.aniruddhfichadia.presentable.provider.ResourceProvider.ColorProvider,
-                   com.aniruddhfichadia.presentable.provider.ResourceProvider.LocaleProvider {
+        implements StringProvider, ColorProvider, LocaleProvider {
     private static final String DEF_TYPE_STRING = "string";
     private static final String DEF_TYPE_COLOR  = "color";
 
