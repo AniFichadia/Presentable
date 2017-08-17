@@ -50,7 +50,7 @@ public abstract class BaseReplayablePresenter<UiT extends Ui, UiProxyT extends U
     public void bindUi(@NotNull UiT ui) {
         uiProxy.bindDelegate(ui);
 
-        onPresenterBound();
+        onPresenterBound(ui);
     }
 
     @Override

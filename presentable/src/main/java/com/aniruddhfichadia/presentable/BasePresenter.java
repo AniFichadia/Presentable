@@ -57,7 +57,7 @@ public class BasePresenter<UiT extends Ui>
     public void bindUi(@NotNull UiT ui) {
         this.uiReference = new WeakReference<>(ui);
 
-        onPresenterBound();
+        onPresenterBound(ui);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class BasePresenter<UiT extends Ui>
 
 
     @Override
-    public void onPresenterBound() {
+    public void onPresenterBound(@NotNull UiT ui) {
     }
 
     @Override

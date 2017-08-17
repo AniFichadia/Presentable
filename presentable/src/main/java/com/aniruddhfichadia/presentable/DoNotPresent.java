@@ -49,7 +49,7 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void onPresenterBound() {
+    public void onPresenterBound(@NotNull UiT ui) {
         // No-op
     }
 

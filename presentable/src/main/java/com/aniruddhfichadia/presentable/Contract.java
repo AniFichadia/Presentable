@@ -43,7 +43,7 @@ public interface Contract {
         /**
          * Bind the {@link Ui} to the {@link Presenter}. Implementations should notify
          * appropriate lifecycle events after binding is complete
-         * (i.e. {@link Presenter#onPresenterBound()}.
+         * (i.e. {@link Presenter#onPresenterBound(Ui)}.
          */
         void bindUi(@NotNull UiT ui);
 
@@ -55,7 +55,7 @@ public interface Contract {
         void unBindUi();
 
 
-        void onPresenterBound();
+        void onPresenterBound(@NotNull UiT ui);
 
         void onPresenterUnBound();
 
