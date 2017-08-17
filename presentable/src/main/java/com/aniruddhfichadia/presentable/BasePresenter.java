@@ -22,6 +22,7 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
@@ -35,12 +36,14 @@ public class BasePresenter<UiT extends Ui>
         implements Presenter<UiT> {
     @NotNull
     private WeakReference<UiT> uiReference;
+    private boolean            firstTimeBound;
 
 
     public BasePresenter() {
         super();
 
         this.uiReference = new WeakReference<>(null);
+        this.firstTimeBound = true;
     }
 
 
@@ -51,19 +54,10 @@ public class BasePresenter<UiT extends Ui>
 
 
     @Override
-    public boolean isUiAttached() {
-        return uiReference.get() != null;
-    }
-
-    @Override
     public void bindUi(@NotNull UiT ui) {
         this.uiReference = new WeakReference<>(ui);
 
-        onPresenterBound();
-    }
-
-    @Override
-    public void onPresenterBound() {
+        onPresenterBound(ui);
     }
 
     @Override
@@ -71,6 +65,13 @@ public class BasePresenter<UiT extends Ui>
         uiReference = new WeakReference<>(null);
 
         onPresenterUnBound();
+
+        setFirstTimeBound(false);
+    }
+
+
+    @Override
+    public void onPresenterBound(@NotNull UiT ui) {
     }
 
     @Override
@@ -78,7 +79,27 @@ public class BasePresenter<UiT extends Ui>
     }
 
     @Override
+    public void onUiReady(@NotNull UiT ui) {
+    }
+
+
+    @Override
+    public boolean isUiAttached() {
+        return uiReference.get() != null;
+    }
+
+    @Nullable
+    @Override
     public UiT getUi() {
         return uiReference.get();
+    }
+
+
+    protected boolean isFirstTimeBound() {
+        return firstTimeBound;
+    }
+
+    protected void setFirstTimeBound(boolean firstTimeBound) {
+        this.firstTimeBound = firstTimeBound;
     }
 }

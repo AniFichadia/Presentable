@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public abstract class PresentableFragment<PresenterT extends Presenter, UiT extends Ui>
+public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends Fragment
         implements PresentableUiAndroid<PresenterT>, Nestable {
     private PresenterT presenter;
@@ -73,11 +73,30 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         beforeOnCreate(savedInstanceState);
 
-        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
+        String bundleKey = PresentableUiDelegateImpl.generateBundleKeyForUi(this);
+        if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
+            presenter = getRegistry().get(savedInstanceState.getString(bundleKey));
+        }
+
+        if (presenter == null) {
+            // Create a new presenter instance
+            presenter = createPresenter();
+
+            onNewInstance();
+        }
 
         afterOnCreate(savedInstanceState);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // UI restoration when the UI has been appropriately bound
+            restoreUiState(savedInstanceState);
+        }
+    }
 
     @Nullable
     @Override
@@ -98,18 +117,18 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onStart() {
         super.onStart();
 
-        // Use a minor delay to allow the view to restore itself
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                getPresenter().bindUi((UiT) PresentableFragment.this);
-            }
-        });
+        getPresenter().bindUi(getUi());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getPresenter().onUiReady(getUi());
     }
 
     @Override
@@ -118,6 +137,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
 
         getPresenter().unBindUi();
     }
+
 
     @Override
     public void onDestroyView() {
@@ -208,6 +228,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter, UiT exte
         }
     }
     //endregion
+
+
+    @SuppressWarnings("unchecked")
+    protected UiT getUi() {
+        return (UiT) this;
+    }
 
 
     @SuppressWarnings("unchecked")

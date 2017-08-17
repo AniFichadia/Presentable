@@ -44,17 +44,22 @@ public final class DoNotPresent<UiT extends Ui>
     }
 
     @Override
-    public void onPresenterBound() {
-        // No-op
-    }
-
-    @Override
     public void unBindUi() {
         // No-op
     }
 
     @Override
+    public void onPresenterBound(@NotNull UiT ui) {
+        // No-op
+    }
+
+    @Override
     public void onPresenterUnBound() {
+        // No-op
+    }
+
+    @Override
+    public void onUiReady(@NotNull UiT ui) {
         // No-op
     }
 

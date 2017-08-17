@@ -15,7 +15,7 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable.provider;
 
 
 import android.content.Context;
@@ -23,6 +23,10 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.ColorProvider;
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.LocaleProvider;
+import com.aniruddhfichadia.presentable.provider.ResourceProvider.StringProvider;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,9 +37,7 @@ import java.util.Locale;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 public class AndroidResourceProvider
-        implements ResourceProvider.StringProvider,
-                   ResourceProvider.ColorProvider,
-                   ResourceProvider.LocaleProvider {
+        implements StringProvider, ColorProvider, LocaleProvider {
     private static final String DEF_TYPE_STRING = "string";
     private static final String DEF_TYPE_COLOR  = "color";
 
@@ -84,7 +86,6 @@ public class AndroidResourceProvider
                                           .getIdentifier(identifier, DEF_TYPE_COLOR, packageName));
     }
     //endregion
-
 
     //region Locale
     @SuppressWarnings("deprecation")
