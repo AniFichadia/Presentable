@@ -49,11 +49,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends Fragment
-        implements PresentableUiAndroid<PresenterT>, Nestable {
-    private PresenterT presenter;
-
+        implements PresentableUiAndroid<PresenterT, UiT>, Nestable {
     @NotNull
-    private final Handler uiHandler;
+    private final Handler                   uiHandler;
+
+    private PresenterT presenter;
 
 
     public PresentableFragment() {
@@ -192,6 +192,17 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     public final PresenterT getPresenter() {
         return presenter;
     }
+
+    @Override
+    public void setPresenter(PresenterT presenter) {
+        this.presenter = presenter;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public UiT getUi() {
+        return (UiT) this;
+    }
     //endregion
 
     //region ViewBindable
@@ -228,12 +239,6 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         }
     }
     //endregion
-
-
-    @SuppressWarnings("unchecked")
-    protected UiT getUi() {
-        return (UiT) this;
-    }
 
 
     @SuppressWarnings("unchecked")
