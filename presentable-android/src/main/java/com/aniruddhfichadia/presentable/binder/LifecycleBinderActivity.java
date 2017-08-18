@@ -88,7 +88,10 @@ public class LifecycleBinderActivity<
 
                 boundActivity.beforeOnCreate(savedInstanceState);
 
-                boundActivity.setContentView(boundActivity.getLayoutResource());
+                int layoutResource = boundActivity.getLayoutResource();
+                if (layoutResource > 0) {
+                    boundActivity.setContentView(layoutResource);
+                }
 
                 View contentView = boundActivity.getWindow().getDecorView();
                 boundActivity.bindView(contentView);

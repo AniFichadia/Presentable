@@ -24,7 +24,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
-import android.util.Log;
 import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
@@ -91,8 +90,6 @@ public class LifecycleBinderFragment<
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
 
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentCreated: ");
-
                 boundFragment.inject();
 
                 boundFragment.beforeOnCreate(savedInstanceState);
@@ -125,8 +122,6 @@ public class LifecycleBinderFragment<
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
 
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentStarted: ");
-
                 boundFragment.getPresenter().bindUi(boundFragment.getUi());
             }
         }
@@ -147,8 +142,6 @@ public class LifecycleBinderFragment<
             if (guaranteeBinding(fm, f) && savedInstanceState != null) {
                 FragmentT boundFragment = boundReference.get();
 
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentActivityCreated: ");
-
                 boundFragment.restoreUiState(savedInstanceState);
             }
         }
@@ -162,8 +155,6 @@ public class LifecycleBinderFragment<
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
 
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentResumed: ");
-
                 boundFragment.getPresenter().onUiReady(boundFragment.getUi());
             }
         }
@@ -176,8 +167,6 @@ public class LifecycleBinderFragment<
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
 
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentStopped: ");
-
                 boundFragment.getPresenter().unBindUi();
             }
         }
@@ -188,8 +177,6 @@ public class LifecycleBinderFragment<
 
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
-
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentViewDestroyed: ");
 
                 boundFragment.unbindView();
             }
@@ -202,8 +189,6 @@ public class LifecycleBinderFragment<
 
             if (guaranteeBinding(fm, f)) {
                 FragmentT boundFragment = boundReference.get();
-
-                Log.d("lc-" + f.getClass().getSimpleName(), "onFragmentSaveInstanceState: ");
 
                 PresenterT presenter = boundFragment.getPresenter();
                 if (presenter.shouldRetainPresenter()) {
