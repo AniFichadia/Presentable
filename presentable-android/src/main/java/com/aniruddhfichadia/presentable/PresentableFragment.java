@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.binder.PresenterBinderFragment.BindingLifecycleCallbacks;
 import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,12 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         implements PresentableUiAndroid<PresenterT, UiT>, Nestable {
     @NotNull
     private final Handler                   uiHandler;
+    /**
+     * Manually implemented lifecycle callbacks. Allows the callback to execute before any
+     * overridden lifecycle method implementations
+     */
+    @NonNull
+    private final BindingLifecycleCallbacks manualLifecycleCallbacks;
 
     private PresenterT presenter;
 
@@ -61,6 +68,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         super();
 
         uiHandler = new Handler(Looper.getMainLooper());
+        manualLifecycleCallbacks = new BindingLifecycleCallbacks<>(this);
     }
 
 
@@ -70,33 +78,16 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        inject();
-
-        beforeOnCreate(savedInstanceState);
-
-        String bundleKey = PresentableUiDelegateImpl.generateBundleKeyForUi(this);
-        if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
-            presenter = getRegistry().get(savedInstanceState.getString(bundleKey));
-        }
-
-        if (presenter == null) {
-            // Create a new presenter instance
-            presenter = createPresenter();
-
-            onNewInstance();
-        }
-
-        afterOnCreate(savedInstanceState);
+        manualLifecycleCallbacks.onFragmentCreated(getFragmentManager(), this, savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            // UI restoration when the UI has been appropriately bound
-            restoreUiState(savedInstanceState);
-        }
+        manualLifecycleCallbacks.onFragmentActivityCreated(
+                getFragmentManager(), this, savedInstanceState
+        );
     }
 
     @Nullable
@@ -117,43 +108,55 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         }
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
 
-        getPresenter().bindUi(getUi());
+        manualLifecycleCallbacks.onFragmentStarted(getFragmentManager(), this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        getPresenter().onUiReady(getUi());
+        manualLifecycleCallbacks.onFragmentResumed(getFragmentManager(), this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        manualLifecycleCallbacks.onFragmentPaused(getFragmentManager(), this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        getPresenter().unBindUi();
+        manualLifecycleCallbacks.onFragmentStopped(getFragmentManager(), this);
     }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        unbindView();
-    }
-
 
     @Override
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresentableUiDelegateImpl.savePresenter(this, outState);
+        manualLifecycleCallbacks.onFragmentSaveInstanceState(getFragmentManager(), this, outState);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        manualLifecycleCallbacks.onFragmentViewDestroyed(getFragmentManager(), this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        manualLifecycleCallbacks.onFragmentDestroyed(getFragmentManager(), this);
+    }
+
     //endregion
 
     //region PresentableUiAndroid
