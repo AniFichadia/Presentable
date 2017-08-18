@@ -44,6 +44,8 @@ public class LifecycleBinderView<
     @Nullable
     private BindingOnAttachStateChangeListener onAttachStateChangeListener;
 
+
+    /** Call this in your {@link View}'s constructor */
     @Override
     public void registerBinding(@NonNull ViewT bound) {
         onAttachStateChangeListener = new BindingOnAttachStateChangeListener<>(bound);

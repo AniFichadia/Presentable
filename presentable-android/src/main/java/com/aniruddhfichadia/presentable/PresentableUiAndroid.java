@@ -61,7 +61,6 @@ public interface PresentableUiAndroid<PresenterT extends Presenter<UiT>, UiT ext
     Registry getRegistry();
 
 
-
     //region Presenter
 
     /**

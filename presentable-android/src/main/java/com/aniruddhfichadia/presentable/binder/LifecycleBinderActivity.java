@@ -47,12 +47,14 @@ public class LifecycleBinderActivity<
     private BindingLifecycleCallbacks activityLifecycleCallbacks;
 
 
+    /** Call this in {@link Activity#onCreate(Bundle)} before calling super */
     @Override
     public void registerBinding(@NonNull ActivityT bound) {
         activityLifecycleCallbacks = new BindingLifecycleCallbacks<>(bound);
         bound.getApplication().registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
     }
 
+    /** Call this in {@link Activity#onDestroy()} */
     @Override
     public void unregisterBinding(@NonNull ActivityT bound) {
         if (activityLifecycleCallbacks != null) {

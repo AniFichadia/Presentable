@@ -18,6 +18,7 @@
 package com.aniruddhfichadia.presentable.binder;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,6 +50,7 @@ public class LifecycleBinderFragment<
     private BindingLifecycleCallbacks binder;
 
 
+    /** Call this in {@link Fragment#onAttach(Context)} */
     @Override
     public void registerBinding(@NotNull FragmentT bound) {
         binder = new BindingLifecycleCallbacks<>(bound);
@@ -56,6 +58,7 @@ public class LifecycleBinderFragment<
              .registerFragmentLifecycleCallbacks(binder, false);
     }
 
+    /** Call this in {@link Fragment#onDetach()} */
     @Override
     public void unregisterBinding(@NotNull FragmentT bound) {
         if (binder != null) {
