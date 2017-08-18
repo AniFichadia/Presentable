@@ -66,7 +66,6 @@ public class LifecycleBinderView<
             UiT extends Ui
             >
             implements OnAttachStateChangeListener {
-        // TODO: to weak reference or not to weak reference?
         @NonNull
         private final WeakReference<ViewT> boundReference;
 
@@ -96,8 +95,9 @@ public class LifecycleBinderView<
 
         @Override
         public void onViewAttachedToWindow(View v) {
-            if (guaranteeBinding(v)) {
-                ViewT boundView = boundReference.get();
+            ViewT boundView = getOperableBinding(v);
+
+            if (boundView != null) {
                 boundView.getPresenter().bindUi(boundView.getUi());
                 boundView.getPresenter().onUiReady(boundView.getUi());
             }
@@ -105,13 +105,20 @@ public class LifecycleBinderView<
 
         @Override
         public void onViewDetachedFromWindow(View v) {
-            if (guaranteeBinding(v)) {
-                ViewT boundView = boundReference.get();
+            ViewT boundView = getOperableBinding(v);
+
+            if (boundView != null) {
                 boundView.getPresenter().unBindUi();
             }
         }
 
-        protected boolean guaranteeBinding(View v) {
+
+        @Nullable
+        protected ViewT getOperableBinding(View v) {
+            return isSameInstance(v) ? boundReference.get() : null;
+        }
+
+        protected boolean isSameInstance(View v) {
             ViewT boundView = boundReference.get();
 
             return boundView != null && boundView == v;

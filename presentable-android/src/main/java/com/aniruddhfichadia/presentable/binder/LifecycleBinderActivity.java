@@ -22,14 +22,13 @@ import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.presentable.PresentableUiAndroid;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
@@ -69,7 +68,6 @@ public class LifecycleBinderActivity<
             UiT extends Ui
             >
             implements ActivityLifecycleCallbacks {
-        // TODO: to weak reference or not to weak reference?
         @NonNull
         private final WeakReference<ActivityT> boundReference;
 
@@ -81,9 +79,9 @@ public class LifecycleBinderActivity<
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 boundActivity.inject();
 
                 boundActivity.beforeOnCreate(savedInstanceState);
@@ -124,18 +122,18 @@ public class LifecycleBinderActivity<
 
         @Override
         public void onActivityStarted(Activity activity) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 boundActivity.getPresenter().bindUi(boundActivity.getUi());
             }
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 boundActivity.getPresenter().onUiReady(boundActivity.getUi());
             }
         }
@@ -146,18 +144,18 @@ public class LifecycleBinderActivity<
 
         @Override
         public void onActivityStopped(Activity activity) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 boundActivity.getPresenter().unBindUi();
             }
         }
 
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 PresenterT presenter = boundActivity.getPresenter();
                 if (presenter.shouldRetainPresenter()) {
                     String presenterKey = boundActivity.getRegistry().put(presenter);
@@ -173,9 +171,9 @@ public class LifecycleBinderActivity<
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-            if (guaranteeBinding(activity)) {
-                ActivityT boundActivity = boundReference.get();
+            ActivityT boundActivity = getOperableBinding(activity);
 
+            if (boundActivity != null) {
                 boundActivity.getPresenter().unBindUi();
 
                 // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
@@ -184,16 +182,29 @@ public class LifecycleBinderActivity<
             }
         }
 
-        protected boolean guaranteeBinding(Activity activity) {
+
+        @Nullable
+        protected ActivityT getOperableBinding(Activity activity) {
+            if (isSameInstance(activity)) {
+                return boundReference.get();
+            } else {
+                unregisterIfInstanceUnbound(activity);
+                return null;
+            }
+        }
+
+        protected boolean isSameInstance(Activity activity) {
             ActivityT boundActivity = boundReference.get();
 
-            if (boundActivity != null && boundActivity == activity) {
-                return true;
-            } else if (boundActivity == null) {
+            return boundActivity != null && boundActivity == activity;
+        }
+
+        protected void unregisterIfInstanceUnbound(Activity activity) {
+            ActivityT boundActivity = boundReference.get();
+
+            if (boundActivity == null) {
                 activity.getApplication().unregisterActivityLifecycleCallbacks(this);
             }
-
-            return false;
         }
     }
 }

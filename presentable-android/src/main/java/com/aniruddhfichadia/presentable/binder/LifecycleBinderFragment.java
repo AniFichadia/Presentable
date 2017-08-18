@@ -72,7 +72,6 @@ public class LifecycleBinderFragment<
             UiT extends Ui
             >
             extends FragmentLifecycleCallbacks {
-        // TODO: to weak reference or not to weak reference?
         @NonNull
         private final WeakReference<FragmentT> boundReference;
 
@@ -87,9 +86,8 @@ public class LifecycleBinderFragment<
         public void onFragmentCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
             super.onFragmentCreated(fm, f, savedInstanceState);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 boundFragment.inject();
 
                 boundFragment.beforeOnCreate(savedInstanceState);
@@ -119,9 +117,8 @@ public class LifecycleBinderFragment<
         public void onFragmentStarted(FragmentManager fm, Fragment f) {
             super.onFragmentStarted(fm, f);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 boundFragment.getPresenter().bindUi(boundFragment.getUi());
             }
         }
@@ -139,9 +136,8 @@ public class LifecycleBinderFragment<
         public void onFragmentActivityCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
             super.onFragmentActivityCreated(fm, f, savedInstanceState);
 
-            if (guaranteeBinding(fm, f) && savedInstanceState != null) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null && savedInstanceState != null) {
                 boundFragment.restoreUiState(savedInstanceState);
             }
         }
@@ -152,9 +148,8 @@ public class LifecycleBinderFragment<
         public void onFragmentResumed(FragmentManager fm, Fragment f) {
             super.onFragmentResumed(fm, f);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 boundFragment.getPresenter().onUiReady(boundFragment.getUi());
             }
         }
@@ -164,9 +159,8 @@ public class LifecycleBinderFragment<
         public void onFragmentStopped(FragmentManager fm, Fragment f) {
             super.onFragmentStopped(fm, f);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 boundFragment.getPresenter().unBindUi();
             }
         }
@@ -175,9 +169,8 @@ public class LifecycleBinderFragment<
         public void onFragmentViewDestroyed(FragmentManager fm, Fragment f) {
             super.onFragmentViewDestroyed(fm, f);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 boundFragment.unbindView();
             }
         }
@@ -187,9 +180,8 @@ public class LifecycleBinderFragment<
         public void onFragmentSaveInstanceState(FragmentManager fm, Fragment f, Bundle outState) {
             super.onFragmentSaveInstanceState(fm, f, outState);
 
-            if (guaranteeBinding(fm, f)) {
-                FragmentT boundFragment = boundReference.get();
-
+            FragmentT boundFragment = getOperableBinding(fm, f);
+            if (boundFragment != null) {
                 PresenterT presenter = boundFragment.getPresenter();
                 if (presenter.shouldRetainPresenter()) {
                     String presenterKey = boundFragment.getRegistry().put(presenter);
@@ -204,16 +196,28 @@ public class LifecycleBinderFragment<
         }
 
 
-        protected boolean guaranteeBinding(FragmentManager fm, Fragment f) {
+        @Nullable
+        protected FragmentT getOperableBinding(FragmentManager fm, Fragment f) {
+            if (isSameInstance(f)) {
+                return boundReference.get();
+            } else {
+                unregisterIfInstanceUnbound(fm);
+                return null;
+            }
+        }
+
+        protected boolean isSameInstance(Fragment f) {
             FragmentT boundFragment = boundReference.get();
 
-            if (boundFragment != null && boundFragment == f) {
-                return true;
-            } else if (boundFragment == null) {
+            return boundFragment != null && boundFragment == f;
+        }
+
+        protected void unregisterIfInstanceUnbound(FragmentManager fm) {
+            FragmentT boundFragment = boundReference.get();
+
+            if (boundFragment == null) {
                 fm.unregisterFragmentLifecycleCallbacks(this);
             }
-
-            return false;
         }
     }
 }
