@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
  * @author Aniruddh Fichadia
  * @date 2017-08-17
  */
-public abstract class PresenterBinder<BoundT> {
+public abstract class LifecycleBinder<BoundT> {
     private static final String KEY_PRESENTER = "presenter";
 
 

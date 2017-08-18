@@ -38,12 +38,12 @@ import java.lang.ref.WeakReference;
  * @author Aniruddh Fichadia
  * @date 2017-07-25
  */
-public class PresenterBinderActivity<
+public class LifecycleBinderActivity<
         ActivityT extends AppCompatActivity & PresentableUiAndroid<PresenterT, UiT>,
         PresenterT extends Presenter<UiT>,
         UiT extends Ui
         >
-        extends PresenterBinder<ActivityT> {
+        extends LifecycleBinder<ActivityT> {
     @Nullable
     private BindingLifecycleCallbacks activityLifecycleCallbacks;
 

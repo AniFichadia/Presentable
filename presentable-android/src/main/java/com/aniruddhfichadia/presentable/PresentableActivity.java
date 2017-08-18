@@ -28,7 +28,7 @@ import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.presentable.binder.PresenterBinderActivity.BindingLifecycleCallbacks;
+import com.aniruddhfichadia.presentable.binder.LifecycleBinderActivity.BindingLifecycleCallbacks;
 import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 

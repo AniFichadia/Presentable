@@ -35,12 +35,12 @@ import java.lang.ref.WeakReference;
  * @author Aniruddh Fichadia
  * @date 2017-08-17
  */
-public class PresenterBinderView<
+public class LifecycleBinderView<
         ViewT extends View & PresentableUiAndroid<PresenterT, UiT>,
         PresenterT extends Presenter<UiT>,
         UiT extends Ui
         >
-        extends PresenterBinder<ViewT> {
+        extends LifecycleBinder<ViewT> {
     @Nullable
     private BindingOnAttachStateChangeListener onAttachStateChangeListener;
 

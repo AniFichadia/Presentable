@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
-import com.aniruddhfichadia.presentable.binder.PresenterBinderFragment.BindingLifecycleCallbacks;
+import com.aniruddhfichadia.presentable.binder.LifecycleBinderFragment.BindingLifecycleCallbacks;
 import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 import org.jetbrains.annotations.NotNull;

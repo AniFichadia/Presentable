@@ -40,12 +40,12 @@ import java.lang.ref.WeakReference;
  * @author Aniruddh Fichadia
  * @date 2017-07-25
  */
-public class PresenterBinderFragment<
+public class LifecycleBinderFragment<
         FragmentT extends Fragment & PresentableUiAndroid<PresenterT, UiT>,
         PresenterT extends Presenter<UiT>,
         UiT extends Ui
         >
-        extends PresenterBinder<FragmentT> {
+        extends LifecycleBinder<FragmentT> {
     @Nullable
     private BindingLifecycleCallbacks binder;
 
