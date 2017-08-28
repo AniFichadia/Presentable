@@ -34,7 +34,7 @@ import com.aniruddhfichadia.presentableexample.DemoApplication;
 import com.aniruddhfichadia.presentableexample.R;
 import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoPresenter;
 import com.aniruddhfichadia.presentableexample.demo.nouipreservation.PartialRestorationDemoContract.PartialRestorationDemoUi;
-import com.tierable.stasis.StasisPreserve;
+import com.tierable.stasis.Preserve;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,22 +55,22 @@ public class PartialRestorationDemoActivity
     private static final String TAG = PartialRestorationDemoActivity.class.getSimpleName();
 
     @BindView(R.id.demo_progress_loading)
-    @StasisPreserve
+    @Preserve
     ProgressBar progressLoading;
     @BindView(R.id.demo_txt_message)
-    @StasisPreserve
+    @Preserve
     TextView    txtMessage;
     @BindView(R.id.demo_btn_load)
-    @StasisPreserve
+    @Preserve
     Button      btnLoad;
     @BindView(R.id.demo_chk_something)
-    @StasisPreserve
+    @Preserve
     CheckBox    chkSomething;
 
     @Nullable
     private Unbinder unbinder;
 
-    private StasisPreservationStrategyPartialRestorationDemoActivity preservationStrategy;
+    private PreservationStrategyPartialRestorationDemoActivity preservationStrategy;
 
 
     @Override

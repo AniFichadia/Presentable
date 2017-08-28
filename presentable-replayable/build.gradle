@@ -1,14 +1,15 @@
 apply plugin: 'java'
+apply from: '../common.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-    compile 'org.jetbrains:annotations-java5:15.0'
-
     compile project(':presentable')
 
-    compile project(':replayable-interface')
+    compile 'org.jetbrains:annotations-java5:15.0'
+
+    compile "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
 }
 
 ext {

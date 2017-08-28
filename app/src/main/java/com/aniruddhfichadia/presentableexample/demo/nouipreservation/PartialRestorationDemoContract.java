@@ -23,7 +23,6 @@ import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.replayableinterface.ReplayStrategy;
 import com.aniruddhfichadia.replayableinterface.ReplayableInterface;
-import com.aniruddhfichadia.replayableinterface.ReplayableInterface.ReplayType;
 import com.aniruddhfichadia.replayableinterface.ReplayableMethod;
 
 
@@ -32,7 +31,7 @@ import com.aniruddhfichadia.replayableinterface.ReplayableMethod;
  * @date 2017-02-25
  */
 public interface PartialRestorationDemoContract {
-    @ReplayableInterface(clearAfterReplaying = true, replayType = ReplayType.DELEGATE_OR_REPLAY)
+    @ReplayableInterface(clearAfterReplaying = true, alwaysCaptureInvocations = false)
     interface PartialRestorationDemoUi
             extends Ui {
         @ReplayableMethod(ReplayStrategy.NONE)
