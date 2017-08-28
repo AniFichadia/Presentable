@@ -37,7 +37,7 @@ import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
  */
 public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends AppCompatActivity
-        implements PresentableUiAndroid<PresenterT, UiT>, Nestable {
+        implements PresentableUiAndroid<PresenterT, UiT>, ViewBindable, Nestable {
     /**
      * Manually implemented lifecycle callbacks. Allows the callback to execute before any
      * overridden lifecycle method implementations

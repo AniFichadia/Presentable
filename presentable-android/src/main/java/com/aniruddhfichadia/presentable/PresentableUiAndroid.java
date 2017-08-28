@@ -30,8 +30,7 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-02-25
  */
-public interface PresentableUiAndroid<PresenterT extends Presenter<UiT>, UiT extends Ui>
-        extends ViewBindable {
+public interface PresentableUiAndroid<PresenterT extends Presenter<UiT>, UiT extends Ui> {
     //region Lifecycle
     void beforeOnCreate(@Nullable Bundle savedInstanceState);
 

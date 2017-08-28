@@ -20,12 +20,19 @@ package com.aniruddhfichadia.presentable.binder;
 
 import android.support.annotation.NonNull;
 
+import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
+
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-08-17
  */
-public abstract class LifecycleBinder<BoundT> {
+public abstract class LifecycleBinder<
+        BoundT,
+        PresenterT extends Presenter<UiT>,
+        UiT extends Ui
+        > {
     private static final String KEY_PRESENTER = "presenter";
 
 

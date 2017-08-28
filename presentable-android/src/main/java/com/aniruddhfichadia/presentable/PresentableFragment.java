@@ -51,7 +51,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends Fragment
-        implements PresentableUiAndroid<PresenterT, UiT>, Nestable {
+        implements PresentableUiAndroid<PresenterT, UiT>, ViewBindable, Nestable {
     @NotNull
     private final Handler                   uiHandler;
     /**
@@ -193,7 +193,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     public abstract PresenterT createPresenter();
 
     @Override
-    public final PresenterT getPresenter() {
+    public PresenterT getPresenter() {
         return presenter;
     }
 

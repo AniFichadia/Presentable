@@ -23,12 +23,12 @@ import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.presentable.PresentableUiAndroid;
+import com.aniruddhfichadia.presentable.ViewBindable;
 
 import java.lang.ref.WeakReference;
 
@@ -38,11 +38,11 @@ import java.lang.ref.WeakReference;
  * @date 2017-07-25
  */
 public class LifecycleBinderActivity<
-        ActivityT extends AppCompatActivity & PresentableUiAndroid<PresenterT, UiT>,
+        ActivityT extends Activity & PresentableUiAndroid<PresenterT, UiT>,
         PresenterT extends Presenter<UiT>,
         UiT extends Ui
         >
-        extends LifecycleBinder<ActivityT> {
+        extends LifecycleBinder<ActivityT, PresenterT, UiT> {
     @Nullable
     private BindingLifecycleCallbacks activityLifecycleCallbacks;
 
@@ -65,7 +65,7 @@ public class LifecycleBinderActivity<
     }
 
     public static class BindingLifecycleCallbacks<
-            ActivityT extends AppCompatActivity & PresentableUiAndroid<PresenterT, UiT>,
+            ActivityT extends Activity & PresentableUiAndroid<PresenterT, UiT>,
             PresenterT extends Presenter<UiT>,
             UiT extends Ui
             >
@@ -88,15 +88,18 @@ public class LifecycleBinderActivity<
 
                 boundActivity.beforeOnCreate(savedInstanceState);
 
-                int layoutResource = boundActivity.getLayoutResource();
-                if (layoutResource > 0) {
-                    boundActivity.setContentView(layoutResource);
+                if (boundActivity instanceof ViewBindable) {
+                    ViewBindable viewBindableBoundActivity = (ViewBindable) boundActivity;
+
+                    int layoutResource = viewBindableBoundActivity.getLayoutResource();
+                    if (layoutResource > 0) {
+                        boundActivity.setContentView(layoutResource);
+                    }
+
+                    View contentView = boundActivity.getWindow().getDecorView();
+                    viewBindableBoundActivity.bindView(contentView);
+                    viewBindableBoundActivity.afterBindView(contentView);
                 }
-
-                View contentView = boundActivity.getWindow().getDecorView();
-                boundActivity.bindView(contentView);
-                boundActivity.afterBindView(contentView);
-
 
                 PresenterT presenter = null;
                 String bundleKey = generateBundleKeyForUi(boundActivity);
@@ -178,9 +181,11 @@ public class LifecycleBinderActivity<
             if (boundActivity != null) {
                 boundActivity.getPresenter().unBindUi();
 
-                // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
-                // this is explicitly necessary
-                boundActivity.unbindView();
+                if (boundActivity instanceof ViewBindable) {
+                    // Unbinding is unnecessary in Activities, just use a no-op in your
+                    // unbindView method unless this is explicitly necessary
+                    ((ViewBindable) boundActivity).unbindView();
+                }
             }
         }
 

@@ -30,6 +30,7 @@ import android.view.View;
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
 import com.aniruddhfichadia.presentable.PresentableUiAndroid;
+import com.aniruddhfichadia.presentable.ViewBindable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +46,7 @@ public class LifecycleBinderFragment<
         PresenterT extends Presenter<UiT>,
         UiT extends Ui
         >
-        extends LifecycleBinder<FragmentT> {
+        extends LifecycleBinder<FragmentT, PresenterT, UiT> {
     @Nullable
     private BindingLifecycleCallbacks binder;
 
@@ -173,8 +174,8 @@ public class LifecycleBinderFragment<
             super.onFragmentViewDestroyed(fm, f);
 
             FragmentT boundFragment = getOperableBinding(fm, f);
-            if (boundFragment != null) {
-                boundFragment.unbindView();
+            if (boundFragment != null && boundFragment instanceof ViewBindable) {
+                ((ViewBindable) boundFragment).unbindView();
             }
         }
 
