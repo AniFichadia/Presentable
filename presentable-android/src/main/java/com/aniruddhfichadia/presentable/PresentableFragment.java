@@ -75,7 +75,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     //region Lifecycle
     @CallSuper
     @Override
-    public final void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         manualLifecycleCallbacks.onFragmentCreated(getFragmentManager(), this, savedInstanceState);
@@ -92,8 +92,8 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
 
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                                   @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         int layoutResource = getLayoutResource();
 
         if (layoutResource > 0) {
