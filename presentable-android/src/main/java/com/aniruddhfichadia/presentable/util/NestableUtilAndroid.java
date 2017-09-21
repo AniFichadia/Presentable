@@ -55,11 +55,17 @@ public class NestableUtilAndroid {
     @Nullable
     public static Nestable getNestableParent(View view) {
         Object nestableParent = view.getParent();
-
+        // Try the ViewParent
         if (nestableParent instanceof Nestable) {
             return (Nestable) nestableParent;
-        } else {
-            return null;
         }
+
+        // Try the Context
+        nestableParent = view.getContext();
+        if (nestableParent instanceof Nestable) {
+            return (Nestable) nestableParent;
+        }
+
+        return null;
     }
 }
