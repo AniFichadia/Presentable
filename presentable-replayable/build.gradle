@@ -4,9 +4,9 @@ apply from: '../common.gradle'
 dependencies {
     implementation project(':presentable')
 
-    compileOnly 'org.jetbrains:annotations-java5:15.0'
+    annotations()
 
-    implementation "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
+    replayableInterface()
 }
 
 ext {

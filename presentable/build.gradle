@@ -1,7 +1,8 @@
 apply plugin: 'java'
+apply from: '../common.gradle'
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations-java5:15.0'
+    annotations()
 }
 
 ext {

@@ -24,29 +24,19 @@ android {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations-java5:15.0'
-
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:design:$supportLibVersion"
-
     implementation project(':presentable')
     implementation project(':presentable-replayable')
     implementation project(':presentable-android')
 
-    implementation "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
-    annotationProcessor "com.aniruddhfichadia.replayableinterface:replayable-interface-compiler:$replayableInterfaceVersion"
+    annotations()
 
-    implementation "com.tierable.stasis:stasis-lib:$stasisVersion"
-    implementation "com.tierable.stasis:stasis-lib-android:$stasisVersion"
-    annotationProcessor "com.tierable.stasis:stasis-compiler:$stasisVersion"
+    androidSupportLib()
 
-    // ButterKnife
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    replayableInterfaceWithAnnotationProcessor()
 
+    stasis()
 
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testImplementation 'junit:junit:4.12'
+    androidUi()
+
+    androidTest()
 }

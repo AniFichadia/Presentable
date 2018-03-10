@@ -9,4 +9,63 @@ ext {
 
     stasisVersion = '1.0.0'
     replayableInterfaceVersion = '1.0.0'
+
+    jUnitVersion = '4.12'
+    espressoVersion = '2.2.2'
+}
+
+
+def dependencyGroup(Closure closure) {
+    closure.delegate = dependencies
+    return closure
+}
+
+ext.annotations = dependencyGroup {
+    compileOnly 'org.jetbrains:annotations-java5:15.0'
+}
+
+ext.androidSupportLib = dependencyGroup {
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:support-annotations:$supportLibVersion"
+}
+
+ext.replayableInterface = dependencyGroup {
+    implementation "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
+}
+
+ext.replayableInterfaceWithAnnotationProcessor = dependencyGroup {
+    replayableInterface()
+    annotationProcessor "com.aniruddhfichadia.replayableinterface:replayable-interface-compiler:$replayableInterfaceVersion"
+}
+
+ext.stasis = dependencyGroup {
+    implementation "com.tierable.stasis:stasis-lib:$stasisVersion"
+    implementation "com.tierable.stasis:stasis-lib-android:$stasisVersion"
+    annotationProcessor "com.tierable.stasis:stasis-compiler:$stasisVersion"
+}
+
+ext.butterknife = dependencyGroup {
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+}
+
+ext.unitTest = dependencyGroup {
+    testImplementation "junit:junit:$jUnitVersion"
+}
+
+ext.uiTest = dependencyGroup {
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}
+
+
+ext.androidUi = dependencyGroup {
+    butterknife()
+}
+
+ext.androidTest = dependencyGroup {
+    unitTest()
+    uiTest()
 }
