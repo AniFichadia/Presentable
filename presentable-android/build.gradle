@@ -3,12 +3,7 @@ apply from: '../common.gradle'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 14

@@ -56,4 +56,12 @@ public class ObjectRegistry
     public void clear() {
         objectRegistry.clear();
     }
+
+
+    @Override
+    public String toString() {
+        return "ObjectRegistry{" +
+                "Size=" + objectRegistry.size() +
+                '}';
+    }
 }

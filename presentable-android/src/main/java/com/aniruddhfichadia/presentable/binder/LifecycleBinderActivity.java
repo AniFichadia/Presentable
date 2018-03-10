@@ -116,8 +116,10 @@ public class LifecycleBinderActivity<
 
                     boundActivity.onNewInstance();
                 } else {
-                    // The presenter has been retained, restore the UI state
-                    boundActivity.restoreUiState(savedInstanceState);
+                    if (savedInstanceState != null) {
+                        // The presenter has been retained, restore the UI state
+                        boundActivity.restoreUiState(savedInstanceState);
+                    }
                 }
 
                 boundActivity.afterOnCreate(savedInstanceState);

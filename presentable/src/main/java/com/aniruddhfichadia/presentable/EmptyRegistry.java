@@ -37,4 +37,10 @@ public class EmptyRegistry
     @Override
     public void clear() {
     }
+
+
+    @Override
+    public String toString() {
+        return "EmptyRegistry{}";
+    }
 }
