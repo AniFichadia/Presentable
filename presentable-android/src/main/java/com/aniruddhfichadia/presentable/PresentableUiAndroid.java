@@ -23,14 +23,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
+import com.aniruddhfichadia.presentable.Contract.Ui;
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-02-25
  */
-public interface PresentableUiAndroid<PresenterT extends Presenter>
-        extends ViewBindable {
+public interface PresentableUiAndroid<PresenterT extends Presenter<UiT>, UiT extends Ui> {
     //region Lifecycle
     void beforeOnCreate(@Nullable Bundle savedInstanceState);
 
@@ -70,5 +70,10 @@ public interface PresentableUiAndroid<PresenterT extends Presenter>
     PresenterT createPresenter();
 
     PresenterT getPresenter();
+
+    void setPresenter(PresenterT presenter);
     //endregion
+
+
+    UiT getUi();
 }

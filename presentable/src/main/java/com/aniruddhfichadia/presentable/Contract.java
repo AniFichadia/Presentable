@@ -74,4 +74,7 @@ public interface Contract {
      */
     interface InterActor {
     }
+
+    interface InterActorListener {
+    }
 }

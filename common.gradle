@@ -1,0 +1,8 @@
+ext {
+    supportLibVersion = '25.3.0'
+
+    butterknifeVersion = '8.4.0'
+
+    stasisVersion = '1.0.0'
+    replayableInterfaceVersion = '1.0.0'
+}

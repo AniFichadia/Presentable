@@ -20,7 +20,10 @@ package com.aniruddhfichadia.presentable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -28,6 +31,11 @@ import java.util.List;
  * @date 3/1/17
  */
 public class ResourceVerifier {
+    private static final Set<String> IGNORED_FIELD_NAMES = new HashSet<>(
+            Arrays.asList("serialVersionUID", "$change")
+    );
+
+
     public static void verifyResourcesPresent(Class<?> androidResFileClass, Class<?> presentableResClass)
             throws RuntimeException {
         Field[] declaredFields = presentableResClass.getDeclaredFields();
@@ -36,6 +44,10 @@ public class ResourceVerifier {
         List<Field> missingFields = new ArrayList<>();
         for (Field field : declaredFields) {
             String fieldName = field.getName();
+            if (IGNORED_FIELD_NAMES.contains(fieldName)) {
+                continue;
+            }
+
             try {
                 androidResFileClass.getField(fieldName);
             } catch (NoSuchFieldException e) {

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: '../common.gradle'
 
 android {
     compileSdkVersion 25
@@ -19,22 +20,20 @@ android {
     }
 }
 
-ext {
-    butterknifeVersion = '8.4.0'
-}
-
 dependencies {
     compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
 
     compile project(':presentable')
     compile project(':presentable-replayable')
     compile project(':presentable-android')
 
-    compile project(':replayable-interface')
-    annotationProcessor project(':replayable-interface-compiler')
+    compile "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
+    annotationProcessor "com.aniruddhfichadia.replayableinterface:replayable-interface-compiler:$replayableInterfaceVersion"
 
-    compile project(':stasis-lib-android')
-    annotationProcessor project(':stasis-compiler')
+    compile "com.tierable.stasis:stasis-lib:$stasisVersion"
+    compile "com.tierable.stasis:stasis-lib-android:$stasisVersion"
+    annotationProcessor "com.tierable.stasis:stasis-compiler:$stasisVersion"
 
     // ButterKnife
     compile "com.jakewharton:butterknife:$butterknifeVersion"

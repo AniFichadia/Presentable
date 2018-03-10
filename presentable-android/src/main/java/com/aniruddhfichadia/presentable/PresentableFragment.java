@@ -32,6 +32,8 @@ import android.view.ViewGroup;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.binder.LifecycleBinderFragment.BindingLifecycleCallbacks;
+import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,59 +51,49 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends Fragment
-        implements PresentableUiAndroid<PresenterT>, Nestable {
-    private PresenterT presenter;
-
+        implements PresentableUiAndroid<PresenterT, UiT>, ViewBindable, Nestable {
     @NotNull
-    private final Handler uiHandler;
+    private final Handler                   uiHandler;
+    /**
+     * Manually implemented lifecycle callbacks. Allows the callback to execute before any
+     * overridden lifecycle method implementations
+     */
+    @NonNull
+    private final BindingLifecycleCallbacks manualLifecycleCallbacks;
+
+    private PresenterT presenter;
 
 
     public PresentableFragment() {
         super();
 
         uiHandler = new Handler(Looper.getMainLooper());
+        manualLifecycleCallbacks = new BindingLifecycleCallbacks<>(this);
     }
 
 
     //region Lifecycle
     @CallSuper
     @Override
-    public final void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        inject();
-
-        beforeOnCreate(savedInstanceState);
-
-        String bundleKey = PresentableUiDelegateImpl.generateBundleKeyForUi(this);
-        if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
-            presenter = getRegistry().get(savedInstanceState.getString(bundleKey));
-        }
-
-        if (presenter == null) {
-            // Create a new presenter instance
-            presenter = createPresenter();
-
-            onNewInstance();
-        }
-
-        afterOnCreate(savedInstanceState);
+        manualLifecycleCallbacks.onFragmentCreated(getFragmentManager(), this, savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            // UI restoration when the UI has been appropriately bound
-            restoreUiState(savedInstanceState);
-        }
+        manualLifecycleCallbacks.onFragmentActivityCreated(
+                getFragmentManager(), this, savedInstanceState
+        );
     }
 
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                                   @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         int layoutResource = getLayoutResource();
 
         if (layoutResource > 0) {
@@ -116,43 +108,55 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
         }
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
 
-        getPresenter().bindUi(getUi());
+        manualLifecycleCallbacks.onFragmentStarted(getFragmentManager(), this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        getPresenter().onUiReady(getUi());
+        manualLifecycleCallbacks.onFragmentResumed(getFragmentManager(), this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        manualLifecycleCallbacks.onFragmentPaused(getFragmentManager(), this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        getPresenter().unBindUi();
+        manualLifecycleCallbacks.onFragmentStopped(getFragmentManager(), this);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        manualLifecycleCallbacks.onFragmentSaveInstanceState(getFragmentManager(), this, outState);
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        unbindView();
+        manualLifecycleCallbacks.onFragmentViewDestroyed(getFragmentManager(), this);
     }
-
 
     @Override
-    public final void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onDestroy() {
+        super.onDestroy();
 
-        PresentableUiDelegateImpl.savePresenter(this, outState);
+        manualLifecycleCallbacks.onFragmentDestroyed(getFragmentManager(), this);
     }
+
     //endregion
 
     //region PresentableUiAndroid
@@ -189,8 +193,19 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     public abstract PresenterT createPresenter();
 
     @Override
-    public final PresenterT getPresenter() {
+    public PresenterT getPresenter() {
         return presenter;
+    }
+
+    @Override
+    public void setPresenter(PresenterT presenter) {
+        this.presenter = presenter;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public UiT getUi() {
+        return (UiT) this;
     }
     //endregion
 
@@ -216,38 +231,14 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     @Nullable
     @Override
     public Nestable getNestableParent() {
-        Object nestableParent = getParentFragment();
-        if (nestableParent == null) {
-            nestableParent = getActivity();
-        }
-
-        if (nestableParent instanceof Nestable) {
-            return (Nestable) nestableParent;
-        } else {
-            return null;
-        }
+        return NestableUtilAndroid.getNestableParent(this);
     }
     //endregion
 
 
-    @SuppressWarnings("unchecked")
-    protected UiT getUi() {
-        return (UiT) this;
-    }
-
-
-    @SuppressWarnings("unchecked")
+    @Nullable
     protected <ClassT> ClassT findParentWithImplementation(Class<ClassT> clazz) {
-        Nestable parent = getNestableParent();
-        while (parent != null && !clazz.isAssignableFrom(parent.getClass())) {
-            parent = parent.getNestableParent();
-        }
-
-        if (parent != null) {
-            return (ClassT) parent;
-        } else {
-            return null;
-        }
+        return NestableUtil.findParentWithImplementation(this, clazz);
     }
 
 

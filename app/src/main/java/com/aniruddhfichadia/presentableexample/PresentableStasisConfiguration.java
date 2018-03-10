@@ -1,16 +1,16 @@
 package com.aniruddhfichadia.presentableexample;
 
 
-import com.tierable.stasis.AndroidViewPreservationConfiguration;
-import com.tierable.stasis.StasisPreservationMapping;
-import com.tierable.stasis.StasisPreservationStrategyView;
+import com.tierable.stasis.AndroidPreservationMapping;
+import com.tierable.stasis.PreservationMapping;
+import com.tierable.stasis.PreservationStrategyView;
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-07-28
  */
-@StasisPreservationMapping(StasisPreservationStrategyView.class)
+@PreservationMapping(PreservationStrategyView.class)
 public interface PresentableStasisConfiguration
-        extends AndroidViewPreservationConfiguration {
+        extends AndroidPreservationMapping {
 }

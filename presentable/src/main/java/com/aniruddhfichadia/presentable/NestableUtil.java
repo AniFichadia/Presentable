@@ -18,29 +18,26 @@
 package com.aniruddhfichadia.presentable;
 
 
+import org.jetbrains.annotations.Nullable;
+
+
 /**
- * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 2017-03-05
+ * @author Aniruddh Fichadia
+ * @date 2017-08-17
  */
-public class EmptyRegistry
-        implements Registry {
-    @Override
-    public <T> String put(T value) {
-        return null;
-    }
+public class NestableUtil {
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <ClassT> ClassT findParentWithImplementation(Nestable nestable, Class<ClassT> clazz) {
+        Nestable parent = nestable.getNestableParent();
+        while (parent != null && !clazz.isAssignableFrom(parent.getClass())) {
+            parent = parent.getNestableParent();
+        }
 
-    @Override
-    public <T> T get(String key) {
-        return null;
-    }
-
-    @Override
-    public void clear() {
-    }
-
-
-    @Override
-    public String toString() {
-        return "EmptyRegistry{}";
+        if (parent != null) {
+            return (ClassT) parent;
+        } else {
+            return null;
+        }
     }
 }

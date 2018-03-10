@@ -28,6 +28,8 @@ import android.view.View;
 
 import com.aniruddhfichadia.presentable.Contract.Presenter;
 import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.binder.LifecycleBinderActivity.BindingLifecycleCallbacks;
+import com.aniruddhfichadia.presentable.util.NestableUtilAndroid;
 
 
 /**
@@ -35,12 +37,21 @@ import com.aniruddhfichadia.presentable.Contract.Ui;
  */
 public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT extends Ui>
         extends AppCompatActivity
-        implements PresentableUiAndroid<PresenterT>, Nestable {
+        implements PresentableUiAndroid<PresenterT, UiT>, ViewBindable, Nestable {
+    /**
+     * Manually implemented lifecycle callbacks. Allows the callback to execute before any
+     * overridden lifecycle method implementations
+     */
+    @NonNull
+    private final BindingLifecycleCallbacks manualLifecycleCallbacks;
+
     private PresenterT presenter;
 
 
     public PresentableActivity() {
         super();
+
+        manualLifecycleCallbacks = new BindingLifecycleCallbacks<>(this);
     }
 
 
@@ -50,19 +61,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        inject();
-
-        beforeOnCreate(savedInstanceState);
-
-        setContentView(getLayoutResource());
-
-        View contentView = getWindow().getDecorView();
-        bindView(contentView);
-        afterBindView(contentView);
-
-        presenter = PresentableUiDelegateImpl.createOrRestorePresenter(this, savedInstanceState);
-
-        afterOnCreate(savedInstanceState);
+        manualLifecycleCallbacks.onActivityCreated(this, savedInstanceState);
     }
 
 
@@ -70,39 +69,42 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     protected void onStart() {
         super.onStart();
 
-        getPresenter().bindUi(getUi());
+        manualLifecycleCallbacks.onActivityStarted(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        getPresenter().onUiReady(getUi());
+        manualLifecycleCallbacks.onActivityResumed(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        manualLifecycleCallbacks.onActivityPaused(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        getPresenter().unBindUi();
+        manualLifecycleCallbacks.onActivityStopped(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        getPresenter().unBindUi();
-
-        // Unbinding is unnecessary in Activities, just use a no-op in your unbindView method unless
-        // this is explicitly necessary
-        unbindView();
+        manualLifecycleCallbacks.onActivityDestroyed(this);
     }
 
     @Override
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        PresentableUiDelegateImpl.savePresenter(this, outState);
+        manualLifecycleCallbacks.onActivitySaveInstanceState(this, outState);
     }
     //endregion
 
@@ -139,8 +141,20 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     @NonNull
     public abstract PresenterT createPresenter();
 
+    @Override
     public final PresenterT getPresenter() {
         return presenter;
+    }
+
+    @Override
+    public void setPresenter(PresenterT presenter) {
+        this.presenter = presenter;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public UiT getUi() {
+        return (UiT) this;
     }
     //endregion
 
@@ -166,13 +180,7 @@ public abstract class PresentableActivity<PresenterT extends Presenter<UiT>, UiT
     @Nullable
     @Override
     public Nestable getNestableParent() {
-        return null;
+        return NestableUtilAndroid.getNestableParent(this);
     }
     //endregion
-
-
-    @SuppressWarnings("unchecked")
-    protected UiT getUi() {
-        return (UiT) this;
-    }
 }
