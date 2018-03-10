@@ -1,7 +1,11 @@
 ext {
-    supportLibVersion = '25.3.0'
+    androidCompileSdkVersion = 27
+    androidTargetSdkVersion = 27
+    androidMinSdkVersion = 16
+    androidBuildToolsVersion = '27.0.3'
+    supportLibVersion = '27.1.0'
 
-    butterknifeVersion = '8.4.0'
+    butterknifeVersion = '8.5.1'
 
     stasisVersion = '1.0.0'
     replayableInterfaceVersion = '1.0.0'

@@ -2,11 +2,11 @@ apply plugin: 'java'
 apply from: '../common.gradle'
 
 dependencies {
-    compile project(':presentable')
+    implementation project(':presentable')
 
-    compile 'org.jetbrains:annotations-java5:15.0'
+    compileOnly 'org.jetbrains:annotations-java5:15.0'
 
-    compile "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
+    implementation "com.aniruddhfichadia.replayableinterface:replayable-interface:$replayableInterfaceVersion"
 }
 
 ext {

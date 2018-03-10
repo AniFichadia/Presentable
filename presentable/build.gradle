@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-    compile 'org.jetbrains:annotations-java5:15.0'
+    compileOnly 'org.jetbrains:annotations-java5:15.0'
 }
 
 ext {
