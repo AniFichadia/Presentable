@@ -1,46 +1,45 @@
-/**
+/*
  * Copyright (C) 2017 Aniruddh Fichadia
- * <p/>
+ *
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * <p/>
+ *
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * <p/>
+ *
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
- * <http://www.gnu.org/licenses/>.
- * <p/>
+ * <http:></http:>//www.gnu.org/licenses/>.
+ *
+ *
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable
 
 
 /**
- * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 2017-03-05
+ * Represents a element (such as a UI) that can be nested within something else
+ *
+ * @author Aniruddh Fichadia
+ * @date 2017-07-24
  */
-public class EmptyRegistry
-        implements Registry {
-    @Override
-    public <T> String put(T value) {
-        return null;
-    }
+interface Nestable {
+    val nestableParent: Nestable?
 
-    @Override
-    public <T> T get(String key) {
-        return null;
-    }
+    companion object {
+        fun <ClassT> findParentWithImplementation(nestable: Nestable, clazz: Class<ClassT>): ClassT? {
+            var parent = nestable.nestableParent
+            while (parent != null && !clazz.isAssignableFrom(parent.javaClass)) {
+                parent = parent.nestableParent
+            }
 
-    @Override
-    public void clear() {
-    }
-
-
-    @Override
-    public String toString() {
-        return "EmptyRegistry{}";
+            @Suppress("UNCHECKED_CAST")
+            return parent as ClassT?
+        }
     }
 }

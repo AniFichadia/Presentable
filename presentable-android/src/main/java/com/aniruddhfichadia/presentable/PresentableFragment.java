@@ -238,7 +238,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
 
     @Nullable
     protected <ClassT> ClassT findParentWithImplementation(Class<ClassT> clazz) {
-        return NestableUtil.findParentWithImplementation(this, clazz);
+        return Nestable.Companion.findParentWithImplementation(this, clazz);
     }
 
 
