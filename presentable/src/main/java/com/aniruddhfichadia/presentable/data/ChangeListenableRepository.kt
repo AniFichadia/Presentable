@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2016 Aniruddh Fichadia
+/*
+ * Copyright (C) 2017 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
@@ -15,34 +15,22 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.component;
-
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package com.aniruddhfichadia.presentable.data
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 29/12/16
+ * @date 27/12/16
  */
-public abstract class MessageComponent {
-    public static final int ACTION_POSITIVE = -1;
-    public static final int ACTION_NEGATIVE = -2;
-    public static final int ACTION_NEUTRAL  = -3;
+interface ChangeListenableRepository {
+    fun notifyRepositoryUpdated(key: String)
+
+    fun addListener(listener: RepositoryChangeListener)
+
+    fun removeListener(listener: RepositoryChangeListener)
 
 
-    public void show(@NotNull MessageBuilder messageBuilder, @Nullable OnActionClickListener listener)
-            throws IllegalStateException {
-        messageBuilder.ensureValidState();
-
-        showInternal(messageBuilder, listener);
+    interface RepositoryChangeListener {
+        fun onRepositoryChanged(key: String)
     }
-
-    public void show(@NotNull MessageBuilder messageBuilder) throws IllegalStateException {
-        show(messageBuilder, null);
-    }
-
-    protected abstract void showInternal(@NotNull MessageBuilder messageBuilder,
-                                         @Nullable OnActionClickListener listener);
 }

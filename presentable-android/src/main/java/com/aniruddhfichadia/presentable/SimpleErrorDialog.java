@@ -84,7 +84,7 @@ public class SimpleErrorDialog
 
         // Dismissible handling: prevent back-presses and external touches from dismissing the
         // dialog
-        setCancelable(messageBuilder.isDismissible());
+        setCancelable(messageBuilder.getDismissible());
 
         return builder.create();
     }

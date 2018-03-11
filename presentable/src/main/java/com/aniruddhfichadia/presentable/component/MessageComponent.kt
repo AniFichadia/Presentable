@@ -15,13 +15,27 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.component;
+package com.aniruddhfichadia.presentable.component
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 13/1/17
+ * @date 29/12/16
  */
-public interface OnActionClickListener {
-    void onActionClicked(int which);
+abstract class MessageComponent {
+    companion object {
+        const val ACTION_POSITIVE = -1
+        const val ACTION_NEGATIVE = -2
+        const val ACTION_NEUTRAL = -3
+    }
+
+    @Throws(IllegalStateException::class)
+    @JvmOverloads
+    fun show(messageBuilder: MessageBuilder, listener: OnActionClickListener? = null) {
+        messageBuilder.ensureValidState()
+
+        showInternal(messageBuilder, listener)
+    }
+
+    protected abstract fun showInternal(messageBuilder: MessageBuilder, listener: OnActionClickListener?)
 }

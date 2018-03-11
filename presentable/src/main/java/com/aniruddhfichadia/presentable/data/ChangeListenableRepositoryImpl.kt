@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2017 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -15,22 +15,35 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.data;
+package com.aniruddhfichadia.presentable.data
+
+import com.aniruddhfichadia.presentable.data.ChangeListenableRepository.RepositoryChangeListener
 
 
 /**
+ * Basic implementation of [ChangeListenableRepository]. Either extend from or compose your
+ * repository implementation using this
+ *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 27/12/16
  */
-public interface ChangeListenableRepository {
-    void notifyRepositoryUpdated(String key);
-
-    void addListener(RepositoryChangeListener listener);
-
-    void removeListener(RepositoryChangeListener listener);
+class ChangeListenableRepositoryImpl : ChangeListenableRepository {
+    private val listeners: MutableList<RepositoryChangeListener> by lazy {
+        ArrayList<RepositoryChangeListener>()
+    }
 
 
-    interface RepositoryChangeListener {
-        void onRepositoryChanged(String key);
+    override fun notifyRepositoryUpdated(key: String) {
+        listeners.forEach {
+            it.onRepositoryChanged(key)
+        }
+    }
+
+    override fun addListener(listener: RepositoryChangeListener) {
+        listeners.add(listener)
+    }
+
+    override fun removeListener(listener: RepositoryChangeListener) {
+        listeners.remove(listener)
     }
 }

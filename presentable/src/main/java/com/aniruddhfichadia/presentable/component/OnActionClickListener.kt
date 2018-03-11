@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -15,13 +15,13 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.data;
+package com.aniruddhfichadia.presentable.component
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 27/12/16
+ * @date 13/1/17
  */
-public interface KeyValueRepository {
-    void clear();
+interface OnActionClickListener {
+    fun onActionClicked(which: Int)
 }
