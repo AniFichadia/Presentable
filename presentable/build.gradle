@@ -1,8 +1,10 @@
 apply plugin: 'java'
+apply plugin: 'kotlin'
 apply from: '../common.gradle'
 
 dependencies {
     annotations()
+    kotlin()
 }
 
 ext {

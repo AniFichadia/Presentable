@@ -1,4 +1,6 @@
 ext {
+    kotlinVersion = '1.2.30'
+
     androidCompileSdkVersion = 27
     androidTargetSdkVersion = 27
     androidMinSdkVersion = 16
@@ -20,8 +22,13 @@ def dependencyGroup(Closure closure) {
     return closure
 }
 
+
 ext.annotations = dependencyGroup {
     compileOnly 'org.jetbrains:annotations-java5:15.0'
+}
+
+ext.kotlin = dependencyGroup {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
 
 ext.androidSupportLib = dependencyGroup {
