@@ -1,80 +1,79 @@
-/**
+/*
  * Copyright (C) 2016 Aniruddh Fichadia
- * <p/>
+ *
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * <p/>
+ *
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * <p/>
+ *
+ *
  * You should have received a copy of the GNU General Public License along with this program. If not, see
- * <http://www.gnu.org/licenses/>.
- * <p/>
+ * <http:></http:>//www.gnu.org/licenses/>.
+ *
+ *
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
-
-
-import org.jetbrains.annotations.NotNull;
+package com.aniruddhfichadia.presentable
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-02-25
  */
-public interface Contract {
-    /** A generalised User Interface contract for a {@link Presenter} */
-    interface Ui {
-    }
+interface Contract {
+    /** A generalised User Interface contract for a [Presenter] */
+    interface Ui
 
     /**
      * A pure Java presenter.
-     * <p>
+     *
+     *
      * Ideally the presenter implementation should be platform agnostic and have no or platform agnostic references to
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
-    interface Presenter<UiT extends Ui> {
-        boolean shouldRetainPresenter();
-
-
+    interface Presenter<UiT : Ui> {
         /**
-         * Bind the {@link Ui} to the {@link Presenter}. Implementations should notify
+         * Bind the [Ui] to the [Presenter]. Implementations should notify
          * appropriate lifecycle events after binding is complete
-         * (i.e. {@link Presenter#onPresenterBound(Ui)}.
+         * (i.e. [Presenter.onPresenterBound].
          */
-        void bindUi(@NotNull UiT ui);
+        fun bindUi(ui: UiT)
 
         /**
-         * Unbind the {@link Ui} from the {@link Presenter}. Implementations should notify
+         * Unbind the [Ui] from the [Presenter]. Implementations should notify
          * appropriate lifecycle events after unbinding is complete
-         * (i.e. {@link Presenter#onPresenterUnBound()}.
+         * (i.e. [Presenter.onPresenterUnBound].
          */
-        void unBindUi();
+        fun unBindUi()
 
 
-        void onPresenterBound(@NotNull UiT ui);
+        fun onPresenterBound(ui: UiT)
 
-        void onPresenterUnBound();
+        fun onPresenterUnBound()
 
-        /** Update the UI when it is ready/stable */
-        void onUiReady(@NotNull UiT ui);
+        /** Update the UI when it is ready/stable  */
+        fun onUiReady(ui: UiT)
 
 
-        boolean isUiAttached();
+        fun shouldRetainPresenter(): Boolean
 
-        UiT getUi();
+
+        fun isUiAttached(): Boolean
+
+        fun getUi(): UiT
     }
 
     /**
      * Clean architecture data layer interactor (inter-actor). Coordinates data retrieval and
-     * notifies the {@link Presenter}
+     * notifies the [Presenter]
      */
-    interface InterActor {
-    }
+    interface InterActor
 
-    interface InterActorListener {
-    }
+    interface InterActorListener
 }
