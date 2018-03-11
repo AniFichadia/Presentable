@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -231,7 +231,7 @@ public abstract class PresentableFragment<PresenterT extends Presenter<UiT>, UiT
     @Nullable
     @Override
     public Nestable getNestableParent() {
-        return NestableUtilAndroid.getNestableParent(this);
+        return NestableUtilAndroid.Companion.getNestableParent(this);
     }
     //endregion
 

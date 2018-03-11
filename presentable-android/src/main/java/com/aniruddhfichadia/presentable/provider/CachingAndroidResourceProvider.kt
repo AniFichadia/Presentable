@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2016 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -15,37 +15,36 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable.provider
 
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.view.View;
+import android.content.Context
+import android.support.v4.util.LruCache
 
 
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
- * @date 28/12/16
  */
-public interface ViewBindable {
-    /** Provide your layout resource through this method. Use any negative number for no layout */
-    @LayoutRes
-    int getLayoutResource();
+class CachingAndroidResourceProvider @JvmOverloads constructor(
+        context: Context,
+        cacheSize: Int = DEFAULT_CACHE_SIZE
+) : AndroidResourceProvider(context) {
+    private val stringLookupCache: LruCache<String, String> = LruCache(cacheSize)
 
-    /**
-     * Perform any view binding (eg. via ButterKnife, or using a bunch of {@link View#findViewById(int)} calls). Won't
-     * be called if a layout isn't inflated.
-     *
-     * @param view The inflated layout. Won't be null
-     */
-    void bindView(@NonNull View view);
 
-    /**
-     * Called after {@link #bindView(View)}. Configure your UI elements here
-     *
-     * @param view The inflated layout. Won't be null
-     */
-    void afterBindView(@NonNull View view);
+    override fun lookupString(identifier: String): String {
+        var string: String? = stringLookupCache.get(identifier)
 
-    void unbindView();
+        if (string == null) {
+            string = super.lookupString(identifier)
+
+            stringLookupCache.put(identifier, string)
+        }
+
+        return string
+    }
+
+    companion object {
+        const val DEFAULT_CACHE_SIZE = 100
+    }
 }
