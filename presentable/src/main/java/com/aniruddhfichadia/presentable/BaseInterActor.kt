@@ -31,7 +31,9 @@ import java.util.concurrent.Executor
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-03-02
  */
-open class BaseInterActor(private val executor: Executor) : InterActor {
+open class BaseInterActor(
+        protected val executor: Executor
+) : InterActor {
     protected fun execute(runnable: Runnable) {
         executor.execute(runnable)
     }

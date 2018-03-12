@@ -18,14 +18,11 @@
 package com.aniruddhfichadia.presentable.component
 
 
-import java.io.Serializable
-
-
 /**
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 13/1/17
  */
-class MessageBuilder : Serializable {
+class MessageBuilder {
     /** Generic int. Implement as required and handle in your [MessageComponent]  */
     var messageType: Int = 0
         private set
@@ -43,31 +40,31 @@ class MessageBuilder : Serializable {
         private set
 
 
-    fun messageType(messageType: Int) = apply {
+    fun messageType(messageType: Int): MessageBuilder = apply {
         this.messageType = messageType
     }
 
-    fun title(title: CharSequence?) = apply {
+    fun title(title: CharSequence?): MessageBuilder = apply {
         this.title = title
     }
 
-    fun message(message: CharSequence?) = apply {
+    fun message(message: CharSequence?): MessageBuilder = apply {
         this.message = message
     }
 
-    fun positiveAction(positiveAction: CharSequence?) = apply {
+    fun positiveAction(positiveAction: CharSequence?): MessageBuilder = apply {
         this.positiveAction = positiveAction
     }
 
-    fun neutralAction(neutralAction: CharSequence?) = apply {
+    fun neutralAction(neutralAction: CharSequence?): MessageBuilder = apply {
         this.neutralAction = neutralAction
     }
 
-    fun negativeAction(negativeAction: CharSequence?) = apply {
+    fun negativeAction(negativeAction: CharSequence?): MessageBuilder = apply {
         this.negativeAction = negativeAction
     }
 
-    fun dismissible(dismissible: Boolean) = apply {
+    fun dismissible(dismissible: Boolean): MessageBuilder = apply {
         this.dismissible = dismissible
     }
 

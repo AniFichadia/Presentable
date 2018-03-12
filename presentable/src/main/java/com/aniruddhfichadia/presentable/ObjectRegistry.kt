@@ -31,14 +31,11 @@ import java.util.*
  * @date 2017-01-17
  */
 class ObjectRegistry : Registry {
-    private val objectRegistry: MutableMap<String, Any>
-
-    init {
-        objectRegistry = HashMap()
-    }
+    private val objectRegistry: MutableMap<String, Any> = HashMap()
 
 
-    override fun <T> put(value: T): String? {
+    override fun <T> put(value: T): String {
+        // TODO: java UUID replacement?
         val key = UUID.randomUUID().toString()
         objectRegistry[key] = (value as Any)
         return key
@@ -55,8 +52,8 @@ class ObjectRegistry : Registry {
 
 
     override fun toString(): String {
-        return "ObjectRegistry{" +
-                "Size=" + objectRegistry.size +
-                '}'.toString()
+        return """ObjectRegistry{
+            Size=${objectRegistry.size}
+            }""".trimMargin()
     }
 }

@@ -21,6 +21,8 @@
  */
 package com.aniruddhfichadia.presentable
 
+import kotlin.reflect.full.isSubclassOf
+
 
 /**
  * Represents a element (such as a UI) that can be nested within something else
@@ -31,15 +33,18 @@ package com.aniruddhfichadia.presentable
 interface Nestable {
     val nestableParent: Nestable?
 
-    companion object {
-        fun <ClassT> findParentWithImplementation(nestable: Nestable, clazz: Class<ClassT>): ClassT? {
-            var parent = nestable.nestableParent
-            while (parent != null && !clazz.isAssignableFrom(parent.javaClass)) {
-                parent = parent.nestableParent
-            }
 
+    fun <ClassT> findParentWithImplementation(nestable: Nestable, clazz: Class<ClassT>): ClassT? {
+        var parent = nestable.nestableParent
+        while (parent != null && !parent::class.isSubclassOf(clazz::class)) {
+            parent = parent.nestableParent
+        }
+
+        return if (parent != null) {
             @Suppress("UNCHECKED_CAST")
-            return parent as ClassT?
+            parent as ClassT
+        } else {
+            null
         }
     }
 }

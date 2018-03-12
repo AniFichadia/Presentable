@@ -30,8 +30,9 @@ import java.lang.ref.WeakReference
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 open class BasePresenter<UiT : Ui> : Presenter<UiT> {
+    override var isFirstTimeBound: Boolean = true
+
     private var uiReference: WeakReference<UiT> = WeakReference<UiT>(null)
-    protected var isFirstTimeBound: Boolean = true
 
 
     override fun bindUi(ui: UiT) {
@@ -57,7 +58,6 @@ open class BasePresenter<UiT : Ui> : Presenter<UiT> {
 
 
     override fun shouldRetainPresenter(): Boolean = true
-
 
     override fun getUi(): UiT = uiReference.get()!!
 

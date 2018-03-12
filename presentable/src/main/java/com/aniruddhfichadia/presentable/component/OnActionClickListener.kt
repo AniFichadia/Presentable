@@ -23,5 +23,9 @@ package com.aniruddhfichadia.presentable.component
  * @date 13/1/17
  */
 interface OnActionClickListener {
-    fun onActionClicked(which: Int)
+    fun onActionPositive()
+
+    fun onActionNegative()
+
+    fun onActionNeutral()
 }

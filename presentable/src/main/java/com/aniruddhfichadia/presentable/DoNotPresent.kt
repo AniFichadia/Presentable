@@ -25,43 +25,27 @@ import com.aniruddhfichadia.presentable.Contract.Ui
 /**
  * Convenience class for when your UI doesn't require a [Presenter].
  *
- *
- *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
 class DoNotPresent<UiT : Ui> : Presenter<UiT> {
-    override fun bindUi(ui: UiT) {
-        // No-op
-    }
-
-    override fun unBindUi() {
-        // No-op
-    }
+    override var isFirstTimeBound: Boolean = false
 
 
-    override fun onPresenterBound(ui: UiT) {
-        // No-op
-    }
+    override fun bindUi(ui: UiT) {}
 
-    override fun onPresenterUnBound() {
-        // No-op
-    }
-
-    override fun onUiReady(ui: UiT) {
-        // No-op
-    }
+    override fun unBindUi() {}
 
 
-    override fun shouldRetainPresenter(): Boolean {
-        return true
-    }
+    override fun onPresenterBound(ui: UiT) {}
+
+    override fun onPresenterUnBound() {}
+
+    override fun onUiReady(ui: UiT) {}
 
 
-    override fun isUiAttached(): Boolean {
-        return false
-    }
+    override fun shouldRetainPresenter(): Boolean = true
 
-    override fun getUi(): UiT? {
-        return null
-    }
+    override fun isUiAttached(): Boolean = false
+
+    override fun getUi(): UiT? = null
 }

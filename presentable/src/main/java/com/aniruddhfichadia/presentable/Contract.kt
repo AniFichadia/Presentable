@@ -38,6 +38,9 @@ interface Contract {
      * things like Android resources, etc. This allows easier porting to multiple platforms using translation tools
      */
     interface Presenter<UiT : Ui> {
+        var isFirstTimeBound: Boolean
+
+
         /**
          * Bind the [Ui] to the [Presenter]. Implementations should notify
          * appropriate lifecycle events after binding is complete
@@ -63,10 +66,9 @@ interface Contract {
 
         fun shouldRetainPresenter(): Boolean
 
-
         fun isUiAttached(): Boolean
 
-        fun getUi(): UiT
+        fun getUi(): UiT?
     }
 
     /**

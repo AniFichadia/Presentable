@@ -23,12 +23,6 @@ package com.aniruddhfichadia.presentable.component
  * @date 29/12/16
  */
 abstract class MessageComponent {
-    companion object {
-        const val ACTION_POSITIVE = -1
-        const val ACTION_NEGATIVE = -2
-        const val ACTION_NEUTRAL = -3
-    }
-
     @Throws(IllegalStateException::class)
     @JvmOverloads
     fun show(messageBuilder: MessageBuilder, listener: OnActionClickListener? = null) {
