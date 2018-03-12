@@ -179,11 +179,6 @@ abstract class PresentableFragment<PresenterT : Presenter<UiT>, UiT : Ui> :
     //endregion
 
 
-    protected fun <ClassT> findParentWithImplementation(clazz: Class<ClassT>): ClassT? {
-        return Nestable.findParentWithImplementation(this, clazz)
-    }
-
-
     /** A [Fragment] equivalent of [android.app.Activity.runOnUiThread].  */
     protected fun runOnUiThread(runnable: Runnable) {
         if (Looper.myLooper() == Looper.getMainLooper()) {

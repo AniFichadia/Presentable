@@ -44,6 +44,7 @@ class CachingAndroidResourceProvider @JvmOverloads constructor(
         return string
     }
 
+
     companion object {
         const val DEFAULT_CACHE_SIZE = 100
     }

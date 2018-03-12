@@ -54,8 +54,9 @@ class LifecycleBinderView<in ViewT, PresenterT, UiT> :
     }
 
 
-    class BindingOnAttachStateChangeListener<out ViewT, PresenterT, UiT>(boundView: ViewT) :
-            OnAttachStateChangeListener
+    class BindingOnAttachStateChangeListener<out ViewT, PresenterT, UiT>(
+            boundView: ViewT
+    ) : OnAttachStateChangeListener
             where ViewT : View,
                   ViewT : PresentableUiAndroid<PresenterT, UiT>,
                   PresenterT : Presenter<UiT>,
@@ -81,8 +82,10 @@ class LifecycleBinderView<in ViewT, PresenterT, UiT> :
             val boundView = getOperableBinding(v)
 
             if (boundView != null) {
-                boundView.presenter.bindUi(boundView.ui)
-                boundView.presenter.onUiReady(boundView.ui)
+                val ui: UiT = boundView.ui
+
+                boundView.presenter.bindUi(ui)
+                boundView.presenter.onUiReady(ui)
             }
         }
 

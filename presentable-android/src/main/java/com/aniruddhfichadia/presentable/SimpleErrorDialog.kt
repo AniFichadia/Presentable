@@ -31,31 +31,6 @@ import com.aniruddhfichadia.presentable.component.MessageBuilder
  * @date 29/12/16
  */
 class SimpleErrorDialog : AppCompatDialogFragment() {
-    companion object {
-        private const val KEY_TITLE = "key_title"
-        private const val KEY_MESSAGE = "key_message"
-        private const val KEY_POSITIVE_ACTION = "key_positive_actio"
-        private const val KEY_NEGATIVE_ACTION = "key_negative_action"
-        private const val KEY_NEUTRAL_ACTION = "key_neutral_action"
-        private const val KEY_DISMISSIBLE = "key_dismissible"
-
-
-        fun newInstance(messageBuilder: MessageBuilder): SimpleErrorDialog {
-            val args = Bundle()
-            args.putCharSequence(KEY_TITLE, messageBuilder.title)
-            args.putCharSequence(KEY_MESSAGE, messageBuilder.message)
-            args.putCharSequence(KEY_POSITIVE_ACTION, messageBuilder.positiveAction)
-            args.putCharSequence(KEY_NEGATIVE_ACTION, messageBuilder.negativeAction)
-            args.putCharSequence(KEY_NEUTRAL_ACTION, messageBuilder.neutralAction)
-            args.putBoolean(KEY_DISMISSIBLE, messageBuilder.dismissible)
-
-            val instance = SimpleErrorDialog()
-            instance.arguments = args
-
-            return instance
-        }
-    }
-
     var onClickListener: OnClickListener? = null
 
 
@@ -87,5 +62,31 @@ class SimpleErrorDialog : AppCompatDialogFragment() {
         isCancelable = dismissible
 
         return builder.create()
+    }
+
+
+    companion object {
+        private const val KEY_TITLE = "key_title"
+        private const val KEY_MESSAGE = "key_message"
+        private const val KEY_POSITIVE_ACTION = "key_positive_actio"
+        private const val KEY_NEGATIVE_ACTION = "key_negative_action"
+        private const val KEY_NEUTRAL_ACTION = "key_neutral_action"
+        private const val KEY_DISMISSIBLE = "key_dismissible"
+
+
+        fun newInstance(messageBuilder: MessageBuilder): SimpleErrorDialog {
+            val args = Bundle()
+            args.putCharSequence(KEY_TITLE, messageBuilder.title)
+            args.putCharSequence(KEY_MESSAGE, messageBuilder.message)
+            args.putCharSequence(KEY_POSITIVE_ACTION, messageBuilder.positiveAction)
+            args.putCharSequence(KEY_NEGATIVE_ACTION, messageBuilder.negativeAction)
+            args.putCharSequence(KEY_NEUTRAL_ACTION, messageBuilder.neutralAction)
+            args.putBoolean(KEY_DISMISSIBLE, messageBuilder.dismissible)
+
+            val instance = SimpleErrorDialog()
+            instance.arguments = args
+
+            return instance
+        }
     }
 }

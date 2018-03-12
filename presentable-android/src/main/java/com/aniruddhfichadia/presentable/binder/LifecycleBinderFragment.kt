@@ -58,8 +58,9 @@ class LifecycleBinderFragment<in FragmentT, PresenterT, UiT> :
     }
 
 
-    class BindingLifecycleCallbacks<out FragmentT, PresenterT, UiT>(boundFragment: FragmentT) :
-            FragmentLifecycleCallbacks()
+    class BindingLifecycleCallbacks<out FragmentT, PresenterT, UiT>(
+            boundFragment: FragmentT
+    ) : FragmentLifecycleCallbacks()
             where FragmentT : Fragment,
                   FragmentT : PresentableUiAndroid<PresenterT, UiT>,
                   PresenterT : Presenter<UiT>,
@@ -81,7 +82,7 @@ class LifecycleBinderFragment<in FragmentT, PresenterT, UiT> :
                 if (savedInstanceState != null && savedInstanceState.containsKey(bundleKey)) {
                     presenter = boundFragment.getRegistry().get<PresenterT>(savedInstanceState.getString(bundleKey))
 
-                    presenter?.let {  boundFragment.presenter = it }
+                    presenter?.let { boundFragment.presenter = it }
                 }
 
                 if (presenter == null) {

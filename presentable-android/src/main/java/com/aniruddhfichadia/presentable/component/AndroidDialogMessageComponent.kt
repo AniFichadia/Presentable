@@ -38,15 +38,10 @@ class AndroidDialogMessageComponent(private val fragmentManager: FragmentManager
 
         listener?.let {
             dialog.onClickListener = OnClickListener { _, which ->
-                val remappedWhich = when (which) {
-                    DialogInterface.BUTTON_POSITIVE -> MessageComponent.ACTION_POSITIVE
-                    DialogInterface.BUTTON_NEGATIVE -> MessageComponent.ACTION_NEGATIVE
-                    DialogInterface.BUTTON_NEUTRAL -> MessageComponent.ACTION_NEUTRAL
-                    else -> null
-                }
-
-                remappedWhich?.let {
-                    listener.onActionClicked(remappedWhich)
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> listener.onActionPositive()
+                    DialogInterface.BUTTON_NEGATIVE -> listener.onActionNegative()
+                    DialogInterface.BUTTON_NEUTRAL -> listener.onActionNeutral()
                 }
             }
         }

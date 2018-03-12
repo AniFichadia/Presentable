@@ -56,8 +56,9 @@ class LifecycleBinderActivity<in ActivityT, PresenterT, UiT> :
     }
 
 
-    class BindingLifecycleCallbacks<out ActivityT, PresenterT, UiT>(boundActivity: ActivityT) :
-            ActivityLifecycleCallbacks
+    class BindingLifecycleCallbacks<out ActivityT, PresenterT, UiT>(
+            boundActivity: ActivityT
+    ) : ActivityLifecycleCallbacks
             where ActivityT : Activity,
                   ActivityT : PresentableUiAndroid<PresenterT, UiT>,
                   PresenterT : Presenter<UiT>,
