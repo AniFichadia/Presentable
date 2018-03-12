@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2017 Aniruddh Fichadia
  * <p/>
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -15,37 +15,34 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable.binder;
+package com.aniruddhfichadia.presentable.binder
 
 
-import android.support.annotation.NonNull;
-
-import com.aniruddhfichadia.presentable.Contract.Presenter;
-import com.aniruddhfichadia.presentable.Contract.Ui;
+import com.aniruddhfichadia.presentable.Contract.Presenter
+import com.aniruddhfichadia.presentable.Contract.Ui
 
 
 /**
  * @author Aniruddh Fichadia
  * @date 2017-08-17
  */
-public abstract class LifecycleBinder<
-        BoundT,
-        PresenterT extends Presenter<UiT>,
-        UiT extends Ui
-        > {
-    private static final String KEY_PRESENTER = "presenter";
+abstract class LifecycleBinder<in BoundT, PresenterT, UiT>
+        where PresenterT : Presenter<UiT>,
+              UiT : Ui {
+    abstract fun registerBinding(bound: BoundT)
+
+    abstract fun unregisterBinding(bound: BoundT)
 
 
-    public abstract void registerBinding(@NonNull BoundT bound);
+    companion object {
+        private const val KEY_PRESENTER = "presenter"
 
-    public abstract void unregisterBinding(@NonNull BoundT bound);
-
-
-    /**
-     * Generates a key that includes the UI classes name. This prevents the keys getting
-     * overwritten by other UI elements. This may happen in UIs with nested fragments.
-     */
-    public static String generateBundleKeyForUi(@NonNull Object ui) {
-        return ui.getClass().getName() + "." + KEY_PRESENTER;
+        /**
+         * Generates a key that includes the UI classes name. This prevents the keys getting
+         * overwritten by other UI elements. This may happen in UIs with nested fragments.
+         */
+        fun generateBundleKeyForUi(ui: Any): String {
+            return "${ui::class.simpleName}.$KEY_PRESENTER"
+        }
     }
 }

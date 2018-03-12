@@ -89,7 +89,7 @@ abstract class PresentableActivity<PresenterT : Presenter<UiT>, UiT : Ui> :
         manualLifecycleCallbacks.onActivityDestroyed(this)
     }
 
-    public override fun onSaveInstanceState(outState: Bundle?) {
+    public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         manualLifecycleCallbacks.onActivitySaveInstanceState(this, outState)
