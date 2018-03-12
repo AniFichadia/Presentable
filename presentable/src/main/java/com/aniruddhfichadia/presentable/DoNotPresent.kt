@@ -15,61 +15,53 @@
  * If you use or enhance the code, please let me know using the provided author information or via email
  * Ani.Fichadia@gmail.com.
  */
-package com.aniruddhfichadia.presentable;
+package com.aniruddhfichadia.presentable
 
 
-import com.aniruddhfichadia.presentable.Contract.Presenter;
-import com.aniruddhfichadia.presentable.Contract.Ui;
-
-import org.jetbrains.annotations.NotNull;
+import com.aniruddhfichadia.presentable.Contract.Presenter
+import com.aniruddhfichadia.presentable.Contract.Ui
 
 
 /**
- * Convenience class for when your UI doesn't require a {@link Presenter}.
- * <p>
+ * Convenience class for when your UI doesn't require a [Presenter].
+ *
+ *
  *
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  */
-public final class DoNotPresent<UiT extends Ui>
-        implements Presenter<UiT> {
-    @Override
-    public boolean shouldRetainPresenter() {
-        return true;
-    }
-
-
-    @Override
-    public void bindUi(@NotNull UiT ui) {
+class DoNotPresent<UiT : Ui> : Presenter<UiT> {
+    override fun bindUi(ui: UiT) {
         // No-op
     }
 
-    @Override
-    public void unBindUi() {
+    override fun unBindUi() {
         // No-op
     }
 
-    @Override
-    public void onPresenterBound(@NotNull UiT ui) {
+
+    override fun onPresenterBound(ui: UiT) {
         // No-op
     }
 
-    @Override
-    public void onPresenterUnBound() {
+    override fun onPresenterUnBound() {
         // No-op
     }
 
-    @Override
-    public void onUiReady(@NotNull UiT ui) {
+    override fun onUiReady(ui: UiT) {
         // No-op
     }
 
-    @Override
-    public boolean isUiAttached() {
-        return false;
+
+    override fun shouldRetainPresenter(): Boolean {
+        return true
     }
 
-    @Override
-    public UiT getUi() {
-        return null;
+
+    override fun isUiAttached(): Boolean {
+        return false
+    }
+
+    override fun getUi(): UiT? {
+        return null
     }
 }
