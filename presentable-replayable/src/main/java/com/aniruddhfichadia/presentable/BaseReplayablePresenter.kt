@@ -22,6 +22,7 @@
 package com.aniruddhfichadia.presentable
 
 
+import com.aniruddhfichadia.presentable.Contract.Presenter
 import com.aniruddhfichadia.presentable.Contract.Ui
 import com.aniruddhfichadia.replayableinterface.Delegator
 import com.aniruddhfichadia.replayableinterface.ReplaySource
@@ -31,11 +32,13 @@ import com.aniruddhfichadia.replayableinterface.ReplaySource
  * @author Aniruddh Fichadia | Email: Ani.Fichadia@gmail.com | GitHub: AniFichadia (http://github.com/AniFichadia)
  * @date 2017-01-17
  */
-abstract class BaseReplayablePresenter<UiT, out UiProxyT> : BasePresenter<UiT>()
+abstract class BaseReplayablePresenter<UiT, out UiProxyT> : Presenter<UiT>
         where UiT : Ui,
               UiProxyT : Ui,
               UiProxyT : Delegator<UiT>,
               UiProxyT : ReplaySource<UiT> {
+    override var isFirstTimeBound: Boolean = true
+
     private val uiProxy: UiProxyT = this.createUiProxy()
 
 
@@ -56,10 +59,15 @@ abstract class BaseReplayablePresenter<UiT, out UiProxyT> : BasePresenter<UiT>()
         isFirstTimeBound = false
     }
 
-    override fun onUiReady(ui: UiT) {
-        uiProxy.replay(ui)
-    }
 
+    override fun onPresenterBound(ui: UiT) {}
+
+    override fun onPresenterUnBound() {}
+
+    override fun onUiReady(ui: UiT) {}
+
+
+    override fun shouldRetainPresenter(): Boolean = true
 
     @Suppress("UNCHECKED_CAST")
     override fun getUi(): UiT = uiProxy as UiT
